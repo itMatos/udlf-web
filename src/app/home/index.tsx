@@ -1,7 +1,8 @@
+"use client";
 import React from "react";
-import Appbar from "@/components/Appbar";
 import { Box, Button } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import Appbar from "@/components/Appbar";
 
 export default function Homepage() {
   return (
@@ -19,8 +20,9 @@ export default function Homepage() {
           size="large"
           variant="contained"
           endIcon={<ArrowForwardIosIcon />}
+          href="/get-started"
         >
-          Get started now
+          Get started
         </Button>
       </Box>
     </React.Fragment>
