@@ -15,6 +15,7 @@ import {
   LabelProps,
   CPRRMethodSettings,
 } from "@/interfaces/interfaces";
+import InputSettings from "./InputSettings";
 
 export default function HorizontalLinearStepper() {
   const [activeStep, setActiveStep] = useState(0);
@@ -22,8 +23,16 @@ export default function HorizontalLinearStepper() {
   const [selectedMethod, setSelectedMethod] = useState<string>(METHODS[0]);
   const [, setMethodSettings] = useState<CPRRMethodSettings | null>(null);
 
-  const isStepOptional = (step: number) => step === 1;
+  const isStepOptional = (step: number) => step === -1;
   const isStepSkipped = (step: number) => skipped.has(step);
+
+  const stepTitle = [
+    "Select method",
+    "Input settings",
+    "Output settings",
+    "Evaluation settings",
+    "Summary",
+  ];
 
   const handleNext = () => {
     let newSkipped = skipped;
@@ -68,6 +77,8 @@ export default function HorizontalLinearStepper() {
             onSettingsChange={setMethodSettings}
           />
         );
+      case 1:
+        return <InputSettings />;
       // Adicione mais cases para outros steps
       default:
         return <Typography>Step content in development</Typography>;
@@ -118,7 +129,7 @@ export default function HorizontalLinearStepper() {
           </>
         ) : (
           <>
-            <Typography sx={{ mb: 2 }}>Step {activeStep + 1}</Typography>
+            <Typography sx={{ mb: 2 }}>{stepTitle[activeStep]}</Typography>
             {renderStepContent()}
             <Box sx={{ display: "flex", pt: 2 }}>
               <Button
