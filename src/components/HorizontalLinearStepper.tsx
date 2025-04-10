@@ -1,29 +1,29 @@
 "use client";
-import * as React from "react";
-import Box from "@mui/material/Box";
-import Stepper from "@mui/material/Stepper";
-import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-
-const steps = [
-  "Select campaign settings",
-  "Create an ad group",
-  "Create an ad",
-];
+import React, { useState } from "react";
+import {
+  Box,
+  Stepper,
+  Step,
+  StepLabel,
+  Button,
+  Typography,
+} from "@mui/material";
+import SelectMethod from "./SelectMethod";
+import { METHODS, STEPS } from "@/app/constants/constants";
+import {
+  StepProps,
+  LabelProps,
+  CPRRMethodSettings,
+} from "@/interfaces/interfaces";
 
 export default function HorizontalLinearStepper() {
-  const [activeStep, setActiveStep] = React.useState(0);
-  const [skipped, setSkipped] = React.useState(new Set<number>());
+  const [activeStep, setActiveStep] = useState(0);
+  const [skipped, setSkipped] = useState(new Set<number>());
+  const [selectedMethod, setSelectedMethod] = useState<string>(METHODS[0]);
+  const [, setMethodSettings] = useState<CPRRMethodSettings | null>(null);
 
-  const isStepOptional = (step: number) => {
-    return step === 1;
-  };
-
-  const isStepSkipped = (step: number) => {
-    return skipped.has(step);
-  };
+  const isStepOptional = (step: number) => step === 1;
+  const isStepSkipped = (step: number) => skipped.has(step);
 
   const handleNext = () => {
     let newSkipped = skipped;
@@ -42,8 +42,6 @@ export default function HorizontalLinearStepper() {
 
   const handleSkip = () => {
     if (!isStepOptional(activeStep)) {
-      // You probably want to guard against something like this,
-      // it should never occur unless someone's actively trying to break something.
       throw new Error("You can't skip a step that isn't optional.");
     }
 
@@ -57,24 +55,49 @@ export default function HorizontalLinearStepper() {
 
   const handleReset = () => {
     setActiveStep(0);
+    setSelectedMethod("");
+    setMethodSettings(null);
+  };
+
+  const renderStepContent = () => {
+    switch (activeStep) {
+      case 0:
+        return (
+          <SelectMethod
+            onMethodChange={setSelectedMethod}
+            onSettingsChange={setMethodSettings}
+          />
+        );
+      // Adicione mais cases para outros steps
+      default:
+        return <Typography>Step content in development</Typography>;
+    }
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box
+      sx={{
+        width: "80%",
+        margin: "auto",
+        py: 4,
+        justifyItems: "center",
+      }}
+    >
       <Stepper activeStep={activeStep}>
-        {steps.map((label, index) => {
-          const stepProps: { completed?: boolean } = {};
-          const labelProps: {
-            optional?: React.ReactNode;
-          } = {};
+        {STEPS.map((label, index) => {
+          const stepProps: StepProps = {};
+          const labelProps: LabelProps = {};
+
           if (isStepOptional(index)) {
             labelProps.optional = (
               <Typography variant="caption">Optional</Typography>
             );
           }
+
           if (isStepSkipped(index)) {
             stepProps.completed = false;
           }
+
           return (
             <Step key={label} {...stepProps}>
               <StepLabel {...labelProps}>{label}</StepLabel>
@@ -82,40 +105,46 @@ export default function HorizontalLinearStepper() {
           );
         })}
       </Stepper>
-      {activeStep === steps.length ? (
-        <React.Fragment>
-          <Typography sx={{ mt: 2, mb: 1 }}>
-            All steps completed - you&apos;re finished
-          </Typography>
-          <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-            <Box sx={{ flex: "1 1 auto" }} />
-            <Button onClick={handleReset}>Reset</Button>
-          </Box>
-        </React.Fragment>
-      ) : (
-        <React.Fragment>
-          <Typography sx={{ mt: 2, mb: 1 }}>Step {activeStep + 1}</Typography>
-          <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-            <Button
-              color="inherit"
-              disabled={activeStep === 0}
-              onClick={handleBack}
-              sx={{ mr: 1 }}
-            >
-              Back
-            </Button>
-            <Box sx={{ flex: "1 1 auto" }} />
-            {isStepOptional(activeStep) && (
-              <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
-                Skip
+
+      <Box sx={{ mt: 4, mb: 2 }}>
+        {activeStep === STEPS.length ? (
+          <>
+            <Typography sx={{ mb: 2 }}>
+              All steps completed - you&apos;re finished
+            </Typography>
+            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+              <Button onClick={handleReset}>Reset</Button>
+            </Box>
+          </>
+        ) : (
+          <>
+            <Typography sx={{ mb: 2 }}>Step {activeStep + 1}</Typography>
+            {renderStepContent()}
+            <Box sx={{ display: "flex", pt: 2 }}>
+              <Button
+                color="inherit"
+                disabled={activeStep === 0}
+                onClick={handleBack}
+                sx={{ mr: 1 }}
+              >
+                Back
               </Button>
-            )}
-            <Button onClick={handleNext}>
-              {activeStep === steps.length - 1 ? "Finish" : "Next"}
-            </Button>
-          </Box>
-        </React.Fragment>
-      )}
+              <Box sx={{ flex: "1 1 auto" }} />
+              {isStepOptional(activeStep) && (
+                <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
+                  Skip
+                </Button>
+              )}
+              <Button
+                onClick={handleNext}
+                disabled={activeStep === 0 && !selectedMethod}
+              >
+                {activeStep === STEPS.length - 1 ? "Finish" : "Next"}
+              </Button>
+            </Box>
+          </>
+        )}
+      </Box>
     </Box>
   );
 }
