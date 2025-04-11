@@ -16,6 +16,8 @@ import {
   CPRRMethodSettings,
 } from "@/interfaces/interfaces";
 import InputSettings from "./InputSettings";
+import OutputSettings from "./OutputSettings";
+import EvaluationSettings from "./EvaluationSettings";
 
 export default function HorizontalLinearStepper() {
   const [activeStep, setActiveStep] = useState(0);
@@ -79,6 +81,10 @@ export default function HorizontalLinearStepper() {
         );
       case 1:
         return <InputSettings />;
+      case 2:
+        return <OutputSettings />;
+      case 3:
+        return <EvaluationSettings />;
       // Adicione mais cases para outros steps
       default:
         return <Typography>Step content in development</Typography>;

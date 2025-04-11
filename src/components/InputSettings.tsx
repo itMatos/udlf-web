@@ -29,7 +29,7 @@ export default function InputSettings() {
           variant="outlined"
         >
           <MenuItem value="MATRIX">Matrix</MenuItem>
-          <MenuItem value="RK">Rank</MenuItem>
+          <MenuItem value="RK">Ranked lists</MenuItem>
         </TextField>
         <TextField
           id="imageListFile"
@@ -47,7 +47,7 @@ export default function InputSettings() {
         />
         <TextField
           id="datasetImagesFile"
-          label="Dataset Image File"
+          label="Dataset Image Path"
           //   type="file"
           type="text"
           variant="outlined"

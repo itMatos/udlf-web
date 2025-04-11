@@ -76,6 +76,8 @@ export default function SelectMethod({
         </Select>
       </FormControl>
 
+      {/* method parametes */}
+
       <Box
         component="form"
         noValidate
