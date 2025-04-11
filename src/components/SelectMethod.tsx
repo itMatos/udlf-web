@@ -2,10 +2,12 @@
 import {
   Box,
   FormControl,
+  FormControlLabel,
   InputLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
+  Switch,
   TextField,
 } from "@mui/material";
 import { useState } from "react";
@@ -44,15 +46,11 @@ export default function SelectMethod({
       onSettingsChange(newSettings);
     };
 
-  const handleSelectOptimizations = (event: SelectChangeEvent<string>) => {
-    const { value } = event.target;
-    const newSettings = {
-      ...settings,
-      OPTIMIZATIONS: value === "true",
-    };
-    console.log("newSettings", newSettings);
-    setSettings(newSettings);
-    onSettingsChange(newSettings);
+  const handleSelectOptimizations = (value: boolean) => {
+    setSettings((prevSettings) => ({
+      ...prevSettings,
+      OPTIMIZATIONS: value,
+    }));
   };
 
   return (
@@ -116,19 +114,22 @@ export default function SelectMethod({
           onChange={handleSettingChange("NBYK")}
           variant="outlined"
         />
-        <TextField
-          id="OPTIMIZATIONS"
-          label="OPTIMIZATIONS"
-          select
-          value={settings.OPTIMIZATIONS}
-          onChange={(event) =>
-            handleSelectOptimizations(event as SelectChangeEvent<string>)
+        <FormControlLabel
+          control={
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Switch
+                id="OPTIMIZATIONS"
+                checked={settings.OPTIMIZATIONS}
+                onChange={(event) =>
+                  handleSelectOptimizations(event.target.checked)
+                }
+              />
+              <Box>{settings.OPTIMIZATIONS ? "on" : "off"}</Box>
+            </Box>
           }
-          variant="outlined"
-        >
-          <MenuItem value="true">True</MenuItem>
-          <MenuItem value="false">False</MenuItem>
-        </TextField>
+          label="OPTIMIZATIONS"
+          labelPlacement="start"
+        />
       </Box>
     </Box>
   );
