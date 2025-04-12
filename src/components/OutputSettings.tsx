@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { OutputSettingsData } from "@/ts/interfaces";
 import { Box, MenuItem, TextField } from "@mui/material";
 
-export default function OutputSettings() {
-  const [outputType, setOutputType] = useState("rankedListNumeric");
+interface OutputSettingsProps {
+  onSettingsChange: (settings: OutputSettingsData | null) => void;
+  settings: OutputSettingsData | null;
+}
 
+export default function OutputSettings({ onSettingsChange, settings }: OutputSettingsProps) {
   return (
     <Box
       sx={{
@@ -24,8 +27,8 @@ export default function OutputSettings() {
           id="inputType"
           label="inputType"
           select
-          value={outputType}
-          onChange={(e) => setOutputType(e.target.value)}
+          value={settings}
+          onChange={(e) => onSettingsChange(e.target.value as unknown as OutputSettingsData)}
           variant="outlined"
         >
           <MenuItem value="rankedListNumeric">Ranked List (numeric)</MenuItem>

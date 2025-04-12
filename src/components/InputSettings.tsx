@@ -1,8 +1,85 @@
 import { useState } from "react";
-import { Box, MenuItem, TextField } from "@mui/material";
+import { Box, IconButton, InputAdornment, MenuItem, TextField, Tooltip } from "@mui/material";
+import { InputSettingsData } from "./../ts/interfaces";
+import FolderOpenIcon from "@mui/icons-material/FolderOpen";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import { DEFAULT_INPUT_SETTINGS } from "./../ts/constants";
 
-export default function InputSettings() {
-  const [inputType, setInputType] = useState("MATRIX");
+export interface InputSettingsProps {
+  onSettingsChange: (settings: InputSettingsData | null) => void;
+  settings: InputSettingsData | null;
+}
+
+const INPUT_TYPES = [
+  { value: "MATRIX", label: "Matrix", description: "Use matrix input format" },
+  {
+    value: "RK",
+    label: "Ranked lists",
+    description: "Use ranked lists input format",
+  },
+];
+
+export default function InputSettings({ onSettingsChange }: InputSettingsProps) {
+  const [inputSettings, setInputSettings] = useState<InputSettingsData>(DEFAULT_INPUT_SETTINGS);
+  const [errors, setErrors] = useState<Partial<Record<keyof InputSettingsData, string>>>({});
+
+  // Função para validar um campo específico
+  const validateField = (name: keyof InputSettingsData, value: string): string => {
+    if (!value) {
+      return "This field is required";
+    }
+
+    if (name === "datasetImagesPath") {
+      if (!value.startsWith("/")) {
+        return "Path should start with '/'";
+      }
+    }
+
+    return "";
+  };
+
+  // Função para atualizar um campo
+  const handleChange = (name: keyof InputSettingsData, value: string) => {
+    const error = validateField(name, value);
+
+    setInputSettings((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: error,
+    }));
+
+    onSettingsChange?.({
+      ...inputSettings,
+      [name]: value,
+    });
+  };
+
+  // Função para simular a seleção de arquivo
+  //   const handleFileSelect = (fieldName: keyof InputSettingsData) => {
+  //     console.log(`Selecting file for ${fieldName}`);
+  //   };
+  const handleFileSelect = async (fieldName: keyof InputSettingsData) => {
+    try {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".txt,.csv";
+
+      input.onchange = (e) => {
+        const file = (e.target as HTMLInputElement).files?.[0];
+        if (file) {
+          handleChange(fieldName, file.name);
+        }
+      };
+
+      input.click();
+    } catch (error) {
+      console.error("Error selecting file:", error);
+    }
+  };
 
   return (
     <Box
@@ -21,36 +98,84 @@ export default function InputSettings() {
         sx={{ gap: 2, display: "flex", flexDirection: "column" }}
       >
         <TextField
-          id="inputType"
-          label="inputType"
           select
-          value={inputType}
-          onChange={(e) => setInputType(e.target.value)}
+          label="Input Type"
+          value={inputSettings.inputType}
+          onChange={(e) => handleChange("inputType", e.target.value)}
           variant="outlined"
+          fullWidth
+          helperText="Select the input data format"
         >
-          <MenuItem value="MATRIX">Matrix</MenuItem>
-          <MenuItem value="RK">Ranked lists</MenuItem>
+          {INPUT_TYPES.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              <Tooltip title={option.description} placement="right">
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  {option.label}
+                  <HelpOutlineIcon
+                    fontSize="small"
+                    sx={{ ml: 1, fontSize: "16px", opacity: 0.7 }}
+                  />
+                </Box>
+              </Tooltip>
+            </MenuItem>
+          ))}
         </TextField>
+
         <TextField
-          id="imageListFile"
           label="Image List File"
-          //   type="file"
-          type="text"
-          variant="outlined"
+          value={inputSettings.imageListFile}
+          onChange={(e) => handleChange("imageListFile", e.target.value)}
+          error={!!errors.imageListFile}
+          helperText={errors.imageListFile}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => handleFileSelect("imageListFile")} edge="end">
+                    <FolderOpenIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
         />
+
         <TextField
-          id="inputClassesFile"
           label="Input Classes File"
-          //   type="file"
-          type="text"
-          variant="outlined"
+          value={inputSettings.inputClassesFile}
+          onChange={(e) => handleChange("inputClassesFile", e.target.value)}
+          error={!!errors.inputClassesFile}
+          helperText={errors.inputClassesFile}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => handleFileSelect("inputClassesFile")} edge="end">
+                    <FolderOpenIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
         />
+
         <TextField
-          id="datasetImagesFile"
-          label="Dataset Image Path"
-          //   type="file"
-          type="text"
-          variant="outlined"
+          label="Dataset Images Path"
+          value={inputSettings.datasetImagesPath}
+          onChange={(e) => handleChange("datasetImagesPath", e.target.value)}
+          error={!!errors.datasetImagesPath}
+          helperText={errors.datasetImagesPath || "Enter the path to dataset images"}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => handleFileSelect("datasetImagesPath")} edge="end">
+                    <FolderOpenIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
         />
       </Box>
     </Box>

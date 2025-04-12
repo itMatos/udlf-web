@@ -11,23 +11,20 @@ import {
   TextField,
 } from "@mui/material";
 import { useState } from "react";
-import { METHODS, CONTEXTRR_DEFAULT_SETTINGS } from "@/app/constants/constants";
-import { ContextRRMethodSettings } from "@/interfaces/interfaces";
+import { METHODS, CONTEXTRR_DEFAULT_SETTINGS } from "./../ts/constants";
+import { ContextRRMethodSettings, CPRRMethodSettings } from "./../ts/interfaces";
 
 interface SelectMethodProps {
   onMethodChange: (method: string) => void;
   onSettingsChange: (settings: ContextRRMethodSettings) => void;
+  selectedMethod: string;
+  methodSettings: CPRRMethodSettings | null;
 }
 
-export default function SelectMethod({
-  onMethodChange,
-  onSettingsChange,
-}: SelectMethodProps) {
+export default function SelectMethod({ onMethodChange, onSettingsChange }: SelectMethodProps) {
   // Default to the first method in the list
   const [method, setMethod] = useState<string>(METHODS[0]);
-  const [settings, setSettings] = useState<ContextRRMethodSettings>(
-    CONTEXTRR_DEFAULT_SETTINGS
-  );
+  const [settings, setSettings] = useState<ContextRRMethodSettings>(CONTEXTRR_DEFAULT_SETTINGS);
 
   const handleMethodChange = (event: SelectChangeEvent) => {
     const newMethod = event.target.value;
@@ -36,8 +33,7 @@ export default function SelectMethod({
   };
 
   const handleSettingChange =
-    (field: keyof ContextRRMethodSettings) =>
-    (event: React.ChangeEvent<HTMLInputElement>) => {
+    (field: keyof ContextRRMethodSettings) => (event: React.ChangeEvent<HTMLInputElement>) => {
       const newSettings = {
         ...settings,
         [field]: Number(event.target.value),
@@ -120,9 +116,7 @@ export default function SelectMethod({
               <Switch
                 id="OPTIMIZATIONS"
                 checked={settings.OPTIMIZATIONS}
-                onChange={(event) =>
-                  handleSelectOptimizations(event.target.checked)
-                }
+                onChange={(event) => handleSelectOptimizations(event.target.checked)}
               />
               <Box>{settings.OPTIMIZATIONS ? "on" : "off"}</Box>
             </Box>

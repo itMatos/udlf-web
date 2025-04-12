@@ -1,32 +1,47 @@
 "use client";
 import React, { useState } from "react";
-import {
-  Box,
-  Stepper,
-  Step,
-  StepLabel,
-  Button,
-  Typography,
-} from "@mui/material";
+import { Box, Stepper, Step, StepLabel, Button, Typography } from "@mui/material";
 import SelectMethod from "./SelectMethod";
-import { METHODS, STEPS } from "@/app/constants/constants";
+import { METHODS, STEPS } from "./../ts/constants";
 import {
   StepProps,
   LabelProps,
   CPRRMethodSettings,
-} from "@/interfaces/interfaces";
+  InputSettingsData,
+  OutputSettingsData,
+  EvaluationSettingsData,
+} from "./../ts/interfaces";
 import InputSettings from "./InputSettings";
 import OutputSettings from "./OutputSettings";
 import EvaluationSettings from "./EvaluationSettings";
+import Summary from "./Summary";
 
 export default function HorizontalLinearStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set<number>());
   const [selectedMethod, setSelectedMethod] = useState<string>(METHODS[0]);
-  const [, setMethodSettings] = useState<CPRRMethodSettings | null>(null);
+  const [methodSettings, setMethodSettings] = useState<CPRRMethodSettings | null>(null);
+  const [inputSettings, setInputSettings] = useState<InputSettingsData | null>(null);
+  const [outputSettings, setOutputSettings] = useState<OutputSettingsData | null>(null);
+  const [evaluationSettings, setEvaluationSettings] = useState<EvaluationSettingsData | null>(null);
 
   const isStepOptional = (step: number) => step === -1;
   const isStepSkipped = (step: number) => skipped.has(step);
+
+  const isStepComplete = (step: number): boolean => {
+    switch (step) {
+      case 0:
+        return !!selectedMethod;
+      case 1:
+        return !!inputSettings;
+      case 2:
+        return !!outputSettings;
+      case 3:
+        return !!evaluationSettings;
+      default:
+        return false;
+    }
+  };
 
   const stepTitle = [
     "Select method",
@@ -77,18 +92,39 @@ export default function HorizontalLinearStepper() {
           <SelectMethod
             onMethodChange={setSelectedMethod}
             onSettingsChange={setMethodSettings}
+            selectedMethod={selectedMethod}
+            methodSettings={methodSettings}
           />
         );
       case 1:
-        return <InputSettings />;
+        return <InputSettings onSettingsChange={setInputSettings} settings={inputSettings} />;
       case 2:
-        return <OutputSettings />;
+        return <OutputSettings onSettingsChange={setOutputSettings} settings={outputSettings} />;
       case 3:
-        return <EvaluationSettings />;
-      // Adicione mais cases para outros steps
+        return (
+          <EvaluationSettings
+            onSettingsChange={setEvaluationSettings}
+            settings={evaluationSettings}
+          />
+        );
+      case 4:
+        return (
+          <Summary
+            selectedMethod={selectedMethod}
+            methodSettings={methodSettings}
+            inputSettings={inputSettings}
+            outputSettings={outputSettings}
+            evaluationSettings={evaluationSettings}
+          />
+        );
       default:
         return <Typography>Step content in development</Typography>;
     }
+  };
+
+  // Função para verificar se pode avançar
+  const canProceed = () => {
+    return isStepComplete(activeStep);
   };
 
   return (
@@ -106,9 +142,7 @@ export default function HorizontalLinearStepper() {
           const labelProps: LabelProps = {};
 
           if (isStepOptional(index)) {
-            labelProps.optional = (
-              <Typography variant="caption">Optional</Typography>
-            );
+            labelProps.optional = <Typography variant="caption">Optional</Typography>;
           }
 
           if (isStepSkipped(index)) {
@@ -126,9 +160,7 @@ export default function HorizontalLinearStepper() {
       <Box sx={{ mt: 4, mb: 2 }}>
         {activeStep === STEPS.length ? (
           <>
-            <Typography sx={{ mb: 2 }}>
-              All steps completed - you&apos;re finished
-            </Typography>
+            <Typography sx={{ mb: 2 }}>All steps completed - you&apos;re finished</Typography>
             <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
               <Button onClick={handleReset}>Reset</Button>
             </Box>
@@ -152,10 +184,7 @@ export default function HorizontalLinearStepper() {
                   Skip
                 </Button>
               )}
-              <Button
-                onClick={handleNext}
-                disabled={activeStep === 0 && !selectedMethod}
-              >
+              <Button onClick={handleNext} disabled={!canProceed()}>
                 {activeStep === STEPS.length - 1 ? "Finish" : "Next"}
               </Button>
             </Box>
