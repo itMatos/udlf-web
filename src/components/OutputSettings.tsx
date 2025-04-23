@@ -1,3 +1,4 @@
+import { OUTPUT_TYPES } from "@/ts/constants";
 import { OutputSettingsData } from "@/ts/interfaces";
 import { Box, MenuItem, TextField } from "@mui/material";
 
@@ -6,7 +7,10 @@ interface OutputSettingsProps {
   settings: OutputSettingsData | null;
 }
 
-export default function OutputSettings({ onSettingsChange, settings }: OutputSettingsProps) {
+export default function OutputSettings({
+  onSettingsChange,
+  settings,
+}: OutputSettingsProps) {
   return (
     <Box
       sx={{
@@ -28,13 +32,16 @@ export default function OutputSettings({ onSettingsChange, settings }: OutputSet
           label="inputType"
           select
           value={settings}
-          onChange={(e) => onSettingsChange(e.target.value as unknown as OutputSettingsData)}
+          onChange={(e) =>
+            onSettingsChange(e.target.value as unknown as OutputSettingsData)
+          }
           variant="outlined"
         >
-          <MenuItem value="rankedListNumeric">Ranked List (numeric)</MenuItem>
-          <MenuItem value="rankedListString">Ranked List (string)</MenuItem>
-          <MenuItem value="similarityMatrix">Similarity Matrix</MenuItem>
-          <MenuItem value="distanceMatrix">Distance Matrix</MenuItem>
+          {OUTPUT_TYPES.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
         </TextField>
       </Box>
     </Box>

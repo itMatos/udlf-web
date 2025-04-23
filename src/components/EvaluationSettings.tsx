@@ -26,9 +26,13 @@ export default function EvaluationSettings({
   settings,
 }: EvaluationSettingsProps) {
   const [useMap, setUseMap] = useState(settings?.useMap || false);
-  const [recallValues, setRecallValues] = useState<number[]>(settings?.recall || []);
+  const [recallValues, setRecallValues] = useState<number[]>(
+    settings?.recall || []
+  );
   const [inputRecallValue, setInputRecallValue] = useState<string>("");
-  const [precisionValues, setPrecisionValues] = useState<number[]>(settings?.precision || []);
+  const [precisionValues, setPrecisionValues] = useState<number[]>(
+    settings?.precision || []
+  );
   const [inputPrecisionValue, setInputPrecisionValue] = useState<string>("");
 
   // Função para adicionar um valor de recall
@@ -49,6 +53,7 @@ export default function EvaluationSettings({
   // Função para lidar com a mudança do MAP
   const handleMapChange = (checked: boolean) => {
     setUseMap(checked);
+    console.log("MAP:", checked);
     onSettingsChange({
       useMap: checked,
       recall: recallValues,
@@ -56,7 +61,7 @@ export default function EvaluationSettings({
     });
   };
 
-  // Função para remover um valor de recall
+  // Function to delete a recall value
   const handleDeleteRecall = (value: number) => {
     const newValues = recallValues.filter((recall) => recall !== value);
     setRecallValues(newValues);
@@ -82,7 +87,9 @@ export default function EvaluationSettings({
   };
 
   const handleDeletePrecision = (value: number) => {
-    const newValues = precisionValues.filter((precision) => precision !== value);
+    const newValues = precisionValues.filter(
+      (precision) => precision !== value
+    );
     setPrecisionValues(newValues);
     onSettingsChange({
       useMap,
@@ -98,7 +105,7 @@ export default function EvaluationSettings({
   return (
     <Box
       sx={{
-        minWidth: 150,
+        minWidth: 400,
         maxWidth: 400,
         gap: 2,
         display: "flex",
@@ -115,7 +122,11 @@ export default function EvaluationSettings({
           <FormGroup>
             <FormControlLabel
               control={
-                <Checkbox checked={useMap} onChange={() => handleMapChange(!useMap)} name="map" />
+                <Checkbox
+                  checked={useMap}
+                  onChange={() => handleMapChange(!useMap)}
+                  name="map"
+                />
               }
               label="MAP"
             />
@@ -124,7 +135,6 @@ export default function EvaluationSettings({
       </Box>
       <Divider />
 
-      {/* Campo de Recall */}
       <Box>
         <FormLabel component="legend">Recall</FormLabel>
         <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
@@ -133,7 +143,8 @@ export default function EvaluationSettings({
             variant="outlined"
             size="small"
             color={
-              inputRecallValue.trim() !== "" && isNaN(parseInt(inputRecallValue, 10))
+              inputRecallValue.trim() !== "" &&
+              isNaN(parseInt(inputRecallValue, 10))
                 ? "error"
                 : "primary"
             }
@@ -150,7 +161,9 @@ export default function EvaluationSettings({
             color="primary"
             startIcon={<Add />}
             onClick={handleAddRecall}
-            disabled={!inputRecallValue || isNaN(parseInt(inputRecallValue, 10))}
+            disabled={
+              !inputRecallValue || isNaN(parseInt(inputRecallValue, 10))
+            }
           >
             Add
           </Button>
@@ -168,7 +181,6 @@ export default function EvaluationSettings({
         </Stack>
       </Box>
 
-      {/* Campo de Precision */}
       <Box>
         <FormLabel component="legend">Precision</FormLabel>
         <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
@@ -177,7 +189,8 @@ export default function EvaluationSettings({
             variant="outlined"
             size="small"
             color={
-              inputPrecisionValue.trim() !== "" && isNaN(parseInt(inputPrecisionValue, 10))
+              inputPrecisionValue.trim() !== "" &&
+              isNaN(parseInt(inputPrecisionValue, 10))
                 ? "error"
                 : "primary"
             }
@@ -194,7 +207,9 @@ export default function EvaluationSettings({
             color="primary"
             startIcon={<Add />}
             onClick={handleAddPrecision}
-            disabled={!inputPrecisionValue || isNaN(parseInt(inputPrecisionValue, 10))}
+            disabled={
+              !inputPrecisionValue || isNaN(parseInt(inputPrecisionValue, 10))
+            }
           >
             Add
           </Button>

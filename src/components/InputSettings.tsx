@@ -1,5 +1,13 @@
+"use client";
 import { useState } from "react";
-import { Box, IconButton, InputAdornment, MenuItem, TextField, Tooltip } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  InputAdornment,
+  MenuItem,
+  TextField,
+  Tooltip,
+} from "@mui/material";
 import { InputSettingsData } from "./../ts/interfaces";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
@@ -19,12 +27,21 @@ const INPUT_TYPES = [
   },
 ];
 
-export default function InputSettings({ onSettingsChange }: InputSettingsProps) {
-  const [inputSettings, setInputSettings] = useState<InputSettingsData>(DEFAULT_INPUT_SETTINGS);
-  const [errors, setErrors] = useState<Partial<Record<keyof InputSettingsData, string>>>({});
+export default function InputSettings({
+  onSettingsChange,
+}: InputSettingsProps) {
+  const [inputSettings, setInputSettings] = useState<InputSettingsData>(
+    DEFAULT_INPUT_SETTINGS
+  );
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof InputSettingsData, string>>
+  >({});
 
-  // Função para validar um campo específico
-  const validateField = (name: keyof InputSettingsData, value: string): string => {
+  // function to validate the input fields
+  const validateField = (
+    name: keyof InputSettingsData,
+    value: string
+  ): string => {
     if (!value) {
       return "This field is required";
     }
@@ -38,7 +55,7 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
     return "";
   };
 
-  // Função para atualizar um campo
+  // function to handle input changes
   const handleChange = (name: keyof InputSettingsData, value: string) => {
     const error = validateField(name, value);
 
@@ -58,10 +75,6 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
     });
   };
 
-  // Função para simular a seleção de arquivo
-  //   const handleFileSelect = (fieldName: keyof InputSettingsData) => {
-  //     console.log(`Selecting file for ${fieldName}`);
-  //   };
   const handleFileSelect = async (fieldName: keyof InputSettingsData) => {
     try {
       const input = document.createElement("input");
@@ -131,7 +144,10 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
             input: {
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton onClick={() => handleFileSelect("imageListFile")} edge="end">
+                  <IconButton
+                    onClick={() => handleFileSelect("imageListFile")}
+                    edge="end"
+                  >
                     <FolderOpenIcon />
                   </IconButton>
                 </InputAdornment>
@@ -150,7 +166,10 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
             input: {
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton onClick={() => handleFileSelect("inputClassesFile")} edge="end">
+                  <IconButton
+                    onClick={() => handleFileSelect("inputClassesFile")}
+                    edge="end"
+                  >
                     <FolderOpenIcon />
                   </IconButton>
                 </InputAdornment>
@@ -164,12 +183,17 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
           value={inputSettings.datasetImagesPath}
           onChange={(e) => handleChange("datasetImagesPath", e.target.value)}
           error={!!errors.datasetImagesPath}
-          helperText={errors.datasetImagesPath || "Enter the path to dataset images"}
+          helperText={
+            errors.datasetImagesPath || "Enter the path to dataset images"
+          }
           slotProps={{
             input: {
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton onClick={() => handleFileSelect("datasetImagesPath")} edge="end">
+                  <IconButton
+                    onClick={() => handleFileSelect("datasetImagesPath")}
+                    edge="end"
+                  >
                     <FolderOpenIcon />
                   </IconButton>
                 </InputAdornment>

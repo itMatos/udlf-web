@@ -1,6 +1,13 @@
 "use client";
 import React, { useState } from "react";
-import { Box, Stepper, Step, StepLabel, Button, Typography } from "@mui/material";
+import {
+  Box,
+  Stepper,
+  Step,
+  StepLabel,
+  Button,
+  Typography,
+} from "@mui/material";
 import SelectMethod from "./SelectMethod";
 import { METHODS, STEPS } from "./../ts/constants";
 import {
@@ -20,10 +27,15 @@ export default function HorizontalLinearStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set<number>());
   const [selectedMethod, setSelectedMethod] = useState<string>(METHODS[0]);
-  const [methodSettings, setMethodSettings] = useState<CPRRMethodSettings | null>(null);
-  const [inputSettings, setInputSettings] = useState<InputSettingsData | null>(null);
-  const [outputSettings, setOutputSettings] = useState<OutputSettingsData | null>(null);
-  const [evaluationSettings, setEvaluationSettings] = useState<EvaluationSettingsData | null>(null);
+  const [methodSettings, setMethodSettings] =
+    useState<CPRRMethodSettings | null>(null);
+  const [inputSettings, setInputSettings] = useState<InputSettingsData | null>(
+    null
+  );
+  const [outputSettings, setOutputSettings] =
+    useState<OutputSettingsData | null>(null);
+  const [evaluationSettings, setEvaluationSettings] =
+    useState<EvaluationSettingsData | null>(null);
 
   const isStepOptional = (step: number) => step === -1;
   const isStepSkipped = (step: number) => skipped.has(step);
@@ -37,7 +49,7 @@ export default function HorizontalLinearStepper() {
       case 2:
         return !!outputSettings;
       case 3:
-        return !!evaluationSettings;
+        return true;
       default:
         return false;
     }
@@ -53,6 +65,7 @@ export default function HorizontalLinearStepper() {
 
   const handleNext = () => {
     let newSkipped = skipped;
+    console.log("skipped", skipped);
     if (isStepSkipped(activeStep)) {
       newSkipped = new Set(newSkipped.values());
       newSkipped.delete(activeStep);
@@ -97,9 +110,19 @@ export default function HorizontalLinearStepper() {
           />
         );
       case 1:
-        return <InputSettings onSettingsChange={setInputSettings} settings={inputSettings} />;
+        return (
+          <InputSettings
+            onSettingsChange={setInputSettings}
+            settings={inputSettings}
+          />
+        );
       case 2:
-        return <OutputSettings onSettingsChange={setOutputSettings} settings={outputSettings} />;
+        return (
+          <OutputSettings
+            onSettingsChange={setOutputSettings}
+            settings={outputSettings}
+          />
+        );
       case 3:
         return (
           <EvaluationSettings
@@ -142,7 +165,9 @@ export default function HorizontalLinearStepper() {
           const labelProps: LabelProps = {};
 
           if (isStepOptional(index)) {
-            labelProps.optional = <Typography variant="caption">Optional</Typography>;
+            labelProps.optional = (
+              <Typography variant="caption">Optional</Typography>
+            );
           }
 
           if (isStepSkipped(index)) {
@@ -160,7 +185,9 @@ export default function HorizontalLinearStepper() {
       <Box sx={{ mt: 4, mb: 2 }}>
         {activeStep === STEPS.length ? (
           <>
-            <Typography sx={{ mb: 2 }}>All steps completed - you&apos;re finished</Typography>
+            <Typography sx={{ mb: 2 }}>
+              All steps completed - you&apos;re finished
+            </Typography>
             <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
               <Button onClick={handleReset}>Reset</Button>
             </Box>
@@ -169,7 +196,7 @@ export default function HorizontalLinearStepper() {
           <>
             <Typography sx={{ mb: 2 }}>{stepTitle[activeStep]}</Typography>
             {renderStepContent()}
-            <Box sx={{ display: "flex", pt: 2 }}>
+            <Box sx={{ display: "flex", pt: 2, width: "100%" }}>
               <Button
                 color="inherit"
                 disabled={activeStep === 0}
