@@ -29,10 +29,6 @@ export interface InputSettingsData {
   datasetImagesPath: string;
 }
 
-export interface OutputSettingsData {
-  outputFormat: OutputFormatType;
-}
-
 export interface EvaluationSettingsData {
   useMap: boolean;
   recall: number[];
@@ -43,6 +39,6 @@ export interface SummaryData {
   method: string;
   methodSettings: CPRRMethodSettings | ContextRRMethodSettings;
   inputSettings: InputSettingsData;
-  outputSettings: OutputSettingsData;
+  outputSettings: OutputFormatType;
   evaluationSettings: EvaluationSettingsData;
 }

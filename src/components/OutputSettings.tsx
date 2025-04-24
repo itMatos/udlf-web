@@ -1,10 +1,10 @@
-import { OUTPUT_TYPES } from "@/ts/constants";
-import { OutputSettingsData } from "@/ts/interfaces";
+import { OUTPUT_TYPES } from "@/ts/types";
+import { OutputFormatType } from "@/ts/types";
 import { Box, MenuItem, TextField } from "@mui/material";
 
 interface OutputSettingsProps {
-  onSettingsChange: (settings: OutputSettingsData | null) => void;
-  settings: OutputSettingsData | null;
+  onSettingsChange: (settings: OutputFormatType) => void;
+  settings: OutputFormatType;
 }
 
 export default function OutputSettings({
@@ -29,12 +29,13 @@ export default function OutputSettings({
       >
         <TextField
           id="inputType"
-          label="inputType"
+          label="Output format"
           select
           value={settings}
-          onChange={(e) =>
-            onSettingsChange(e.target.value as unknown as OutputSettingsData)
-          }
+          onChange={(e) => {
+            const selectedValue = e.target.value as OutputFormatType;
+            onSettingsChange(selectedValue);
+          }}
           variant="outlined"
         >
           {OUTPUT_TYPES.map((option) => (

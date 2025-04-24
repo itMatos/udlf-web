@@ -15,13 +15,13 @@ import {
   LabelProps,
   CPRRMethodSettings,
   InputSettingsData,
-  OutputSettingsData,
   EvaluationSettingsData,
 } from "./../ts/interfaces";
 import InputSettings from "./InputSettings";
 import OutputSettings from "./OutputSettings";
 import EvaluationSettings from "./EvaluationSettings";
 import Summary from "./Summary";
+import { OutputFormatType } from "@/ts/types";
 
 export default function HorizontalLinearStepper() {
   const [activeStep, setActiveStep] = useState(0);
@@ -33,7 +33,7 @@ export default function HorizontalLinearStepper() {
     null
   );
   const [outputSettings, setOutputSettings] =
-    useState<OutputSettingsData | null>(null);
+    useState<OutputFormatType>("RANKEDLIST_NUMERIC");
   const [evaluationSettings, setEvaluationSettings] =
     useState<EvaluationSettingsData | null>(null);
 

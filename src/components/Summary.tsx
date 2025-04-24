@@ -9,21 +9,26 @@ import {
   Paper,
   Chip,
   Stack,
+  Button,
 } from "@mui/material";
 import {
   CPRRMethodSettings,
   ContextRRMethodSettings,
   InputSettingsData,
-  OutputSettingsData,
   EvaluationSettingsData,
 } from "../ts/interfaces";
-import { OUTPUT_TYPES } from "@/ts/constants";
+import { OUTPUT_TYPES } from "@/ts/types";
+import { OutputFormatType } from "@/ts/types";
+import { baseConfigTemplate } from "@/services/templates/baseConfig";
+import { udlConfigTemplate } from "@/services/templates/udlConfig";
+import { ConfigGenerator } from "@/services/configGenerator";
+import DownloadIcon from "@mui/icons-material/Download";
 
 interface SummaryProps {
   selectedMethod: string;
   methodSettings: CPRRMethodSettings | ContextRRMethodSettings | null;
   inputSettings: InputSettingsData | null;
-  outputSettings: OutputSettingsData | null;
+  outputSettings: OutputFormatType;
   evaluationSettings: EvaluationSettingsData | null;
 }
 
@@ -34,54 +39,39 @@ const Summary: React.FC<SummaryProps> = ({
   outputSettings,
   evaluationSettings,
 }) => {
-  const renderEvaluationSettings = () => {
-    if (!evaluationSettings) return null;
-    return (
-      <>
-        <ListItem>
-          <ListItemText
-            primary="MAP"
-            secondary={evaluationSettings.useMap ? "Yes" : "No"}
-          />
-        </ListItem>
-        <ListItem>
-          <ListItemText
-            primary="Recall Values"
-            secondary={
-              <Stack direction="row" spacing={1} flexWrap="wrap">
-                {evaluationSettings.recall.map((value) => (
-                  <Chip
-                    key={value}
-                    label={value}
-                    size="small"
-                    color="primary"
-                    variant="outlined"
-                  />
-                ))}
-              </Stack>
-            }
-          />
-        </ListItem>
-        <ListItem>
-          <ListItemText
-            primary="Precision Values"
-            secondary={
-              <Stack direction="row" spacing={1} flexWrap="wrap">
-                {evaluationSettings.precision.map((value) => (
-                  <Chip
-                    key={value}
-                    label={value}
-                    size="small"
-                    color="primary"
-                    variant="outlined"
-                  />
-                ))}
-              </Stack>
-            }
-          />
-        </ListItem>
-      </>
-    );
+  const generateConfigFile = () => {
+    const templates = [
+      {
+        ...baseConfigTemplate,
+        parameters: baseConfigTemplate.parameters.map((param) => ({
+          ...param,
+          value: param.key === "UDL_METHOD" ? selectedMethod : param.value,
+        })),
+      },
+      {
+        ...udlConfigTemplate,
+        parameters: udlConfigTemplate.parameters.map((param) => ({
+          ...param,
+          value:
+            inputSettings && param.key.toLowerCase() in inputSettings
+              ? inputSettings[
+                  param.key.toLowerCase() as keyof InputSettingsData
+                ]
+              : param.value,
+        })),
+      },
+    ];
+    const generator = new ConfigGenerator(templates);
+    const blob = generator.generateFile();
+
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "config.ini";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   };
 
   return (
@@ -136,9 +126,7 @@ const Summary: React.FC<SummaryProps> = ({
         {outputSettings ? (
           <Typography variant="body1">
             Format Type:{" "}
-            {OUTPUT_TYPES.find(
-              (type) => type.value === outputSettings.outputFormat
-            )?.label || "Not specified"}
+            {OUTPUT_TYPES.find((type) => type.value === outputSettings)?.label}
           </Typography>
         ) : (
           <Typography variant="body2" color="textSecondary">
@@ -153,7 +141,68 @@ const Summary: React.FC<SummaryProps> = ({
         <Typography variant="h6" color="primary" gutterBottom>
           Evaluation Configuration
         </Typography>
-        <List dense>{renderEvaluationSettings()}</List>
+        {evaluationSettings && (
+          <List dense>
+            <ListItem>
+              <ListItemText
+                primary="MAP"
+                secondary={evaluationSettings.useMap ? "Yes" : "No"}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="Recall Values"
+                secondary={
+                  <Stack direction="row" spacing={1} flexWrap="wrap">
+                    {evaluationSettings.recall.map((value) => (
+                      <Chip
+                        key={value}
+                        label={value}
+                        size="small"
+                        color="primary"
+                        variant="outlined"
+                      />
+                    ))}
+                  </Stack>
+                }
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="Precision Values"
+                secondary={
+                  <Stack direction="row" spacing={1} flexWrap="wrap">
+                    {evaluationSettings.precision.map((value) => (
+                      <Chip
+                        key={value}
+                        label={value}
+                        size="small"
+                        color="primary"
+                        variant="outlined"
+                      />
+                    ))}
+                  </Stack>
+                }
+              />
+            </ListItem>
+          </List>
+        )}
+
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="body2" color="textSecondary">
+            Click the button below to generate the configuration file.
+          </Typography>
+
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={generateConfigFile}
+            sx={{ mt: 2 }}
+            startIcon={<DownloadIcon />}
+          >
+            Download Config File
+          </Button>
+        </Box>
       </Box>
     </Paper>
   );

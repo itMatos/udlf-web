@@ -38,6 +38,7 @@ export default function SelectMethod({
     const newMethod = event.target.value;
     setMethod(newMethod);
     onMethodChange(newMethod);
+    console.log("Selected method:", event.target.value);
   };
 
   const handleSettingChange =
