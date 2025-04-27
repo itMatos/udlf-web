@@ -19,8 +19,8 @@ import {
 } from "../ts/interfaces";
 import { OUTPUT_TYPES } from "@/ts/types";
 import { OutputFormatType } from "@/ts/types";
-import { baseConfigTemplate } from "@/services/templates/baseConfig";
-import { udlConfigTemplate } from "@/services/templates/udlConfig";
+import { baseConfigTemplate } from "@/services/templates/generalConfig";
+import { inputDatasetFilesConfig as udlConfigTemplate } from "@/services/templates/inputDataSetFilesConfig";
 import { ConfigGenerator } from "@/services/configGenerator";
 import DownloadIcon from "@mui/icons-material/Download";
 

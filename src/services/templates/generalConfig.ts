@@ -14,7 +14,20 @@ export const baseConfigTemplate: ConfigTemplate = {
       value: "",
       description:
         "(NONE|CPRR|RLRECOM|...): Selection of method to be executed",
-      options: ["NONE", "CPRR", "RLRECOM", "RLSIM", "CONTEXTRR"],
+      options: [
+        "NONE",
+        "CPRR",
+        "RLRECOM",
+        "RLSIM",
+        "CONTEXTRR",
+        "RECKNNGRAPH",
+        "RKGRAPH",
+        "CORGRAPH",
+        "LHRR",
+        "BFSTREE",
+        "RDPAC",
+        "RFE",
+      ],
     },
   ],
 };
