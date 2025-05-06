@@ -1,6 +1,6 @@
 import { ConfigTemplate } from "@/ts/generatorTypes";
 
-export const outputFilesSettings: ConfigTemplate = {
+export const outputFilesSettingsConfig: ConfigTemplate = {
   section: "OUTPUT FILES SETTINGS",
   parameters: [
     {
@@ -10,7 +10,7 @@ export const outputFilesSettings: ConfigTemplate = {
     },
     {
       key: "OUTPUT_FILE_FORMAT",
-      value: "RANKEDLIST_NUMERIC",
+      value: "",
       description: "#(RK|MATRIX): Type of output file",
       options: ["RK", "MATRIX"],
     },

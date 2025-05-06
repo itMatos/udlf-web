@@ -16,7 +16,6 @@ import {
   ContextRRMethodSettings,
   InputSettingsData,
   EvaluationSettingsData,
-  MAP_INPUT_SETTINGS,
 } from "../ts/interfaces";
 import { OUTPUT_TYPES } from "@/ts/types";
 import { OutputFormatType } from "@/ts/types";
@@ -24,6 +23,7 @@ import { baseConfigTemplate } from "@/services/templates/generalConfig";
 import { inputDatasetFilesConfig } from "@/services/templates/inputDataSetFilesConfig";
 import { ConfigGenerator } from "@/services/configGenerator";
 import DownloadIcon from "@mui/icons-material/Download";
+import { outputFilesSettingsConfig } from "@/services/templates/outputFIlesSettingsConfig";
 
 interface SummaryProps {
   selectedMethod: string;
@@ -68,6 +68,21 @@ const Summary: React.FC<SummaryProps> = ({
       })),
     };
     console.log("inputSettingsTemplate", inputSettingsTemplate);
+
+    const valueUpdatesOutput = {
+      OUTPUT_FILE_FORMAT: outputSettings,
+    };
+
+    const outputSettingsTemplate = {
+      section: "OUTPUT SETTINGS",
+      parameters: outputFilesSettingsConfig.parameters.map((param) => ({
+        ...param,
+        value:
+          valueUpdatesOutput[param.key as keyof typeof valueUpdatesOutput] ??
+          param.value,
+      })),
+    };
+    console.log("outputSettingsTemplate", outputSettingsTemplate);
     // const generator = new ConfigGenerator(templates);
     // const blob = generator.generateFile();
 
