@@ -10,7 +10,7 @@ export const inputDatasetFilesConfig: ConfigTemplate = {
     },
     {
       key: "INPUT_FILE_FORMAT",
-      value: "AUTO",
+      value: "MATRIX",
       description:
         "#(AUTO|MATRIX|RK): Type of input file. Use AUTO  for automatic format detection",
     },
@@ -41,18 +41,18 @@ export const inputDatasetFilesConfig: ConfigTemplate = {
     },
     {
       key: "INPUT_FILE_LIST",
-      value: "./../Datasets/mpeg7/lists_mpeg7.txt",
+      value: "",
       description: "#Path of the lists file",
     },
     {
       key: "INPUT_FILE_CLASSES",
-      value: "./../Datasets/mpeg7/classes_mpeg7.txt",
+      value: "",
       description:
         "#Path of the classes file (only used when EFFECTIVENESS_EVAL = TRUE)",
     },
     {
       key: "INPUT_IMAGES_PATH",
-      value: "./../Datasets/mpeg7/images/",
+      value: "",
       description:
         "#Path of the directory with the dataset images (this string ends with /). It is used to build the html ranked lists for output.",
     },

@@ -16,11 +16,12 @@ import {
   ContextRRMethodSettings,
   InputSettingsData,
   EvaluationSettingsData,
+  MAP_INPUT_SETTINGS,
 } from "../ts/interfaces";
 import { OUTPUT_TYPES } from "@/ts/types";
 import { OutputFormatType } from "@/ts/types";
 import { baseConfigTemplate } from "@/services/templates/generalConfig";
-import { inputDatasetFilesConfig as udlConfigTemplate } from "@/services/templates/inputDataSetFilesConfig";
+import { inputDatasetFilesConfig } from "@/services/templates/inputDataSetFilesConfig";
 import { ConfigGenerator } from "@/services/configGenerator";
 import DownloadIcon from "@mui/icons-material/Download";
 
@@ -48,30 +49,36 @@ const Summary: React.FC<SummaryProps> = ({
           value: param.key === "UDL_METHOD" ? selectedMethod : param.value,
         })),
       },
-      {
-        ...udlConfigTemplate,
-        parameters: udlConfigTemplate.parameters.map((param) => ({
-          ...param,
-          value:
-            inputSettings && param.key.toLowerCase() in inputSettings
-              ? inputSettings[
-                  param.key.toLowerCase() as keyof InputSettingsData
-                ]
-              : param.value,
-        })),
-      },
     ];
-    const generator = new ConfigGenerator(templates);
-    const blob = generator.generateFile();
+    console.log("inputSettings", inputSettings);
+    console.log("Templates", templates);
+    const valueUpdates = {
+      INPUT_FILE_FORMAT: inputSettings?.inputType,
+      INPUT_FILE_LIST: inputSettings?.imageListFile,
+      INPUT_FILE_CLASSES: inputSettings?.inputClassesFile,
+      INPUT_IMAGES_PATH: inputSettings?.datasetImagesPath,
+    };
 
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "config.ini";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
+    const inputSettingsTemplate = {
+      section: inputDatasetFilesConfig.section,
+      parameters: inputDatasetFilesConfig.parameters.map((param) => ({
+        ...param,
+        value:
+          valueUpdates[param.key as keyof typeof valueUpdates] ?? param.value,
+      })),
+    };
+    console.log("inputSettingsTemplate", inputSettingsTemplate);
+    // const generator = new ConfigGenerator(templates);
+    // const blob = generator.generateFile();
+
+    // const url = window.URL.createObjectURL(blob);
+    // const link = document.createElement("a");
+    // link.href = url;
+    // link.download = "config.ini";
+    // document.body.appendChild(link);
+    // link.click();
+    // document.body.removeChild(link);
+    // window.URL.revokeObjectURL(url);
   };
 
   return (

@@ -29,6 +29,13 @@ export interface InputSettingsData {
   datasetImagesPath: string;
 }
 
+export const MAP_INPUT_SETTINGS = {
+  // inputType: "INPUT_FILE_FORMAT",
+  imageListFile: "INPUT_FILE_LIST ",
+  inputClassesFile: "INPUT_FILE_CLASSES",
+  datasetImagesPath: "INPUT_IMAGES_PATH",
+};
+
 export interface EvaluationSettingsData {
   useMap: boolean;
   recall: number[];

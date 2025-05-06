@@ -58,11 +58,12 @@ export default function InputSettings({
   // function to handle input changes
   const handleChange = (name: keyof InputSettingsData, value: string) => {
     const error = validateField(name, value);
-
     setInputSettings((prev) => ({
       ...prev,
       [name]: value,
     }));
+    console.log("name handle change", name);
+    console.log("value handle change", value);
 
     setErrors((prev) => ({
       ...prev,
