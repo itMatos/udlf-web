@@ -1,6 +1,6 @@
 import { ConfigTemplate } from "@/ts/generatorTypes";
 
-export const evaluationSettings: ConfigTemplate = {
+export const evaluationSettingsConfig: ConfigTemplate = {
   section: "EVALUATION SETTINGS",
   parameters: [
     {
@@ -20,7 +20,7 @@ export const evaluationSettings: ConfigTemplate = {
     },
     {
       key: "EFFECTIVENESS_COMPUTE_MAP",
-      value: "TRUE",
+      value: "FALSE",
       description: "#(TBool): Compute and show MAP results",
     },
     {
@@ -30,13 +30,13 @@ export const evaluationSettings: ConfigTemplate = {
     },
     {
       key: "EFFECTIVENESS_RECALLS_TO_COMPUTE",
-      value: "4, 5, 10, 20, 40",
+      value: "",
       description:
         "#(TUint [',' TUint]*): Recalls to be computed (unsigned integers separated by commas)",
     },
     {
       key: "EFFECTIVENESS_PRECISIONS_TO_COMPUTE",
-      value: "4, 5, 10, 15, 20, 30, 50, 100",
+      value: "",
       description:
         "#(TUint [',' TUint]*): Precisions to be computed (unsigned integers separated by commas)",
     },

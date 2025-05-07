@@ -24,6 +24,7 @@ import { inputDatasetFilesConfig } from "@/services/templates/inputDataSetFilesC
 import { ConfigGenerator } from "@/services/configGenerator";
 import DownloadIcon from "@mui/icons-material/Download";
 import { outputFilesSettingsConfig } from "@/services/templates/outputFIlesSettingsConfig";
+import { evaluationSettingsConfig } from "@/services/templates/evaluationSettings";
 
 interface SummaryProps {
   selectedMethod: string;
@@ -87,6 +88,35 @@ const Summary: React.FC<SummaryProps> = ({
       })),
     };
     console.log("outputSettingsTemplate", outputSettingsTemplate);
+
+    const recallArrayToString = evaluationSettings?.recall
+      .map((value) => value.toString())
+      .join(", ");
+    const precisionArrayToString = evaluationSettings?.precision
+      .map((value) => value.toString())
+      .join(", ");
+
+    const valueUpdatesEval = {
+      EFFECTIVENESS_COMPUTE_MAP: evaluationSettings?.useMap ? "TRUE" : "FALSE",
+      EFFECTIVENESS_RECALLS_TO_COMPUTE: evaluationSettings?.recall.length
+        ? recallArrayToString
+        : "1",
+      EFFECTIVENESS_PRECISIONS_TO_COMPUTE: evaluationSettings?.precision.length
+        ? precisionArrayToString
+        : "1",
+    };
+
+    const evaluationSettingsTemplate = {
+      section: "EVALUATION SETTINGS",
+      parameters: evaluationSettingsConfig.parameters.map((param) => ({
+        ...param,
+        value:
+          valueUpdatesEval[param.key as keyof typeof valueUpdatesEval] ??
+          param.value,
+      })),
+    };
+
+    console.log("evaluationSettingsTemplate", evaluationSettingsTemplate);
 
     // const generator = new ConfigGenerator(templates);
     // const blob = generator.generateFile();
