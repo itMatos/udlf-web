@@ -70,7 +70,11 @@ const Summary: React.FC<SummaryProps> = ({
     console.log("inputSettingsTemplate", inputSettingsTemplate);
 
     const valueUpdatesOutput = {
-      OUTPUT_FILE_FORMAT: outputSettings,
+      OUTPUT_FILE_FORMAT: outputSettings.includes("RANKEDLIST")
+        ? "RK"
+        : "MATRIX",
+      OUTPUT_MATRIX_TYPE: outputSettings.includes("DISTANCE") ? "DIST" : "SIM",
+      OUTPUT_RK_FORMAT: outputSettings.includes("NUMERIC") ? "NUM" : "STR",
     };
 
     const outputSettingsTemplate = {
@@ -83,6 +87,7 @@ const Summary: React.FC<SummaryProps> = ({
       })),
     };
     console.log("outputSettingsTemplate", outputSettingsTemplate);
+
     // const generator = new ConfigGenerator(templates);
     // const blob = generator.generateFile();
 
