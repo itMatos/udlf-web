@@ -9,13 +9,13 @@ import {
   Typography,
 } from "@mui/material";
 import SelectMethod from "./SelectMethod";
-import { METHODS, STEPS } from "./../ts/constants";
+import { CONTEXTRR_DEFAULT_SETTINGS, METHODS, STEPS } from "./../ts/constants";
 import {
   StepProps,
   LabelProps,
-  CPRRMethodSettings,
   InputSettingsData,
   EvaluationSettingsData,
+  ContextRRMethodSettings,
 } from "./../ts/interfaces";
 import InputSettings from "./InputSettings";
 import OutputSettings from "./OutputSettings";
@@ -27,8 +27,9 @@ export default function HorizontalLinearStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set<number>());
   const [selectedMethod, setSelectedMethod] = useState<string>(METHODS[0]);
-  const [methodSettings, setMethodSettings] =
-    useState<CPRRMethodSettings | null>(null);
+  const [methodSettings, setMethodSettings] = useState<ContextRRMethodSettings>(
+    CONTEXTRR_DEFAULT_SETTINGS
+  );
   const [inputSettings, setInputSettings] = useState<InputSettingsData | null>(
     null
   );
@@ -95,7 +96,7 @@ export default function HorizontalLinearStepper() {
   const handleReset = () => {
     setActiveStep(0);
     setSelectedMethod("");
-    setMethodSettings(null);
+    setMethodSettings(CONTEXTRR_DEFAULT_SETTINGS);
   };
 
   const renderStepContent = () => {

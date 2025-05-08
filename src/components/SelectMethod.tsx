@@ -53,6 +53,7 @@ export default function SelectMethod({
     };
 
   const handleSelectOptimizations = (value: boolean) => {
+    console.log("OPTIMIZATIONS", value);
     setSettings((prevSettings) => ({
       ...prevSettings,
       OPTIMIZATIONS: value,

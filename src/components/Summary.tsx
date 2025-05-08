@@ -12,7 +12,6 @@ import {
   Button,
 } from "@mui/material";
 import {
-  CPRRMethodSettings,
   ContextRRMethodSettings,
   InputSettingsData,
   EvaluationSettingsData,
@@ -28,7 +27,7 @@ import { evaluationSettingsConfig } from "@/services/templates/evaluationSetting
 
 interface SummaryProps {
   selectedMethod: string;
-  methodSettings: CPRRMethodSettings | ContextRRMethodSettings | null;
+  methodSettings: ContextRRMethodSettings;
   inputSettings: InputSettingsData | null;
   outputSettings: OutputFormatType;
   evaluationSettings: EvaluationSettingsData | null;
@@ -42,17 +41,19 @@ const Summary: React.FC<SummaryProps> = ({
   evaluationSettings,
 }) => {
   const generateConfigFile = () => {
-    const templates = [
-      {
-        ...baseConfigTemplate,
-        parameters: baseConfigTemplate.parameters.map((param) => ({
-          ...param,
-          value: param.key === "UDL_METHOD" ? selectedMethod : param.value,
-        })),
-      },
-    ];
-    console.log("inputSettings", inputSettings);
-    console.log("Templates", templates);
+    const baseConfig = {
+      ...baseConfigTemplate,
+      parameters: baseConfigTemplate.parameters.map((param) => ({
+        ...param,
+        value:
+          param.key === "UDL_METHOD"
+            ? selectedMethod.toUpperCase()
+            : param.value,
+      })),
+    };
+
+    console.log("baseConfig", baseConfig);
+
     const valueUpdates = {
       INPUT_FILE_FORMAT: inputSettings?.inputType,
       INPUT_FILE_LIST: inputSettings?.imageListFile,
@@ -116,19 +117,47 @@ const Summary: React.FC<SummaryProps> = ({
       })),
     };
 
-    console.log("evaluationSettingsTemplate", evaluationSettingsTemplate);
+    const ContextRRValueUpdates = {
+      PARAM_NONE_L: "1400",
+      PARAM_CONTEXTRR_L: methodSettings?.L,
+      PARAM_CONTEXTRR_K: methodSettings?.K,
+      PARAM_CONTEXTRR_T: methodSettings?.T,
+      PARAM_CONTEXTRR_NBYK: methodSettings?.NBYK,
+      PARAM_CONTEXTRR_OPTIMIZATIONS: methodSettings?.OPTIMIZATIONS
+        ? "TRUE"
+        : "FALSE",
+    };
 
-    // const generator = new ConfigGenerator(templates);
-    // const blob = generator.generateFile();
+    const ContextRRSettingsTemplate = {
+      section: "# CONTEXTRR #",
+      parameters: Object.entries(ContextRRValueUpdates).map(([key, value]) => ({
+        key,
+        value,
+      })),
+    };
 
-    // const url = window.URL.createObjectURL(blob);
-    // const link = document.createElement("a");
-    // link.href = url;
-    // link.download = "config.ini";
-    // document.body.appendChild(link);
-    // link.click();
-    // document.body.removeChild(link);
-    // window.URL.revokeObjectURL(url);
+    console.log("ContextRRSettingsTemplate", ContextRRSettingsTemplate);
+
+    const allTemplates = [
+      baseConfig,
+      inputSettingsTemplate,
+      outputSettingsTemplate,
+      evaluationSettingsTemplate,
+      ContextRRSettingsTemplate,
+    ];
+    console.log("allTemplates", allTemplates);
+
+    const generator = new ConfigGenerator(allTemplates);
+    const blob = generator.generateFile();
+
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "config.ini";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   };
 
   return (
