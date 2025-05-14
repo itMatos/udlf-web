@@ -29,7 +29,7 @@ export const outputFilesSettingsConfig: ConfigTemplate = {
     },
     {
       key: "OUTPUT_FILE_PATH",
-      value: "./../Results/output_test_html",
+      value: "output_test_html",
       description:
         "#Path of the output file(s) (do not add the extension -> .txt, .html, and others)",
     },
@@ -59,7 +59,7 @@ export const outputFilesSettingsConfig: ConfigTemplate = {
     },
     {
       key: "OUTPUT_LOG_FILE_PATH",
-      value: "./../Results/log_test_html.txt",
+      value: "log_test_html.txt",
       description:
         "#Path of the log file which contains information of the execution (effectiveness measures, execution time, ...)",
     },

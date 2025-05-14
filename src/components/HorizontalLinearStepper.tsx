@@ -105,7 +105,15 @@ export default function HorizontalLinearStepper() {
         return (
           <SelectMethod
             onMethodChange={setSelectedMethod}
-            onSettingsChange={setMethodSettings}
+            onSettingsChange={(settings) => {
+              if ("NBYK" in settings && "OPTIMIZATIONS" in settings) {
+                setMethodSettings(settings);
+              } else {
+                console.error(
+                  "Invalid settings type passed to setMethodSettings"
+                );
+              }
+            }}
             selectedMethod={selectedMethod}
             methodSettings={methodSettings}
           />

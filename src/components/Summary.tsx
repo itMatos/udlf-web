@@ -52,7 +52,7 @@ const Summary: React.FC<SummaryProps> = ({
       })),
     };
 
-    console.log("baseConfig", baseConfig);
+    console.log("inputSettings", inputSettings);
 
     const valueUpdates = {
       INPUT_FILE_FORMAT: inputSettings?.inputType,
@@ -117,43 +117,61 @@ const Summary: React.FC<SummaryProps> = ({
       })),
     };
 
-    const ContextRRValueUpdates = {
-      PARAM_NONE_L: "1400",
-      PARAM_CONTEXTRR_L: methodSettings?.L,
-      PARAM_CONTEXTRR_K: methodSettings?.K,
-      PARAM_CONTEXTRR_T: methodSettings?.T,
-      PARAM_CONTEXTRR_NBYK: methodSettings?.NBYK,
-      PARAM_CONTEXTRR_OPTIMIZATIONS: methodSettings?.OPTIMIZATIONS
-        ? "TRUE"
-        : "FALSE",
-    };
+    const generateContextRRSettings = (methodSettings: ContextRRMethodSettings) => {
+      const ContextRRValueUpdates = {
+        PARAM_NONE_L: "1400",
+        PARAM_CONTEXTRR_L: methodSettings?.L,
+        PARAM_CONTEXTRR_K: methodSettings?.K,
+        PARAM_CONTEXTRR_T: methodSettings?.T,
+        PARAM_CONTEXTRR_NBYK: methodSettings?.NBYK,
+        PARAM_CONTEXTRR_OPTIMIZATIONS: methodSettings?.OPTIMIZATIONS
+          ? "TRUE"
+          : "FALSE",
+      };
+      return ContextRRValueUpdates;
+    }
 
-    const ContextRRSettingsTemplate = {
-      section: "# CONTEXTRR #",
-      parameters: Object.entries(ContextRRValueUpdates).map(([key, value]) => ({
+    const generateCPRRSettings = (methodSettings: ContextRRMethodSettings) => {
+      const CPRRValueUpdates = {
+        PARAM_NONE_L: "1400",
+        PARAM_CPRR_L: methodSettings?.L,
+        PARAM_CPRR_K: methodSettings?.K,
+        PARAM_CPRR_T: methodSettings?.T,
+    }
+    return CPRRValueUpdates;
+  }
+
+  console.log("methodSettings", methodSettings);
+
+  const settingsTemplate = selectedMethod === "CPRR" ? generateCPRRSettings(methodSettings) : generateContextRRSettings(methodSettings);
+
+    const methodSettingsTemplate = {
+      section: `${selectedMethod.toUpperCase()} SETTINGS`,
+      parameters: Object.entries(settingsTemplate).map(([key, value]) => ({
         key,
         value,
       })),
     };
 
-    console.log("ContextRRSettingsTemplate", ContextRRSettingsTemplate);
+    console.log("methodSettingsTemplate", methodSettingsTemplate);
 
     const allTemplates = [
       baseConfig,
       inputSettingsTemplate,
       outputSettingsTemplate,
       evaluationSettingsTemplate,
-      ContextRRSettingsTemplate,
+      methodSettingsTemplate,
     ];
     console.log("allTemplates", allTemplates);
 
     const generator = new ConfigGenerator(allTemplates);
     const blob = generator.generateFile();
+    const fileNameToDownload = `${selectedMethod}_config.ini`;
 
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "config.ini";
+    link.download = fileNameToDownload;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

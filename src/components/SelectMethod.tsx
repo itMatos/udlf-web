@@ -11,7 +11,11 @@ import {
   TextField,
 } from "@mui/material";
 import { useState } from "react";
-import { METHODS, CONTEXTRR_DEFAULT_SETTINGS } from "./../ts/constants";
+import {
+  METHODS,
+  CONTEXTRR_DEFAULT_SETTINGS,
+  CPRR_DEFAULT_SETTINGS,
+} from "./../ts/constants";
 import {
   ContextRRMethodSettings,
   CPRRMethodSettings,
@@ -19,7 +23,9 @@ import {
 
 interface SelectMethodProps {
   onMethodChange: (method: string) => void;
-  onSettingsChange: (settings: ContextRRMethodSettings) => void;
+  onSettingsChange: (
+    settings: ContextRRMethodSettings | CPRRMethodSettings
+  ) => void;
   selectedMethod: string;
   methodSettings: CPRRMethodSettings | null;
 }
@@ -30,15 +36,18 @@ export default function SelectMethod({
 }: SelectMethodProps) {
   // Default to the first method in the list
   const [method, setMethod] = useState<string>(METHODS[0]);
-  const [settings, setSettings] = useState<ContextRRMethodSettings>(
-    CONTEXTRR_DEFAULT_SETTINGS
-  );
+  const [settings, setSettings] = useState<
+    ContextRRMethodSettings | CPRRMethodSettings
+  >(CONTEXTRR_DEFAULT_SETTINGS);
 
   const handleMethodChange = (event: SelectChangeEvent) => {
     const newMethod = event.target.value;
     setMethod(newMethod);
     onMethodChange(newMethod);
-    console.log("Selected method:", event.target.value);
+
+    if (newMethod === "CPRR") {
+      setSettings(CPRR_DEFAULT_SETTINGS);
+    }
   };
 
   const handleSettingChange =
@@ -53,7 +62,6 @@ export default function SelectMethod({
     };
 
   const handleSelectOptimizations = (value: boolean) => {
-    console.log("OPTIMIZATIONS", value);
     setSettings((prevSettings) => ({
       ...prevSettings,
       OPTIMIZATIONS: value,
@@ -111,30 +119,39 @@ export default function SelectMethod({
           onChange={handleSettingChange("T")}
           variant="outlined"
         />
-        <TextField
-          id="NBYK"
-          label="NBYK"
-          type="number"
-          value={settings.NBYK}
-          onChange={handleSettingChange("NBYK")}
-          variant="outlined"
-        />
-        <FormControlLabel
-          control={
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Switch
-                id="OPTIMIZATIONS"
-                checked={settings.OPTIMIZATIONS}
-                onChange={(event) =>
-                  handleSelectOptimizations(event.target.checked)
-                }
-              />
-              <Box>{settings.OPTIMIZATIONS ? "on" : "off"}</Box>
-            </Box>
-          }
-          label="OPTIMIZATIONS"
-          labelPlacement="start"
-        />
+        {"NBYK" in settings && (
+          <TextField
+            id="NBYK"
+            label="NBYK"
+            type="number"
+            value={settings.NBYK}
+            onChange={handleSettingChange("NBYK")}
+            variant="outlined"
+          />
+        )}
+
+        {"OPTIMIZATIONS" in settings && (
+          <FormControlLabel
+            control={
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Switch
+                  id="OPTIMIZATIONS"
+                  checked={
+                    "OPTIMIZATIONS" in settings ? settings.OPTIMIZATIONS : false
+                  }
+                  onChange={(event) =>
+                    handleSelectOptimizations(event.target.checked)
+                  }
+                />
+                {"OPTIMIZATIONS" in settings && (
+                  <Box>{settings.OPTIMIZATIONS ? "on" : "off"}</Box>
+                )}
+              </Box>
+            }
+            label="OPTIMIZATIONS"
+            labelPlacement="start"
+          />
+        )}
       </Box>
     </Box>
   );

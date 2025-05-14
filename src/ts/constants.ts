@@ -15,7 +15,7 @@ export const STEPS = [
   "Summary",
 ] as const;
 
-export const METHODS = ["ContextRR"] as const;
+export const METHODS = ["CONTEXTRR", "CPRR"] as const;
 
 export const CPRR_DEFAULT_SETTINGS: CPRRMethodSettings = {
   L: 400,
