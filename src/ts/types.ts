@@ -1,4 +1,4 @@
-export type InputType = "MATRIX" | "RANKEDLISTS";
+export type InputType = "AUTO" | "MATRIX" | "RANKEDLISTS";
 
 export type OutputFormatType =
   | "RANKEDLIST_NUMERIC"

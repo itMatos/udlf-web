@@ -32,7 +32,7 @@ export const CONTEXTRR_DEFAULT_SETTINGS: ContextRRMethodSettings = {
 };
 
 export const DEFAULT_INPUT_SETTINGS: InputSettingsData = {
-  inputType: "MATRIX",
+  inputType: "AUTO",
   imageListFile: "",
   inputClassesFile: "",
   datasetImagesPath: "",

@@ -117,7 +117,9 @@ const Summary: React.FC<SummaryProps> = ({
       })),
     };
 
-    const generateContextRRSettings = (methodSettings: ContextRRMethodSettings) => {
+    const generateContextRRSettings = (
+      methodSettings: ContextRRMethodSettings
+    ) => {
       const ContextRRValueUpdates = {
         PARAM_NONE_L: "1400",
         PARAM_CONTEXTRR_L: methodSettings?.L,
@@ -129,7 +131,7 @@ const Summary: React.FC<SummaryProps> = ({
           : "FALSE",
       };
       return ContextRRValueUpdates;
-    }
+    };
 
     const generateCPRRSettings = (methodSettings: ContextRRMethodSettings) => {
       const CPRRValueUpdates = {
@@ -137,13 +139,16 @@ const Summary: React.FC<SummaryProps> = ({
         PARAM_CPRR_L: methodSettings?.L,
         PARAM_CPRR_K: methodSettings?.K,
         PARAM_CPRR_T: methodSettings?.T,
-    }
-    return CPRRValueUpdates;
-  }
+      };
+      return CPRRValueUpdates;
+    };
 
-  console.log("methodSettings", methodSettings);
+    console.log("methodSettings", methodSettings);
 
-  const settingsTemplate = selectedMethod === "CPRR" ? generateCPRRSettings(methodSettings) : generateContextRRSettings(methodSettings);
+    const settingsTemplate =
+      selectedMethod === "CPRR"
+        ? generateCPRRSettings(methodSettings)
+        : generateContextRRSettings(methodSettings);
 
     const methodSettingsTemplate = {
       section: `${selectedMethod.toUpperCase()} SETTINGS`,
@@ -164,18 +169,18 @@ const Summary: React.FC<SummaryProps> = ({
     ];
     console.log("allTemplates", allTemplates);
 
-    const generator = new ConfigGenerator(allTemplates);
-    const blob = generator.generateFile();
-    const fileNameToDownload = `${selectedMethod}_config.ini`;
+    // const generator = new ConfigGenerator(allTemplates);
+    // const blob = generator.generateFile();
+    // const fileNameToDownload = `${selectedMethod}_config.ini`;
 
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = fileNameToDownload;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
+    // const url = window.URL.createObjectURL(blob);
+    // const link = document.createElement("a");
+    // link.href = url;
+    // link.download = fileNameToDownload;
+    // document.body.appendChild(link);
+    // link.click();
+    // document.body.removeChild(link);
+    // window.URL.revokeObjectURL(url);
   };
 
   return (

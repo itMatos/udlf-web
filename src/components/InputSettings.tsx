@@ -19,6 +19,11 @@ export interface InputSettingsProps {
 }
 
 const INPUT_TYPES = [
+  {
+    value: "AUTO",
+    label: "Auto",
+    description: "Use auto input format detection",
+  },
   { value: "MATRIX", label: "Matrix", description: "Use matrix input format" },
   {
     value: "RK",

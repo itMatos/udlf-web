@@ -10,7 +10,7 @@ export const inputDatasetFilesConfig: ConfigTemplate = {
     },
     {
       key: "INPUT_FILE_FORMAT",
-      value: "MATRIX",
+      value: "AUTO",
       description:
         "#(AUTO|MATRIX|RK): Type of input file. Use AUTO  for automatic format detection",
     },
