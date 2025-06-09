@@ -5,7 +5,7 @@ export const outputFilesSettingsConfig: ConfigTemplate = {
   parameters: [
     {
       key: "OUTPUT_FILE",
-      value: "TRUE",
+      value: "FALSE",
       description: "#Path of the output file (ranked lists/similarity matrix)",
     },
     {
@@ -23,8 +23,7 @@ export const outputFilesSettingsConfig: ConfigTemplate = {
     {
       key: "OUTPUT_RK_FORMAT",
       value: "ALL",
-      description:
-        "#(NUM|STR|HTML|ALL): Selection of ranked lists output format",
+      description: "#(NUM|STR|HTML|ALL): Selection of ranked lists output format",
       options: ["NUM", "STR", "HTML", "ALL"],
     },
     {
@@ -47,15 +46,14 @@ export const outputFilesSettingsConfig: ConfigTemplate = {
     },
     {
       key: "OUTPUT_HTML_RK_COLORS",
-      value: 'TRUE',
+      value: "TRUE",
       description:
         "#(TBool): Use colors to highlight wrong and query images (only works when EFFICIENCY_EVAL = TRUE)",
     },
     {
       key: "OUTPUT_HTML_RK_BEFORE_AFTER",
-      value: 'TRUE',
-      description:
-        "#(TBool): Show ranked lists before (original) and after the execution.",
+      value: "TRUE",
+      description: "#(TBool): Show ranked lists before (original) and after the execution.",
     },
     {
       key: "OUTPUT_LOG_FILE_PATH",

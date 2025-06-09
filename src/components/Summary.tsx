@@ -45,10 +45,7 @@ const Summary: React.FC<SummaryProps> = ({
       ...baseConfigTemplate,
       parameters: baseConfigTemplate.parameters.map((param) => ({
         ...param,
-        value:
-          param.key === "UDL_METHOD"
-            ? selectedMethod.toUpperCase()
-            : param.value,
+        value: param.key === "UDL_METHOD" ? selectedMethod.toUpperCase() : param.value,
       })),
     };
 
@@ -56,8 +53,8 @@ const Summary: React.FC<SummaryProps> = ({
 
     const valueUpdates = {
       INPUT_FILE_FORMAT: inputSettings?.inputType,
-      INPUT_FILE_LIST: inputSettings?.imageListFile,
-      INPUT_FILE_CLASSES: inputSettings?.inputClassesFile,
+      INPUT_FILE_LIST: inputSettings?.inputFileList,
+      INPUT_FILE_CLASSES: inputSettings?.inputFileClasses,
       INPUT_IMAGES_PATH: inputSettings?.datasetImagesPath,
     };
 
@@ -65,16 +62,14 @@ const Summary: React.FC<SummaryProps> = ({
       section: inputDatasetFilesConfig.section,
       parameters: inputDatasetFilesConfig.parameters.map((param) => ({
         ...param,
-        value:
-          valueUpdates[param.key as keyof typeof valueUpdates] ?? param.value,
+        value: valueUpdates[param.key as keyof typeof valueUpdates] ?? param.value,
       })),
     };
     console.log("inputSettingsTemplate", inputSettingsTemplate);
 
     const valueUpdatesOutput = {
-      OUTPUT_FILE_FORMAT: outputSettings.includes("RANKEDLIST")
-        ? "RK"
-        : "MATRIX",
+      OUTPUT_FILE: outputSettings.includes("OUTPUT_FILE") ? "TRUE" : "FALSE",
+      OUTPUT_FILE_FORMAT: outputSettings.includes("RANKEDLIST") ? "RK" : "MATRIX",
       OUTPUT_MATRIX_TYPE: outputSettings.includes("DISTANCE") ? "DIST" : "SIM",
       OUTPUT_RK_FORMAT: outputSettings.includes("NUMERIC") ? "NUM" : "STR",
     };
@@ -83,9 +78,7 @@ const Summary: React.FC<SummaryProps> = ({
       section: "OUTPUT SETTINGS",
       parameters: outputFilesSettingsConfig.parameters.map((param) => ({
         ...param,
-        value:
-          valueUpdatesOutput[param.key as keyof typeof valueUpdatesOutput] ??
-          param.value,
+        value: valueUpdatesOutput[param.key as keyof typeof valueUpdatesOutput] ?? param.value,
       })),
     };
     console.log("outputSettingsTemplate", outputSettingsTemplate);
@@ -97,8 +90,11 @@ const Summary: React.FC<SummaryProps> = ({
       .map((value) => value.toString())
       .join(", ");
 
+    // TODO: tratar caso de recall e precision vazios
+
     const valueUpdatesEval = {
       EFFECTIVENESS_COMPUTE_MAP: evaluationSettings?.useMap ? "TRUE" : "FALSE",
+      EFFICIENCY_EVAL: evaluationSettings?.useEfficiency ? "TRUE" : "FALSE",
       EFFECTIVENESS_RECALLS_TO_COMPUTE: evaluationSettings?.recall.length
         ? recallArrayToString
         : "1",
@@ -111,24 +107,18 @@ const Summary: React.FC<SummaryProps> = ({
       section: "EVALUATION SETTINGS",
       parameters: evaluationSettingsConfig.parameters.map((param) => ({
         ...param,
-        value:
-          valueUpdatesEval[param.key as keyof typeof valueUpdatesEval] ??
-          param.value,
+        value: valueUpdatesEval[param.key as keyof typeof valueUpdatesEval] ?? param.value,
       })),
     };
 
-    const generateContextRRSettings = (
-      methodSettings: ContextRRMethodSettings
-    ) => {
+    const generateContextRRSettings = (methodSettings: ContextRRMethodSettings) => {
       const ContextRRValueUpdates = {
         PARAM_NONE_L: "1400",
         PARAM_CONTEXTRR_L: methodSettings?.L,
         PARAM_CONTEXTRR_K: methodSettings?.K,
         PARAM_CONTEXTRR_T: methodSettings?.T,
         PARAM_CONTEXTRR_NBYK: methodSettings?.NBYK,
-        PARAM_CONTEXTRR_OPTIMIZATIONS: methodSettings?.OPTIMIZATIONS
-          ? "TRUE"
-          : "FALSE",
+        PARAM_CONTEXTRR_OPTIMIZATIONS: methodSettings?.OPTIMIZATIONS ? "TRUE" : "FALSE",
       };
       return ContextRRValueUpdates;
     };
@@ -199,9 +189,7 @@ const Summary: React.FC<SummaryProps> = ({
               <ListItem key={key}>
                 <ListItemText
                   primary={key}
-                  secondary={
-                    typeof value === "boolean" ? (value ? "Yes" : "No") : value
-                  }
+                  secondary={typeof value === "boolean" ? (value ? "Yes" : "No") : value}
                 />
               </ListItem>
             ))}
@@ -234,8 +222,7 @@ const Summary: React.FC<SummaryProps> = ({
         </Typography>
         {outputSettings ? (
           <Typography variant="body1">
-            Format Type:{" "}
-            {OUTPUT_TYPES.find((type) => type.value === outputSettings)?.label}
+            Format Type: {OUTPUT_TYPES.find((type) => type.value === outputSettings)?.label}
           </Typography>
         ) : (
           <Typography variant="body2" color="textSecondary">
@@ -253,9 +240,12 @@ const Summary: React.FC<SummaryProps> = ({
         {evaluationSettings && (
           <List dense>
             <ListItem>
+              <ListItemText primary="MAP" secondary={evaluationSettings.useMap ? "Yes" : "No"} />
+            </ListItem>
+            <ListItem>
               <ListItemText
-                primary="MAP"
-                secondary={evaluationSettings.useMap ? "Yes" : "No"}
+                primary="Efficiency"
+                secondary={evaluationSettings.useEfficiency ? "Yes" : "No"}
               />
             </ListItem>
             <ListItem>

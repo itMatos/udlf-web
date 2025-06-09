@@ -1,13 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import {
-  Box,
-  Stepper,
-  Step,
-  StepLabel,
-  Button,
-  Typography,
-} from "@mui/material";
+import { Box, Stepper, Step, StepLabel, Button, Typography } from "@mui/material";
 import SelectMethod from "./SelectMethod";
 import { CONTEXTRR_DEFAULT_SETTINGS, METHODS, STEPS } from "./../ts/constants";
 import {
@@ -27,16 +20,10 @@ export default function HorizontalLinearStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set<number>());
   const [selectedMethod, setSelectedMethod] = useState<string>(METHODS[0]);
-  const [methodSettings, setMethodSettings] = useState<ContextRRMethodSettings>(
-    CONTEXTRR_DEFAULT_SETTINGS
-  );
-  const [inputSettings, setInputSettings] = useState<InputSettingsData | null>(
-    null
-  );
-  const [outputSettings, setOutputSettings] =
-    useState<OutputFormatType>("RANKEDLIST_NUMERIC");
-  const [evaluationSettings, setEvaluationSettings] =
-    useState<EvaluationSettingsData | null>(null);
+  const [methodSettings, setMethodSettings] = useState<ContextRRMethodSettings>(CONTEXTRR_DEFAULT_SETTINGS);
+  const [inputSettings, setInputSettings] = useState<InputSettingsData | null>(null);
+  const [outputSettings, setOutputSettings] = useState<OutputFormatType>("RANKEDLIST_NUMERIC");
+  const [evaluationSettings, setEvaluationSettings] = useState<EvaluationSettingsData | null>(null);
 
   const isStepOptional = (step: number) => step === -1;
   const isStepSkipped = (step: number) => skipped.has(step);
@@ -46,7 +33,7 @@ export default function HorizontalLinearStepper() {
       case 0:
         return !!selectedMethod;
       case 1:
-        return !!inputSettings;
+        return true;
       case 2:
         return !!outputSettings;
       case 3:
@@ -56,13 +43,7 @@ export default function HorizontalLinearStepper() {
     }
   };
 
-  const stepTitle = [
-    "Select method",
-    "Input settings",
-    "Output settings",
-    "Evaluation settings",
-    "Summary",
-  ];
+  const stepTitle = ["Select method", "Input settings", "Output settings", "Evaluation settings", "Summary"];
 
   const handleNext = () => {
     let newSkipped = skipped;
@@ -109,9 +90,7 @@ export default function HorizontalLinearStepper() {
               if ("NBYK" in settings && "OPTIMIZATIONS" in settings) {
                 setMethodSettings(settings);
               } else {
-                console.error(
-                  "Invalid settings type passed to setMethodSettings"
-                );
+                console.error("Invalid settings type passed to setMethodSettings");
               }
             }}
             selectedMethod={selectedMethod}
@@ -119,26 +98,11 @@ export default function HorizontalLinearStepper() {
           />
         );
       case 1:
-        return (
-          <InputSettings
-            onSettingsChange={setInputSettings}
-            settings={inputSettings}
-          />
-        );
+        return <InputSettings onSettingsChange={setInputSettings} settings={inputSettings} />;
       case 2:
-        return (
-          <OutputSettings
-            onSettingsChange={setOutputSettings}
-            settings={outputSettings}
-          />
-        );
+        return <OutputSettings onSettingsChange={setOutputSettings} settings={outputSettings} />;
       case 3:
-        return (
-          <EvaluationSettings
-            onSettingsChange={setEvaluationSettings}
-            settings={evaluationSettings}
-          />
-        );
+        return <EvaluationSettings onSettingsChange={setEvaluationSettings} settings={evaluationSettings} />;
       case 4:
         return (
           <Summary
@@ -162,7 +126,7 @@ export default function HorizontalLinearStepper() {
   return (
     <Box
       sx={{
-        width: "80%",
+        width: "100%",
         margin: "auto",
         py: 4,
         justifyItems: "center",
@@ -174,9 +138,7 @@ export default function HorizontalLinearStepper() {
           const labelProps: LabelProps = {};
 
           if (isStepOptional(index)) {
-            labelProps.optional = (
-              <Typography variant="caption">Optional</Typography>
-            );
+            labelProps.optional = <Typography variant="caption">Optional</Typography>;
           }
 
           if (isStepSkipped(index)) {
@@ -194,9 +156,7 @@ export default function HorizontalLinearStepper() {
       <Box sx={{ mt: 4, mb: 2 }}>
         {activeStep === STEPS.length ? (
           <>
-            <Typography sx={{ mb: 2 }}>
-              All steps completed - you&apos;re finished
-            </Typography>
+            <Typography sx={{ mb: 2 }}>All steps completed - you&apos;re finished</Typography>
             <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
               <Button onClick={handleReset}>Reset</Button>
             </Box>
@@ -206,12 +166,7 @@ export default function HorizontalLinearStepper() {
             <Typography sx={{ mb: 2 }}>{stepTitle[activeStep]}</Typography>
             {renderStepContent()}
             <Box sx={{ display: "flex", pt: 2, width: "100%" }}>
-              <Button
-                color="inherit"
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                sx={{ mr: 1 }}
-              >
+              <Button color="inherit" disabled={activeStep === 0} onClick={handleBack} sx={{ mr: 1 }}>
                 Back
               </Button>
               <Box sx={{ flex: "1 1 auto" }} />

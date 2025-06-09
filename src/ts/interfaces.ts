@@ -24,8 +24,8 @@ export interface ContextRRMethodSettings {
 
 export interface InputSettingsData {
   inputType: InputType;
-  imageListFile: string;
-  inputClassesFile: string;
+  inputFileList: string;
+  inputFileClasses: string;
   datasetImagesPath: string;
 }
 
@@ -38,6 +38,7 @@ export const MAP_INPUT_SETTINGS = {
 
 export interface EvaluationSettingsData {
   useMap: boolean;
+  useEfficiency: boolean;
   recall: number[];
   precision: number[];
 }

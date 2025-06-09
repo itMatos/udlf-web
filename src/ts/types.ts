@@ -1,3 +1,5 @@
+export type OutputFileEnabled = "TRUE" | "FALSE";
+
 export type InputType = "AUTO" | "MATRIX" | "RANKEDLISTS";
 
 export type OutputFormatType =

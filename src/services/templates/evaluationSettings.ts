@@ -5,7 +5,7 @@ export const evaluationSettingsConfig: ConfigTemplate = {
   parameters: [
     {
       key: "EFFICIENCY_EVAL",
-      value: "TRUE",
+      value: "",
       description: "#(TBool): Enable efficiency evaluation",
     },
     {

@@ -33,9 +33,10 @@ export const CONTEXTRR_DEFAULT_SETTINGS: ContextRRMethodSettings = {
 
 export const DEFAULT_INPUT_SETTINGS: InputSettingsData = {
   inputType: "AUTO",
-  imageListFile: "",
-  inputClassesFile: "",
-  datasetImagesPath: "",
+  inputFileList: "./../Datasets/mpeg7/lists_mpeg7.txt",
+  inputFileClasses: "./../Datasets/mpeg7/classes_mpeg7.txt",
+  datasetImagesPath:
+    "/Users/italomatos/Documents/IC/UDLF/Datasets/mpeg7/original/",
 };
 
 export const DEFAULT_OUTPUT_SETTINGS: OutputFormatType = "RANKEDLIST_NUMERIC";
