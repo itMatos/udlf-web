@@ -29,6 +29,12 @@ export interface InputSettingsData {
   datasetImagesPath: string;
 }
 
+export interface OutputSettingsData {
+  enabledOutput: boolean;
+  outputFileName: string;
+  outputFileFormat: OutputFormatType;
+}
+
 export const MAP_INPUT_SETTINGS = {
   // inputType: "INPUT_FILE_FORMAT",
   imageListFile: "INPUT_FILE_LIST ",
@@ -47,6 +53,6 @@ export interface SummaryData {
   method: string;
   methodSettings: CPRRMethodSettings | ContextRRMethodSettings;
   inputSettings: InputSettingsData;
-  outputSettings: OutputFormatType;
+  outputSettings: OutputSettingsData;
   evaluationSettings: EvaluationSettingsData;
 }

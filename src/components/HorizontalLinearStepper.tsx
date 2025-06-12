@@ -9,6 +9,7 @@ import {
   InputSettingsData,
   EvaluationSettingsData,
   ContextRRMethodSettings,
+  OutputSettingsData,
 } from "./../ts/interfaces";
 import InputSettings from "./InputSettings";
 import OutputSettings from "./OutputSettings";
@@ -20,9 +21,15 @@ export default function HorizontalLinearStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set<number>());
   const [selectedMethod, setSelectedMethod] = useState<string>(METHODS[0]);
-  const [methodSettings, setMethodSettings] = useState<ContextRRMethodSettings>(CONTEXTRR_DEFAULT_SETTINGS);
+  const [methodSettings, setMethodSettings] = useState<ContextRRMethodSettings>(
+    CONTEXTRR_DEFAULT_SETTINGS
+  );
   const [inputSettings, setInputSettings] = useState<InputSettingsData | null>(null);
-  const [outputSettings, setOutputSettings] = useState<OutputFormatType>("RANKEDLIST_NUMERIC");
+  const [outputSettings, setOutputSettings] = useState<OutputSettingsData>({
+    outputFileName: "",
+    outputFileFormat: "RANKEDLIST_NUMERIC" as OutputFormatType,
+    enabledOutput: false,
+  });
   const [evaluationSettings, setEvaluationSettings] = useState<EvaluationSettingsData | null>(null);
 
   const isStepOptional = (step: number) => step === -1;
@@ -43,7 +50,13 @@ export default function HorizontalLinearStepper() {
     }
   };
 
-  const stepTitle = ["Select method", "Input settings", "Output settings", "Evaluation settings", "Summary"];
+  const stepTitle = [
+    "Select method",
+    "Input settings",
+    "Output settings",
+    "Evaluation settings",
+    "Summary",
+  ];
 
   const handleNext = () => {
     let newSkipped = skipped;
@@ -102,7 +115,12 @@ export default function HorizontalLinearStepper() {
       case 2:
         return <OutputSettings onSettingsChange={setOutputSettings} settings={outputSettings} />;
       case 3:
-        return <EvaluationSettings onSettingsChange={setEvaluationSettings} settings={evaluationSettings} />;
+        return (
+          <EvaluationSettings
+            onSettingsChange={setEvaluationSettings}
+            settings={evaluationSettings}
+          />
+        );
       case 4:
         return (
           <Summary
@@ -166,7 +184,12 @@ export default function HorizontalLinearStepper() {
             <Typography sx={{ mb: 2 }}>{stepTitle[activeStep]}</Typography>
             {renderStepContent()}
             <Box sx={{ display: "flex", pt: 2, width: "100%" }}>
-              <Button color="inherit" disabled={activeStep === 0} onClick={handleBack} sx={{ mr: 1 }}>
+              <Button
+                color="inherit"
+                disabled={activeStep === 0}
+                onClick={handleBack}
+                sx={{ mr: 1 }}
+              >
                 Back
               </Button>
               <Box sx={{ flex: "1 1 auto" }} />

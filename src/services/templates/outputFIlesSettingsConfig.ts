@@ -28,7 +28,7 @@ export const outputFilesSettingsConfig: ConfigTemplate = {
     },
     {
       key: "OUTPUT_FILE_PATH",
-      value: "output_test_html",
+      value: "output test",
       description:
         "#Path of the output file(s) (do not add the extension -> .txt, .html, and others)",
     },

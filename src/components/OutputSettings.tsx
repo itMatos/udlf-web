@@ -1,23 +1,36 @@
+import { OutputSettingsData } from "@/ts/interfaces";
 import { OUTPUT_TYPES } from "@/ts/types";
 import { OutputFormatType } from "@/ts/types";
 import { Box, FormControlLabel, FormGroup, MenuItem, Switch, TextField } from "@mui/material";
 import { useState } from "react";
 
 interface OutputSettingsProps {
-  onSettingsChange: (settings: OutputFormatType) => void;
-  settings: OutputFormatType;
+  onSettingsChange: (settings: OutputSettingsData) => void;
+  settings: OutputSettingsData;
 }
 
 export default function OutputSettings({ onSettingsChange, settings }: OutputSettingsProps) {
   const [enabledOutput, setEnabledOutput] = useState<boolean>(false);
+  const [selectedOutputType, setSelectedOutputType] = useState<OutputFormatType>(
+    settings.outputFileFormat || "RANKEDLIST_NUMERIC"
+  );
 
   const handleChangeEnabledOutput = (value: boolean) => {
     setEnabledOutput(value);
-    // if (!value) {
-    //   onSettingsChange("")
-    // } else {
-    //   onSettingsChange(settings);
-    // }
+    onSettingsChange({
+      ...settings,
+      enabledOutput: value,
+    });
+  };
+
+  const handleOutputFileNameChange = (value: string) => {
+    onSettingsChange({ ...settings, outputFileName: value });
+  };
+
+  const handleOutputFileFormatChange = (value: OutputFormatType) => {
+    console.log("Output file format changed:", value);
+    setSelectedOutputType(value);
+    onSettingsChange({ ...settings, outputFileFormat: value });
   };
 
   return (
@@ -44,29 +57,42 @@ export default function OutputSettings({ onSettingsChange, settings }: OutputSet
                 onChange={(_, checked) => handleChangeEnabledOutput(checked)}
               />
             }
-            label="Enable output settings"
+            label="Enable output"
             labelPlacement="start"
           />
         </FormGroup>
 
         {enabledOutput && (
-          <TextField
-            id="inputType"
-            label="Output format"
-            select
-            value={settings}
-            onChange={(e) => {
-              const selectedValue = e.target.value as OutputFormatType;
-              onSettingsChange(selectedValue);
-            }}
-            variant="outlined"
-          >
-            {OUTPUT_TYPES.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </TextField>
+          <Box sx={{ mb: 2 }}>
+            <TextField
+              fullWidth
+              id="outputFilePath"
+              label="Output file name"
+              value={settings.outputFileName}
+              onChange={(e) => handleOutputFileNameChange(e.target.value)}
+              variant="outlined"
+              style={{ marginBottom: "16px" }}
+              required
+              helperText="Specify the name of the output file (without extension)"
+            />
+            <TextField
+              fullWidth
+              id="inputType"
+              label="Output format"
+              select
+              value={selectedOutputType} // Default to the first output type
+              onChange={(e) => {
+                handleOutputFileFormatChange(e.target.value as OutputFormatType);
+              }}
+              variant="outlined"
+            >
+              {OUTPUT_TYPES.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
         )}
       </Box>
     </Box>

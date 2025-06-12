@@ -15,12 +15,12 @@ import {
   ContextRRMethodSettings,
   InputSettingsData,
   EvaluationSettingsData,
+  OutputSettingsData,
 } from "../ts/interfaces";
 import { OUTPUT_TYPES } from "@/ts/types";
-import { OutputFormatType } from "@/ts/types";
 import { baseConfigTemplate } from "@/services/templates/generalConfig";
 import { inputDatasetFilesConfig } from "@/services/templates/inputDataSetFilesConfig";
-import { ConfigGenerator } from "@/services/configGenerator";
+// import { ConfigGenerator } from "@/services/configGenerator";
 import DownloadIcon from "@mui/icons-material/Download";
 import { outputFilesSettingsConfig } from "@/services/templates/outputFIlesSettingsConfig";
 import { evaluationSettingsConfig } from "@/services/templates/evaluationSettings";
@@ -29,7 +29,7 @@ interface SummaryProps {
   selectedMethod: string;
   methodSettings: ContextRRMethodSettings;
   inputSettings: InputSettingsData | null;
-  outputSettings: OutputFormatType;
+  outputSettings: OutputSettingsData;
   evaluationSettings: EvaluationSettingsData | null;
 }
 
@@ -67,11 +67,14 @@ const Summary: React.FC<SummaryProps> = ({
     };
     console.log("inputSettingsTemplate", inputSettingsTemplate);
 
+    console.log("outputSettings --------", outputSettings);
+
     const valueUpdatesOutput = {
-      OUTPUT_FILE: outputSettings.includes("OUTPUT_FILE") ? "TRUE" : "FALSE",
-      OUTPUT_FILE_FORMAT: outputSettings.includes("RANKEDLIST") ? "RK" : "MATRIX",
-      OUTPUT_MATRIX_TYPE: outputSettings.includes("DISTANCE") ? "DIST" : "SIM",
-      OUTPUT_RK_FORMAT: outputSettings.includes("NUMERIC") ? "NUM" : "STR",
+      OUTPUT_FILE_PATH: outputSettings.outputFileName,
+      OUTPUT_FILE: outputSettings.enabledOutput ? "TRUE" : "FALSE",
+      OUTPUT_FILE_FORMAT: outputSettings.outputFileFormat.includes("RANKEDLIST") ? "RK" : "MATRIX",
+      OUTPUT_MATRIX_TYPE: outputSettings.outputFileFormat.includes("DISTANCE") ? "DIST" : "SIM",
+      OUTPUT_RK_FORMAT: outputSettings.outputFileFormat.includes("NUMERIC") ? "NUM" : "STR",
     };
 
     const outputSettingsTemplate = {
@@ -201,7 +204,7 @@ const Summary: React.FC<SummaryProps> = ({
 
       <Box sx={{ mb: 3 }}>
         <Typography variant="h6" color="primary" gutterBottom>
-          Input Configuration
+          Input
         </Typography>
         {inputSettings && (
           <List dense>
@@ -218,11 +221,12 @@ const Summary: React.FC<SummaryProps> = ({
 
       <Box sx={{ mb: 3 }}>
         <Typography variant="h6" color="primary" gutterBottom>
-          Output Configuration
+          Output
         </Typography>
         {outputSettings ? (
           <Typography variant="body1">
-            Format Type: {OUTPUT_TYPES.find((type) => type.value === outputSettings)?.label}
+            Format Type:{" "}
+            {OUTPUT_TYPES.find((type) => type.value === outputSettings.outputFileFormat)?.label}
           </Typography>
         ) : (
           <Typography variant="body2" color="textSecondary">
