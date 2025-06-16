@@ -10,6 +10,12 @@ import {
   Chip,
   Stack,
   Button,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
 } from "@mui/material";
 import {
   ContextRRMethodSettings,
@@ -86,24 +92,16 @@ const Summary: React.FC<SummaryProps> = ({
     };
     console.log("outputSettingsTemplate", outputSettingsTemplate);
 
-    const recallArrayToString = evaluationSettings?.recall
-      .map((value) => value.toString())
-      .join(", ");
-    const precisionArrayToString = evaluationSettings?.precision
-      .map((value) => value.toString())
-      .join(", ");
+    const recallArrayToString = evaluationSettings?.recall.map((value) => value.toString()).join(", ");
+    const precisionArrayToString = evaluationSettings?.precision.map((value) => value.toString()).join(", ");
 
     // TODO: tratar caso de recall e precision vazios
 
     const valueUpdatesEval = {
       EFFECTIVENESS_COMPUTE_MAP: evaluationSettings?.useMap ? "TRUE" : "FALSE",
       EFFICIENCY_EVAL: evaluationSettings?.useEfficiency ? "TRUE" : "FALSE",
-      EFFECTIVENESS_RECALLS_TO_COMPUTE: evaluationSettings?.recall.length
-        ? recallArrayToString
-        : "1",
-      EFFECTIVENESS_PRECISIONS_TO_COMPUTE: evaluationSettings?.precision.length
-        ? precisionArrayToString
-        : "1",
+      EFFECTIVENESS_RECALLS_TO_COMPUTE: evaluationSettings?.recall.length ? recallArrayToString : "1",
+      EFFECTIVENESS_PRECISIONS_TO_COMPUTE: evaluationSettings?.precision.length ? precisionArrayToString : "1",
     };
 
     const evaluationSettingsTemplate = {
@@ -115,6 +113,7 @@ const Summary: React.FC<SummaryProps> = ({
     };
 
     const generateContextRRSettings = (methodSettings: ContextRRMethodSettings) => {
+      console.log("methodSettings", methodSettings);
       const ContextRRValueUpdates = {
         PARAM_NONE_L: "1400",
         PARAM_CONTEXTRR_L: methodSettings?.L,
@@ -139,9 +138,7 @@ const Summary: React.FC<SummaryProps> = ({
     console.log("methodSettings", methodSettings);
 
     const settingsTemplate =
-      selectedMethod === "CPRR"
-        ? generateCPRRSettings(methodSettings)
-        : generateContextRRSettings(methodSettings);
+      selectedMethod === "CPRR" ? generateCPRRSettings(methodSettings) : generateContextRRSettings(methodSettings);
 
     const methodSettingsTemplate = {
       section: `${selectedMethod.toUpperCase()} SETTINGS`,
@@ -187,7 +184,8 @@ const Summary: React.FC<SummaryProps> = ({
           Selected Method: {selectedMethod}
         </Typography>
         {methodSettings && (
-          <List dense>
+          <>
+            {/* <List dense>
             {Object.entries(methodSettings).map(([key, value]) => (
               <ListItem key={key}>
                 <ListItemText
@@ -196,7 +194,31 @@ const Summary: React.FC<SummaryProps> = ({
                 />
               </ListItem>
             ))}
-          </List>
+          </List> */}
+            <TableContainer component={Paper} sx={{ mt: 2 }}>
+              <Table sx={{ minWidth: 300 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Parameter</TableCell>
+                    <TableCell align="right">Value</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {Object.entries(methodSettings).map(([key, value]) => (
+                    <TableRow key={key}>
+                      <TableCell component="th" scope="row">
+                        {key}
+                      </TableCell>
+                      <TableCell align="right">
+                        {console.log("value", value)}
+                        {typeof value === "boolean" ? (value ? "Yes" : "No") : value}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </>
         )}
       </Box>
 
@@ -223,10 +245,10 @@ const Summary: React.FC<SummaryProps> = ({
         <Typography variant="h6" color="primary" gutterBottom>
           Output
         </Typography>
-        {outputSettings ? (
+
+        {outputSettings.enabledOutput ? (
           <Typography variant="body1">
-            Format Type:{" "}
-            {OUTPUT_TYPES.find((type) => type.value === outputSettings.outputFileFormat)?.label}
+            Format Type: {OUTPUT_TYPES.find((type) => type.value === outputSettings.outputFileFormat)?.label}
           </Typography>
         ) : (
           <Typography variant="body2" color="textSecondary">
@@ -247,10 +269,7 @@ const Summary: React.FC<SummaryProps> = ({
               <ListItemText primary="MAP" secondary={evaluationSettings.useMap ? "Yes" : "No"} />
             </ListItem>
             <ListItem>
-              <ListItemText
-                primary="Efficiency"
-                secondary={evaluationSettings.useEfficiency ? "Yes" : "No"}
-              />
+              <ListItemText primary="Efficiency" secondary={evaluationSettings.useEfficiency ? "Yes" : "No"} />
             </ListItem>
             <ListItem>
               <ListItemText
@@ -258,13 +277,7 @@ const Summary: React.FC<SummaryProps> = ({
                 secondary={
                   <Stack direction="row" spacing={1} flexWrap="wrap">
                     {evaluationSettings.recall.map((value) => (
-                      <Chip
-                        key={value}
-                        label={value}
-                        size="small"
-                        color="primary"
-                        variant="outlined"
-                      />
+                      <Chip key={value} label={value} size="small" color="primary" variant="outlined" />
                     ))}
                   </Stack>
                 }
@@ -276,13 +289,7 @@ const Summary: React.FC<SummaryProps> = ({
                 secondary={
                   <Stack direction="row" spacing={1} flexWrap="wrap">
                     {evaluationSettings.precision.map((value) => (
-                      <Chip
-                        key={value}
-                        label={value}
-                        size="small"
-                        color="primary"
-                        variant="outlined"
-                      />
+                      <Chip key={value} label={value} size="small" color="primary" variant="outlined" />
                     ))}
                   </Stack>
                 }

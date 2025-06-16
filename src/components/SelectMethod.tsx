@@ -11,37 +11,21 @@ import {
   TextField,
 } from "@mui/material";
 import { useState } from "react";
-import {
-  METHODS,
-  CONTEXTRR_DEFAULT_SETTINGS,
-  CPRR_DEFAULT_SETTINGS,
-} from "./../ts/constants";
-import {
-  ContextRRMethodSettings,
-  CPRRMethodSettings,
-} from "./../ts/interfaces";
+import { METHODS, CONTEXTRR_DEFAULT_SETTINGS, CPRR_DEFAULT_SETTINGS } from "./../ts/constants";
+import { ContextRRMethodSettings, CPRRMethodSettings } from "./../ts/interfaces";
 
 interface SelectMethodProps {
   onMethodChange: (method: string) => void;
-  onSettingsChange: (
-    settings: ContextRRMethodSettings | CPRRMethodSettings
-  ) => void;
+  onSettingsChange: (settings: ContextRRMethodSettings | CPRRMethodSettings) => void;
   selectedMethod: string;
   methodSettings: CPRRMethodSettings | null;
 }
 
-export default function SelectMethod({
-  onMethodChange,
-  onSettingsChange,
-}: SelectMethodProps) {
-  // Default to the first method in the list
+export default function SelectMethod({ onMethodChange, onSettingsChange }: SelectMethodProps) {
   const [method, setMethod] = useState<string>(METHODS[0]);
-  const [settings, setSettings] = useState<
-    ContextRRMethodSettings | CPRRMethodSettings
-  >(CONTEXTRR_DEFAULT_SETTINGS);
+  const [settings, setSettings] = useState<ContextRRMethodSettings | CPRRMethodSettings>(CONTEXTRR_DEFAULT_SETTINGS);
 
-  const handleMethodChange = (event: SelectChangeEvent) => {
-    const newMethod = event.target.value;
+  const handleMethodChange = (newMethod: string) => {
     setMethod(newMethod);
     onMethodChange(newMethod);
 
@@ -51,8 +35,7 @@ export default function SelectMethod({
   };
 
   const handleSettingChange =
-    (field: keyof ContextRRMethodSettings) =>
-    (event: React.ChangeEvent<HTMLInputElement>) => {
+    (field: keyof ContextRRMethodSettings) => (event: React.ChangeEvent<HTMLInputElement>) => {
       const newSettings = {
         ...settings,
         [field]: Number(event.target.value),
@@ -62,10 +45,9 @@ export default function SelectMethod({
     };
 
   const handleSelectOptimizations = (value: boolean) => {
-    setSettings((prevSettings) => ({
-      ...prevSettings,
-      OPTIMIZATIONS: value,
-    }));
+    const newSettings = { ...settings, OPTIMIZATIONS: value } as ContextRRMethodSettings;
+    setSettings(newSettings);
+    onSettingsChange(newSettings);
   };
 
   return (
@@ -80,7 +62,11 @@ export default function SelectMethod({
     >
       <FormControl fullWidth>
         <InputLabel>Method</InputLabel>
-        <Select value={method} label="Method" onChange={handleMethodChange}>
+        <Select
+          value={method}
+          label="Method"
+          onChange={(event: SelectChangeEvent) => handleMethodChange(event.target.value)}
+        >
           {METHODS.map((methodOption) => (
             <MenuItem key={methodOption} value={methodOption}>
               {methodOption}
@@ -89,12 +75,7 @@ export default function SelectMethod({
         </Select>
       </FormControl>
 
-      <Box
-        component="form"
-        noValidate
-        autoComplete="off"
-        sx={{ gap: 2, display: "flex", flexDirection: "column" }}
-      >
+      <Box component="form" noValidate autoComplete="off" sx={{ gap: 2, display: "flex", flexDirection: "column" }}>
         <TextField
           id="L"
           label="L"
@@ -136,16 +117,10 @@ export default function SelectMethod({
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Switch
                   id="OPTIMIZATIONS"
-                  checked={
-                    "OPTIMIZATIONS" in settings ? settings.OPTIMIZATIONS : false
-                  }
-                  onChange={(event) =>
-                    handleSelectOptimizations(event.target.checked)
-                  }
+                  checked={"OPTIMIZATIONS" in settings ? settings.OPTIMIZATIONS : false}
+                  onChange={(event) => handleSelectOptimizations(event.target.checked)}
                 />
-                {"OPTIMIZATIONS" in settings && (
-                  <Box>{settings.OPTIMIZATIONS ? "on" : "off"}</Box>
-                )}
+                {"OPTIMIZATIONS" in settings && <Box>{settings.OPTIMIZATIONS ? "on" : "off"}</Box>}
               </Box>
             }
             label="OPTIMIZATIONS"
