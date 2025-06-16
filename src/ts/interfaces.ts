@@ -23,6 +23,7 @@ export interface ContextRRMethodSettings {
 }
 
 export interface InputSettingsData {
+  inputFile: string;
   inputType: InputType;
   inputFileList: string;
   inputFileClasses: string;

@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Box, Stepper, Step, StepLabel, Button, Typography } from "@mui/material";
 import SelectMethod from "./SelectMethod";
-import { CONTEXTRR_DEFAULT_SETTINGS, METHODS, STEPS } from "./../ts/constants";
+import { CONTEXTRR_DEFAULT_SETTINGS, DEFAULT_INPUT_SETTINGS, METHODS, STEPS } from "./../ts/constants";
 import {
   StepProps,
   LabelProps,
@@ -16,19 +16,23 @@ import OutputSettings from "./OutputSettings";
 import EvaluationSettings from "./EvaluationSettings";
 import Summary from "./Summary";
 import { OutputFormatType } from "@/ts/types";
+import ExecuteConfig from "./ExecuteConfig";
 
 export default function HorizontalLinearStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set<number>());
   const [selectedMethod, setSelectedMethod] = useState<string>(METHODS[0]);
   const [methodSettings, setMethodSettings] = useState<ContextRRMethodSettings>(CONTEXTRR_DEFAULT_SETTINGS);
-  const [inputSettings, setInputSettings] = useState<InputSettingsData | null>(null);
+  const [inputSettings, setInputSettings] = useState<InputSettingsData | null>(DEFAULT_INPUT_SETTINGS);
   const [outputSettings, setOutputSettings] = useState<OutputSettingsData>({
     outputFileName: "",
     outputFileFormat: "RANKEDLIST_NUMERIC" as OutputFormatType,
     enabledOutput: false,
   });
   const [evaluationSettings, setEvaluationSettings] = useState<EvaluationSettingsData | null>(null);
+
+  const [configFileToExecute, setConfigFileToExecute] = useState<Blob | null>(null);
+  const [configFileName, setConfigFileName] = useState<string>("");
 
   const isStepOptional = (step: number) => step === -1;
   const isStepSkipped = (step: number) => skipped.has(step);
@@ -43,12 +47,14 @@ export default function HorizontalLinearStepper() {
         return !!outputSettings;
       case 3:
         return true;
+      case 4:
+        return true;
       default:
         return false;
     }
   };
 
-  const stepTitle = ["Select method", "Input settings", "Output settings", "Evaluation settings", "Summary"];
+  const stepTitle = ["Select method", "Input settings", "Output settings", "Evaluation settings", "Summary", "Execute"];
 
   const handleNext = () => {
     let newSkipped = skipped;
@@ -60,6 +66,11 @@ export default function HorizontalLinearStepper() {
 
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
     setSkipped(newSkipped);
+
+    if (activeStep === STEPS.length - 1) {
+      console.log("Final step reached, preparing configuration file for execution");
+      console.log("configFileToExecute", configFileToExecute);
+    }
   };
 
   const handleBack = () => {
@@ -79,11 +90,11 @@ export default function HorizontalLinearStepper() {
     });
   };
 
-  const handleReset = () => {
-    setActiveStep(0);
-    setSelectedMethod("");
-    setMethodSettings(CONTEXTRR_DEFAULT_SETTINGS);
-  };
+  // const handleReset = () => {
+  //   setActiveStep(0);
+  //   setSelectedMethod("");
+  //   setMethodSettings(CONTEXTRR_DEFAULT_SETTINGS);
+  // };
 
   const renderStepContent = () => {
     switch (activeStep) {
@@ -116,7 +127,15 @@ export default function HorizontalLinearStepper() {
             inputSettings={inputSettings}
             outputSettings={outputSettings}
             evaluationSettings={evaluationSettings}
+            setConfigFileToExecute={setConfigFileToExecute}
+            setConfigFileName={setConfigFileName}
           />
+        );
+      case 5:
+        return (
+          configFileToExecute && (
+            <ExecuteConfig configFileToExecute={configFileToExecute} configFileName={configFileName} />
+          )
         );
       default:
         return <Typography>Step content in development</Typography>;
@@ -162,10 +181,9 @@ export default function HorizontalLinearStepper() {
       <Box sx={{ mt: 4, mb: 2 }}>
         {activeStep === STEPS.length ? (
           <>
-            <Typography sx={{ mb: 2 }}>All steps completed - you&apos;re finished</Typography>
-            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-              <Button onClick={handleReset}>Reset</Button>
-            </Box>
+            {configFileToExecute && (
+              <ExecuteConfig configFileToExecute={configFileToExecute} configFileName={configFileName} />
+            )}
           </>
         ) : (
           <>
@@ -182,7 +200,7 @@ export default function HorizontalLinearStepper() {
                 </Button>
               )}
               <Button onClick={handleNext} disabled={!canProceed()}>
-                {activeStep === STEPS.length - 1 ? "Finish" : "Next"}
+                {activeStep === STEPS.length - 1 ? "Execute" : "Next"}
               </Button>
             </Box>
           </>

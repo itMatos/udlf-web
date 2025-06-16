@@ -27,8 +27,9 @@ export const CONTEXTRR_DEFAULT_SETTINGS: ContextRRMethodSettings = {
 
 export const DEFAULT_INPUT_SETTINGS: InputSettingsData = {
   inputType: "AUTO",
-  inputFileList: "./../Datasets/mpeg7/lists_mpeg7.txt",
-  inputFileClasses: "./../Datasets/mpeg7/classes_mpeg7.txt",
+  inputFile: "/Users/italomatos/Documents/IC/UDLF/Datasets/mpeg7/ranked_lists/AIR.txt",
+  inputFileList: "/Users/italomatos/Documents/IC/UDLF/Datasets/mpeg7/lists_mpeg7.txt",
+  inputFileClasses: "/Users/italomatos/Documents/IC/UDLF/Datasets/mpeg7/classes_mpeg7.txt",
   datasetImagesPath: "/Users/italomatos/Documents/IC/UDLF/Datasets/mpeg7/original/",
 };
 

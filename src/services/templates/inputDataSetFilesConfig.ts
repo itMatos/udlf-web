@@ -11,21 +11,18 @@ export const inputDatasetFilesConfig: ConfigTemplate = {
     {
       key: "INPUT_FILE_FORMAT",
       value: "AUTO",
-      description:
-        "#(AUTO|MATRIX|RK): Type of input file. Use AUTO  for automatic format detection",
+      description: "#(AUTO|MATRIX|RK): Type of input file. Use AUTO  for automatic format detection",
     },
     {
       key: "INPUT_RK_FORMAT",
       value: "NUM",
-      description:
-        "#(NUM|STR): Format of ranked lists file (only used when INPUT_FILE_FORMAT = RK)",
+      description: "#(NUM|STR): Format of ranked lists file (only used when INPUT_FILE_FORMAT = RK)",
       options: ["NUM", "STR"],
     },
     {
       key: "MATRIX_TO_RK_SORTING",
       value: "HEAP",
-      description:
-        "#(HEAP|INSERTION): Sorting method for the first sorting (conversion of matrix to ranked lists)",
+      description: "#(HEAP|INSERTION): Sorting method for the first sorting (conversion of matrix to ranked lists)",
       options: ["HEAP", "INSERTION"],
     },
     {
@@ -35,9 +32,8 @@ export const inputDatasetFilesConfig: ConfigTemplate = {
     },
     {
       key: "INPUT_FILE",
-      value: "./../Datasets/mpeg7/ranked_lists/AIR.txt",
-      description:
-        "#Path of the main input file (matrix/ranked lists) for UDL tasks",
+      value: "/Users/italomatos/Documents/IC/UDLF/Datasets/mpeg7/ranked_lists/AIR.txt",
+      description: "#Path of the main input file (matrix/ranked lists) for UDL tasks",
     },
     {
       key: "INPUT_FILE_LIST",
@@ -47,8 +43,7 @@ export const inputDatasetFilesConfig: ConfigTemplate = {
     {
       key: "INPUT_FILE_CLASSES",
       value: "",
-      description:
-        "#Path of the classes file (only used when EFFECTIVENESS_EVAL = TRUE)",
+      description: "#Path of the classes file (only used when EFFECTIVENESS_EVAL = TRUE)",
     },
     {
       key: "INPUT_IMAGES_PATH",

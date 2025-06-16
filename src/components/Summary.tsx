@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Typography,
@@ -37,6 +37,8 @@ interface SummaryProps {
   inputSettings: InputSettingsData | null;
   outputSettings: OutputSettingsData;
   evaluationSettings: EvaluationSettingsData | null;
+  setConfigFileToExecute: (file: Blob) => void;
+  setConfigFileName: (fileName: string) => void;
 }
 
 const Summary: React.FC<SummaryProps> = ({
@@ -45,6 +47,8 @@ const Summary: React.FC<SummaryProps> = ({
   inputSettings,
   outputSettings,
   evaluationSettings,
+  setConfigFileToExecute,
+  setConfigFileName,
 }) => {
   const generateConfigFile = () => {
     const baseConfig = {
@@ -161,6 +165,12 @@ const Summary: React.FC<SummaryProps> = ({
 
     const generator = new ConfigGenerator(allTemplates);
     const blob = generator.generateFile();
+
+    return blob;
+  };
+
+  const generateConfigFileToDownload = () => {
+    const blob = generateConfigFile();
     const fileNameToDownload = `${selectedMethod}_config.ini`;
 
     const url = window.URL.createObjectURL(blob);
@@ -172,6 +182,13 @@ const Summary: React.FC<SummaryProps> = ({
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
   };
+
+  useEffect(() => {
+    const configFile = generateConfigFile();
+    setConfigFileToExecute(configFile);
+    setConfigFileName(`${selectedMethod}_config.ini`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Paper elevation={3} sx={{ p: 3 }}>
@@ -185,16 +202,6 @@ const Summary: React.FC<SummaryProps> = ({
         </Typography>
         {methodSettings && (
           <>
-            {/* <List dense>
-            {Object.entries(methodSettings).map(([key, value]) => (
-              <ListItem key={key}>
-                <ListItemText
-                  primary={key}
-                  secondary={typeof value === "boolean" ? (value ? "Yes" : "No") : value}
-                />
-              </ListItem>
-            ))}
-          </List> */}
             <TableContainer component={Paper} sx={{ mt: 2 }}>
               <Table sx={{ minWidth: 300 }} aria-label="simple table">
                 <TableHead>
@@ -309,7 +316,7 @@ const Summary: React.FC<SummaryProps> = ({
           <Button
             variant="contained"
             color="primary"
-            onClick={generateConfigFile}
+            onClick={() => generateConfigFileToDownload()}
             sx={{ mt: 2 }}
             startIcon={<DownloadIcon />}
           >
