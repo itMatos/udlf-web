@@ -37,26 +37,16 @@ export default function OutputSettings({ onSettingsChange, settings }: OutputSet
     <Box
       sx={{
         minWidth: 150,
-        maxWidth: 400,
+        maxWidth: 500,
         gap: 2,
         display: "flex",
         flexDirection: "column",
       }}
     >
-      <Box
-        component="form"
-        noValidate
-        autoComplete="off"
-        sx={{ gap: 2, display: "flex", flexDirection: "column" }}
-      >
+      <Box component="form" noValidate autoComplete="off" sx={{ gap: 2, display: "flex", flexDirection: "column" }}>
         <FormGroup>
           <FormControlLabel
-            control={
-              <Switch
-                checked={enabledOutput}
-                onChange={(_, checked) => handleChangeEnabledOutput(checked)}
-              />
-            }
+            control={<Switch checked={enabledOutput} onChange={(_, checked) => handleChangeEnabledOutput(checked)} />}
             label="Enable output"
             labelPlacement="start"
           />

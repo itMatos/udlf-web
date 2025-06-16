@@ -26,7 +26,7 @@ import {
 import { OUTPUT_TYPES } from "@/ts/types";
 import { baseConfigTemplate } from "@/services/templates/generalConfig";
 import { inputDatasetFilesConfig } from "@/services/templates/inputDataSetFilesConfig";
-// import { ConfigGenerator } from "@/services/configGenerator";
+import { ConfigGenerator } from "@/services/configGenerator";
 import DownloadIcon from "@mui/icons-material/Download";
 import { outputFilesSettingsConfig } from "@/services/templates/outputFIlesSettingsConfig";
 import { evaluationSettingsConfig } from "@/services/templates/evaluationSettings";
@@ -159,18 +159,18 @@ const Summary: React.FC<SummaryProps> = ({
     ];
     console.log("allTemplates", allTemplates);
 
-    // const generator = new ConfigGenerator(allTemplates);
-    // const blob = generator.generateFile();
-    // const fileNameToDownload = `${selectedMethod}_config.ini`;
+    const generator = new ConfigGenerator(allTemplates);
+    const blob = generator.generateFile();
+    const fileNameToDownload = `${selectedMethod}_config.ini`;
 
-    // const url = window.URL.createObjectURL(blob);
-    // const link = document.createElement("a");
-    // link.href = url;
-    // link.download = fileNameToDownload;
-    // document.body.appendChild(link);
-    // link.click();
-    // document.body.removeChild(link);
-    // window.URL.revokeObjectURL(url);
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileNameToDownload;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   };
 
   return (
@@ -247,9 +247,12 @@ const Summary: React.FC<SummaryProps> = ({
         </Typography>
 
         {outputSettings.enabledOutput ? (
-          <Typography variant="body1">
-            Format Type: {OUTPUT_TYPES.find((type) => type.value === outputSettings.outputFileFormat)?.label}
-          </Typography>
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="body1">File name: {outputSettings.outputFileName || "Not specified"}</Typography>
+            <Typography variant="body1">
+              Format Type: {OUTPUT_TYPES.find((type) => type.value === outputSettings.outputFileFormat)?.label}
+            </Typography>
+          </Box>
         ) : (
           <Typography variant="body2" color="textSecondary">
             No output settings configured.

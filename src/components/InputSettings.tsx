@@ -1,12 +1,12 @@
 "use client";
 import { useState } from "react";
-import { Box, IconButton, InputAdornment, MenuItem, Modal, TextField, Tooltip, Typography } from "@mui/material";
+import { Box, MenuItem, Modal, TextField, Tooltip, Typography } from "@mui/material";
 import { InputSettingsData } from "./../ts/interfaces";
-import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { DEFAULT_INPUT_SETTINGS } from "./../ts/constants";
-import FileOpenIcon from "@mui/icons-material/FileOpen";
-import { commonFilters, useFs } from "use-fs";
+// import FileOpenIcon from "@mui/icons-material/FileOpen";
+import { InputType } from "@/ts/types";
+// import { commonFilters, useFs } from "use-fs";
 
 export interface InputSettingsProps {
   onSettingsChange: (settings: InputSettingsData | null) => void;
@@ -27,11 +27,11 @@ const INPUT_TYPES = [
   },
 ];
 
-type FileState = {
-  path: string;
-  content: string | null;
-  previousContent: string | null;
-};
+// type FileState = {
+//   path: string;
+//   content: string | null;
+//   previousContent: string | null;
+// };
 
 export default function InputSettings({ onSettingsChange }: InputSettingsProps) {
   const [inputSettings, setInputSettings] = useState<InputSettingsData>(DEFAULT_INPUT_SETTINGS);
@@ -40,23 +40,23 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [fileContentToDisplay, setFileContentToDisplay] = useState("");
   const [currentSelectedFileName, setCurrentSelectedFileName] = useState("");
-  const [selectedFile, setSelectedFile] = useState<FileState>({
-    path: "",
-    content: null,
-    previousContent: null,
-  });
-  const [fileHistory, setFileHistory] = useState<
-    Array<{
-      type: "added" | "removed";
-      path: string;
-      timestamp: number;
-    }>
-  >([]);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [editableContent, setEditableContent] = useState("");
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  // const [selectedFile, setSelectedFile] = useState<FileState>({
+  //   path: "",
+  //   content: null,
+  //   previousContent: null,
+  // });
+  // const [fileHistory, setFileHistory] = useState<
+  //   Array<{
+  //     type: "added" | "removed";
+  //     path: string;
+  //     timestamp: number;
+  //   }>
+  // >([]);
+  // const [isEditMode, setIsEditMode] = useState(false);
+  // const [editableContent, setEditableContent] = useState("");
+  // const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
-  const pathNameToShow = "/Users/italomatos/Documents/UDLF/Datasets/";
+  // const pathNameToShow = "/Users/italomatos/Documents/UDLF/Datasets/";
 
   // function to validate the input fields
   const validateField = (name: keyof InputSettingsData, value: string): string => {
@@ -78,10 +78,8 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
     const error = validateField(name, value);
     setInputSettings((prev) => ({
       ...prev,
-      [name]: pathNameToShow + value,
+      [name]: value,
     }));
-    console.log("name handle change", name);
-    console.log("value handle change", value);
 
     setErrors((prev) => ({
       ...prev,
@@ -94,80 +92,80 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
     });
   };
 
-  const { onDirectorySelection, onClear, files, isBrowserSupported, writeFile, setFiles } = useFs({
-    filters: commonFilters,
-    onFilesAdded: (newFiles, previousFiles) => {
-      console.log("onFilesAdded", newFiles, previousFiles);
-      const newEntries = Array.from(newFiles.keys()).map((path) => ({
-        type: "added" as const,
-        path,
-        timestamp: Date.now(),
-      }));
-      setFileHistory((prev) => [...newEntries, ...prev].slice(0, 50));
-    },
-    onFilesChanged: (changedFiles, previousFiles) => {
-      console.log("onFilesChanged", changedFiles, previousFiles);
+  // const { onDirectorySelection, onClear, files, isBrowserSupported, writeFile, setFiles } = useFs({
+  //   filters: commonFilters,
+  //   onFilesAdded: (newFiles, previousFiles) => {
+  //     console.log("onFilesAdded", newFiles, previousFiles);
+  //     const newEntries = Array.from(newFiles.keys()).map((path) => ({
+  //       type: "added" as const,
+  //       path,
+  //       timestamp: Date.now(),
+  //     }));
+  //     setFileHistory((prev) => [...newEntries, ...prev].slice(0, 50));
+  //   },
+  //   onFilesChanged: (changedFiles, previousFiles) => {
+  //     console.log("onFilesChanged", changedFiles, previousFiles);
 
-      const changedFilesArray = Array.from(changedFiles);
-      if (changedFilesArray.length > 0) {
-        const [filePath, content] = changedFilesArray[0];
-        const previousContent = previousFiles.get(filePath) || null;
-        setSelectedFile({ path: filePath, content, previousContent });
-      }
-    },
-    onFilesDeleted: (deletedFiles, previousFiles) => {
-      console.log("onFilesDeleted", deletedFiles, previousFiles);
-      if (deletedFiles.has(selectedFile.path)) {
-        setSelectedFile({ path: "", content: null, previousContent: null });
-      }
-      const deletedEntries = Array.from(deletedFiles.keys()).map((path) => ({
-        type: "removed" as const,
-        path,
-        timestamp: Date.now(),
-      }));
-      setFileHistory((prev) => [...deletedEntries, ...prev].slice(0, 50));
-    },
-  });
+  //     const changedFilesArray = Array.from(changedFiles);
+  //     if (changedFilesArray.length > 0) {
+  //       const [filePath, content] = changedFilesArray[0];
+  //       const previousContent = previousFiles.get(filePath) || null;
+  //       setSelectedFile({ path: filePath, content, previousContent });
+  //     }
+  //   },
+  //   onFilesDeleted: (deletedFiles, previousFiles) => {
+  //     console.log("onFilesDeleted", deletedFiles, previousFiles);
+  //     if (deletedFiles.has(selectedFile.path)) {
+  //       setSelectedFile({ path: "", content: null, previousContent: null });
+  //     }
+  //     const deletedEntries = Array.from(deletedFiles.keys()).map((path) => ({
+  //       type: "removed" as const,
+  //       path,
+  //       timestamp: Date.now(),
+  //     }));
+  //     setFileHistory((prev) => [...deletedEntries, ...prev].slice(0, 50));
+  //   },
+  // });
 
-  const handleFileSelectFs = (path: string) => {
-    const content = files.get(path) || null;
-    setSelectedFile({
-      path,
-      content,
-      previousContent: null,
-    });
-  };
+  // const handleFileSelectFs = (path: string) => {
+  //   const content = files.get(path) || null;
+  //   setSelectedFile({
+  //     path,
+  //     content,
+  //     previousContent: null,
+  //   });
+  // };
 
-  const handleFileSelect = async (fieldName: keyof InputSettingsData) => {
-    onDirectorySelection();
-    try {
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = ".txt,.csv";
+  // const handleFileSelect = async (fieldName: keyof InputSettingsData) => {
+  //   onDirectorySelection();
+  //   try {
+  //     const input = document.createElement("input");
+  //     input.type = "file";
+  //     input.accept = ".txt,.csv";
 
-      input.onchange = (e) => {
-        const file = (e.target as HTMLInputElement).files?.[0];
-        if (file) {
-          handleChange(fieldName, file.name);
+  //     input.onchange = (e) => {
+  //       const file = (e.target as HTMLInputElement).files?.[0];
+  //       if (file) {
+  //         handleChange(fieldName, file.name);
 
-          const reader = new FileReader();
-          reader.onload = (event) => {
-            setFileContentToDisplay(event.target?.result as string);
-            setCurrentSelectedFileName(file.name);
-          };
-          reader.readAsText(file);
-        }
-      };
+  //         const reader = new FileReader();
+  //         reader.onload = (event) => {
+  //           setFileContentToDisplay(event.target?.result as string);
+  //           setCurrentSelectedFileName(file.name);
+  //         };
+  //         reader.readAsText(file);
+  //       }
+  //     };
 
-      input.click();
-    } catch (error) {
-      console.error("Error selecting file:", error);
-    }
-  };
+  //     input.click();
+  //   } catch (error) {
+  //     console.error("Error selecting file:", error);
+  //   }
+  // };
 
-  const handleViewListFile = () => {
-    setIsModalOpen(true);
-  };
+  // const handleViewListFile = () => {
+  //   setIsModalOpen(true);
+  // };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -192,7 +190,7 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
   return (
     <Box
       sx={{
-        minWidth: 300,
+        minWidth: 500,
         maxWidth: 500,
         gap: 2,
         display: "flex",
@@ -208,7 +206,7 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
         <TextField
           select
           label="Input Type"
-          value={inputSettings.inputType}
+          value={inputSettings.inputType as InputType}
           onChange={(e) => handleChange("inputType", e.target.value)}
           variant="outlined"
           fullWidth
@@ -233,24 +231,24 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
             onChange={(e) => handleChange("inputFileList", e.target.value)}
             error={!!errors.inputFileList}
             helperText={errors.inputFileList}
-            slotProps={{
-              input: {
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => handleFileSelect("inputFileList")} edge="end">
-                      <FolderOpenIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              },
-            }}
+            // slotProps={{
+            //   input: {
+            //     endAdornment: (
+            //       <InputAdornment position="end">
+            //         <IconButton onClick={() => handleFileSelect("inputFileList")} edge="end">
+            //           <FolderOpenIcon />
+            //         </IconButton>
+            //       </InputAdornment>
+            //     ),
+            //   },
+            // }}
             fullWidth
           />
-          {inputSettings.inputFileList && (
+          {/* {inputSettings.inputFileList && (
             <IconButton onClick={() => handleViewListFile()} aria-label="view image list file content" color="primary">
               <FileOpenIcon />
             </IconButton>
-          )}
+          )} */}
         </Box>
 
         <TextField
@@ -259,17 +257,17 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
           onChange={(e) => handleChange("inputFileClasses", e.target.value)}
           error={!!errors.inputFileClasses}
           helperText={errors.inputFileClasses}
-          slotProps={{
-            input: {
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => handleFileSelect("inputFileClasses")} edge="end">
-                    <FolderOpenIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            },
-          }}
+          // slotProps={{
+          //   input: {
+          //     endAdornment: (
+          //       <InputAdornment position="end">
+          //         <IconButton onClick={() => handleFileSelect("inputFileClasses")} edge="end">
+          //           <FolderOpenIcon />
+          //         </IconButton>
+          //       </InputAdornment>
+          //     ),
+          //   },
+          // }}
         />
 
         <TextField
@@ -278,17 +276,17 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
           onChange={(e) => handleChange("datasetImagesPath", e.target.value)}
           error={!!errors.datasetImagesPath}
           helperText={errors.datasetImagesPath || "Enter the path to dataset images"}
-          slotProps={{
-            input: {
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => handleFileSelect("datasetImagesPath")} edge="end">
-                    <FolderOpenIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            },
-          }}
+          // slotProps={{
+          //   input: {
+          //     endAdornment: (
+          //       <InputAdornment position="end">
+          //         <IconButton onClick={() => handleFileSelect("datasetImagesPath")} edge="end">
+          //           <FolderOpenIcon />
+          //         </IconButton>
+          //       </InputAdornment>
+          //     ),
+          //   },
+          // }}
         />
 
         <Modal
