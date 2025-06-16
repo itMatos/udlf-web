@@ -1,7 +1,8 @@
-import { Box } from "@mui/material";
+import { Alert, Box, Button, Snackbar } from "@mui/material";
 import React, { useState } from "react";
 import { executeUDLF } from "@/services/api/UDLF-api";
 import { ResponseApi } from "@/services/api/types";
+import TerminalIcon from "@mui/icons-material/Terminal";
 
 export default function ExecuteConfig({
   configFileToExecute,
@@ -11,15 +12,40 @@ export default function ExecuteConfig({
   configFileName: string;
 }) {
   const [resultUdlf, setResultUdlf] = useState<ResponseApi | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
+  const [showWarningMessage, setShowWarningMessage] = useState<boolean>(false);
+
+  const handleShowSuccessMessage = () => {
+    setShowSuccessMessage(true);
+    setTimeout(() => {
+      setShowSuccessMessage(false);
+    }, 3000); // Hide after 3 seconds
+  };
+
+  const handleShowWarningMessage = () => {
+    setShowWarningMessage(true);
+    setTimeout(() => {
+      setShowWarningMessage(false);
+    }, 10000);
+  };
 
   const handleExecute = async () => {
+    setIsLoading(true);
     try {
       const result = (await executeUDLF(configFileToExecute, configFileName)) as ResponseApi;
       setResultUdlf(result);
       console.log("UDLF execution result:", result);
       console.log("Execution result:", result);
+      handleShowSuccessMessage();
+      if (result.error) {
+        console.warn("Execution error:", result.error);
+        handleShowWarningMessage();
+      }
     } catch (error) {
       console.error("Error executing configuration:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -31,20 +57,37 @@ export default function ExecuteConfig({
         {resultUdlf ? (
           <Box>
             <h3>Execution Result</h3>
+            <Snackbar
+              anchorOrigin={{ vertical: "top", horizontal: "right" }}
+              open={showSuccessMessage}
+              autoHideDuration={3000}
+              message={resultUdlf.message || "Execution completed successfully!"}
+            >
+              <Alert severity="success" sx={{ width: "100%" }} variant="filled">
+                {resultUdlf.message || "Execution completed successfully!"}
+              </Alert>
+            </Snackbar>
+
+            <Snackbar
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              open={showWarningMessage}
+              message={resultUdlf.error || "Execution completed with warnings!"}
+            >
+              <Alert severity="warning" sx={{ width: "100%" }}>
+                <pre>{resultUdlf.error || "Execution completed successfully!"}</pre>
+              </Alert>
+            </Snackbar>
+
             <p>
-              <strong>Message:</strong> {resultUdlf.message}
-            </p>
-            <p>
-              <strong>Error:</strong> {resultUdlf.error}
-            </p>
-            <p>
-              <strong>Output:</strong> {resultUdlf.output}
+              <strong>Output:</strong> <pre>{resultUdlf.output}</pre>
             </p>
           </Box>
         ) : (
           <Box>
             <h3>Execute Configuration</h3>
-            <button onClick={handleExecute}>Execute</button>
+            <Button variant="contained" startIcon={<TerminalIcon />} onClick={handleExecute} loading={isLoading}>
+              Run
+            </Button>
           </Box>
         )}
       </Box>
