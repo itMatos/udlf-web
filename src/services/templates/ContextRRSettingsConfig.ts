@@ -6,8 +6,7 @@ export const ContextRRSettingsConfig: ConfigTemplate = {
     {
       key: "PARAM_NONE_L",
       value: "1400",
-      description:
-        "#(TUint): Size of ranked lists (must be lesser than SIZE_DATASET)",
+      description: "#(TUint): Size of ranked lists (must be lesser than SIZE_DATASET)",
     },
     {
       key: "PARAM_CONTEXTRR_L",

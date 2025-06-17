@@ -1,4 +1,4 @@
-import { ContextRRParams } from "../models/contextrr";
+import { ContextRRParams } from "../methods/contextrr";
 
 export const CONTEXTRR_DEFAULT_PARAMS: ContextRRParams = {
   L: 25,

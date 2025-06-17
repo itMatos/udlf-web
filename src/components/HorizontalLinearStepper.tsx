@@ -2,22 +2,17 @@
 import React, { useState } from "react";
 import { Box, Stepper, Step, StepLabel, Button, Typography } from "@mui/material";
 import SelectMethod from "./SelectMethod";
-import { DEFAULT_INPUT_SETTINGS, METHODS, STEPS } from "./../ts/constants";
-import {
-  StepProps,
-  LabelProps,
-  InputSettingsData,
-  EvaluationSettingsData,
-  OutputSettingsData,
-} from "./../ts/interfaces";
+import { StepProps, LabelProps, InputSettingsData, EvaluationSettingsData, OutputSettingsData } from "../ts/interfaces";
 import InputSettings from "./InputSettings";
 import OutputSettings from "./OutputSettings";
 import EvaluationSettings from "./EvaluationSettings";
 import Summary from "./Summary";
-import { OutputFormatType } from "@/ts/types";
+import { OutputFormatType } from "@/ts/common";
 import ExecuteConfig from "./ExecuteConfig";
-import { ContextRRParams } from "@/ts/models/contextrr";
+import { ContextRRParams } from "@/ts/methods/contextrr";
 import { CONTEXTRR_DEFAULT_PARAMS } from "@/ts/constants/contextrr";
+import { METHODS, STEPS } from "@/ts/constants/common";
+import { DEFAULT_INPUT_SETTINGS } from "@/ts/constants";
 
 export default function HorizontalLinearStepper() {
   const [activeStep, setActiveStep] = useState(0);

@@ -1,10 +1,6 @@
 import { CONTEXTRR_DEFAULT_PARAMS } from "./constants/contextrr";
 import { EvaluationSettingsData, InputSettingsData, SummaryData } from "./interfaces";
-import { OutputFormatType } from "./types";
-
-export const STEPS = ["Select method", "Input settings", "Output settings", "Evaluation settings", "Summary"] as const;
-
-export const METHODS = ["CONTEXTRR", "CPRR"] as const;
+import { OutputFormatType } from "./common";
 
 export const DEFAULT_INPUT_SETTINGS: InputSettingsData = {
   inputType: "AUTO",
@@ -30,3 +26,10 @@ export const DEFAULT_SETTING: SummaryData = {
   outputSettings: DEFAULT_OUTPUT_SETTINGS,
   evaluationSettings: DEFAULT_EVALUATION_SETTINGS,
 };
+
+export const OUTPUT_TYPES = [
+  { value: "RANKEDLIST_NUMERIC", label: "Ranked List (numeric)" },
+  { value: "RANKEDLIST_STRING", label: "Ranked List (string)" },
+  { value: "SIMILARITY_MATRIX", label: "Similarity Matrix" },
+  { value: "DISTANCE_MATRIX", label: "Distance Matrix" },
+] as const;

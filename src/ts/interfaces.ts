@@ -1,5 +1,5 @@
-import { ContextRRParams } from "./models/contextrr";
-import { InputType, OutputFormatType } from "./types";
+import { ContextRRParams } from "./methods/contextrr";
+import { InputType, OutputFormatType } from "./common";
 
 export interface StepProps {
   completed?: boolean;
@@ -7,6 +7,11 @@ export interface StepProps {
 
 export interface LabelProps {
   optional?: React.ReactNode;
+}
+
+export interface InputSettingsProps {
+  onSettingsChange: (settings: InputSettingsData | null) => void;
+  settings: InputSettingsData | null;
 }
 
 export interface CPRRMethodSettings {

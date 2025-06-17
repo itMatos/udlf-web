@@ -29,26 +29,22 @@ export const outputFilesSettingsConfig: ConfigTemplate = {
     {
       key: "OUTPUT_FILE_PATH",
       value: "output test",
-      description:
-        "#Path of the output file(s) (do not add the extension -> .txt, .html, and others)",
+      description: "#Path of the output file(s) (do not add the extension -> .txt, .html, and others)",
     },
     {
       key: "OUTPUT_HTML_RK_PER_FILE",
       value: 1,
-      description:
-        "#(TUint): Number of ranked lists for each html file (only used when OUTPUT_RK_FORMAT = HTML)",
+      description: "#(TUint): Number of ranked lists for each html file (only used when OUTPUT_RK_FORMAT = HTML)",
     },
     {
       key: "OUTPUT_HTML_RK_SIZE",
       value: 20,
-      description:
-        "#(TUint): Number of images per ranked list (only used when OUTPUT_RK_FORMAT = HTML)",
+      description: "#(TUint): Number of images per ranked list (only used when OUTPUT_RK_FORMAT = HTML)",
     },
     {
       key: "OUTPUT_HTML_RK_COLORS",
       value: "TRUE",
-      description:
-        "#(TBool): Use colors to highlight wrong and query images (only works when EFFICIENCY_EVAL = TRUE)",
+      description: "#(TBool): Use colors to highlight wrong and query images (only works when EFFICIENCY_EVAL = TRUE)",
     },
     {
       key: "OUTPUT_HTML_RK_BEFORE_AFTER",

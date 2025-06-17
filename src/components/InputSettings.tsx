@@ -1,37 +1,11 @@
 "use client";
 import { useState } from "react";
 import { Box, MenuItem, Modal, TextField, Tooltip, Typography } from "@mui/material";
-import { InputSettingsData } from "./../ts/interfaces";
+import { InputSettingsData, InputSettingsProps } from "../ts/interfaces";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import { DEFAULT_INPUT_SETTINGS } from "./../ts/constants";
-// import FileOpenIcon from "@mui/icons-material/FileOpen";
-import { InputType } from "@/ts/types";
-// import { commonFilters, useFs } from "use-fs";
-
-export interface InputSettingsProps {
-  onSettingsChange: (settings: InputSettingsData | null) => void;
-  settings: InputSettingsData | null;
-}
-
-const INPUT_TYPES = [
-  {
-    value: "AUTO",
-    label: "Auto",
-    description: "Use auto input format detection",
-  },
-  { value: "MATRIX", label: "Matrix", description: "Use matrix input format" },
-  {
-    value: "RK",
-    label: "Ranked lists",
-    description: "Use ranked lists input format",
-  },
-];
-
-// type FileState = {
-//   path: string;
-//   content: string | null;
-//   previousContent: string | null;
-// };
+import { DEFAULT_INPUT_SETTINGS } from "../ts/constants";
+import { INPUT_TYPES } from "@/ts/constants/common";
+import { InputType } from "@/ts/common";
 
 export default function InputSettings({ onSettingsChange }: InputSettingsProps) {
   const [inputSettings, setInputSettings] = useState<InputSettingsData>(DEFAULT_INPUT_SETTINGS);

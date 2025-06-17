@@ -11,9 +11,7 @@ export class ConfigGenerator {
   private generateSection(template: ConfigTemplate): string {
     const header = `#########################\n# ${template.section} #\n#########################`;
 
-    const parameters = template.parameters
-      .map((param) => this.formatParameter(param))
-      .join("\n");
+    const parameters = template.parameters.map((param) => this.formatParameter(param)).join("\n");
 
     return `${header}\n${parameters}\n`;
   }
@@ -25,9 +23,7 @@ export class ConfigGenerator {
   }
 
   public generate(): string {
-    return this.templates
-      .map((template) => this.generateSection(template))
-      .join("\n\n");
+    return this.templates.map((template) => this.generateSection(template)).join("\n\n");
   }
 
   public generateFile(): Blob {

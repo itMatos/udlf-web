@@ -12,8 +12,7 @@ export const baseConfigTemplate: ConfigTemplate = {
     {
       key: "UDL_METHOD",
       value: "",
-      description:
-        "(NONE|CPRR|RLRECOM|...): Selection of method to be executed",
+      description: "(NONE|CPRR|RLRECOM|...): Selection of method to be executed",
       options: [
         "NONE",
         "CPRR",

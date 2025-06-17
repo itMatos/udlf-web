@@ -31,14 +31,12 @@ export const evaluationSettingsConfig: ConfigTemplate = {
     {
       key: "EFFECTIVENESS_RECALLS_TO_COMPUTE",
       value: "",
-      description:
-        "#(TUint [',' TUint]*): Recalls to be computed (unsigned integers separated by commas)",
+      description: "#(TUint [',' TUint]*): Recalls to be computed (unsigned integers separated by commas)",
     },
     {
       key: "EFFECTIVENESS_PRECISIONS_TO_COMPUTE",
       value: "",
-      description:
-        "#(TUint [',' TUint]*): Precisions to be computed (unsigned integers separated by commas)",
+      description: "#(TUint [',' TUint]*): Precisions to be computed (unsigned integers separated by commas)",
     },
   ],
 };

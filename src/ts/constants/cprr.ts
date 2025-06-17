@@ -1,4 +1,4 @@
-import { CPRRParams } from "../models/cprr";
+import { CPRRParams } from "../methods/cprr";
 
 export const CPRR_DEFAULT_PARAMS: CPRRParams = {
   L: 400,

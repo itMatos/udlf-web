@@ -18,14 +18,14 @@ import {
   TableBody,
 } from "@mui/material";
 import { InputSettingsData, EvaluationSettingsData, OutputSettingsData } from "../ts/interfaces";
-import { OUTPUT_TYPES } from "@/ts/types";
 import { baseConfigTemplate } from "@/services/templates/generalConfig";
 import { inputDatasetFilesConfig } from "@/services/templates/inputDataSetFilesConfig";
 import { ConfigGenerator } from "@/services/configGenerator";
 import DownloadIcon from "@mui/icons-material/Download";
 import { outputFilesSettingsConfig } from "@/services/templates/outputFIlesSettingsConfig";
 import { evaluationSettingsConfig } from "@/services/templates/evaluationSettings";
-import { ContextRRParams } from "@/ts/models/contextrr";
+import { ContextRRParams } from "@/ts/methods/contextrr";
+import { OUTPUT_TYPES } from "@/ts/constants";
 
 interface SummaryProps {
   selectedMethod: string;

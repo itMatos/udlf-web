@@ -11,11 +11,11 @@ import {
   TextField,
 } from "@mui/material";
 import { useState } from "react";
-import { METHODS } from "./../ts/constants";
-import { CPRRMethodSettings } from "./../ts/interfaces";
-import { ContextRRParams } from "@/ts/models/contextrr";
+import { CPRRMethodSettings } from "../ts/interfaces";
+import { ContextRRParams } from "@/ts/methods/contextrr";
 import { CONTEXTRR_DEFAULT_PARAMS } from "@/ts/constants/contextrr";
 import { CPRR_DEFAULT_PARAMS } from "@/ts/constants/cprr";
+import { METHODS } from "@/ts/constants/common";
 
 interface SelectMethodProps {
   onMethodChange: (method: string) => void;
