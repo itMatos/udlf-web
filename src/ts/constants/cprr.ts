@@ -1,7 +1,7 @@
-import { CPRRParams } from "../methods/cprr";
+import { CPRR } from "../interfaces/cprr";
 
-export const CPRR_DEFAULT_PARAMS: CPRRParams = {
+export const CPRR_DEFAULT_PARAMS: CPRR = {
   L: 400,
   K: 20,
   T: 2,
-};
+} as const;

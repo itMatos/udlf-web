@@ -1,4 +1,4 @@
-export interface ContextRRParams {
+export interface ContextRR {
   L: number;
   K: number;
   T: number;

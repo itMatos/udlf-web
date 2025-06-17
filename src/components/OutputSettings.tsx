@@ -1,8 +1,8 @@
-import { OutputSettingsData } from "@/ts/interfaces";
-import { OutputFormatType } from "@/ts/common";
+import { OUTPUT_TYPES } from "@/ts/constants/output";
+import { OutputSettingsData } from "@/ts/interfaces/output";
+import { OutputFormatType } from "@/ts/types/output";
 import { Box, FormControlLabel, FormGroup, MenuItem, Switch, TextField } from "@mui/material";
 import { useState } from "react";
-import { OUTPUT_TYPES } from "@/ts/constants";
 
 interface OutputSettingsProps {
   onSettingsChange: (settings: OutputSettingsData) => void;

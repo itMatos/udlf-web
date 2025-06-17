@@ -11,22 +11,22 @@ import {
   TextField,
 } from "@mui/material";
 import { useState } from "react";
-import { CPRRMethodSettings } from "../ts/interfaces";
-import { ContextRRParams } from "@/ts/methods/contextrr";
 import { CONTEXTRR_DEFAULT_PARAMS } from "@/ts/constants/contextrr";
 import { CPRR_DEFAULT_PARAMS } from "@/ts/constants/cprr";
 import { METHODS } from "@/ts/constants/common";
+import { ContextRR } from "@/ts/interfaces/contextrr";
+import { CPRR } from "@/ts/interfaces/cprr";
 
 interface SelectMethodProps {
   onMethodChange: (method: string) => void;
-  onSettingsChange: (settings: ContextRRParams | CPRRMethodSettings) => void;
+  onSettingsChange: (settings: ContextRR | CPRR) => void;
   selectedMethod: string;
-  methodSettings: CPRRMethodSettings | null;
+  methodSettings: CPRR | null;
 }
 
 export default function SelectMethod({ onMethodChange, onSettingsChange }: SelectMethodProps) {
   const [method, setMethod] = useState<string>(METHODS[0]);
-  const [settings, setSettings] = useState<ContextRRParams | CPRRMethodSettings>(CONTEXTRR_DEFAULT_PARAMS);
+  const [settings, setSettings] = useState<ContextRR | CPRR>(CONTEXTRR_DEFAULT_PARAMS);
 
   const handleMethodChange = (newMethod: string) => {
     setMethod(newMethod);
@@ -37,7 +37,7 @@ export default function SelectMethod({ onMethodChange, onSettingsChange }: Selec
     }
   };
 
-  const handleSettingChange = (field: keyof ContextRRParams) => (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSettingChange = (field: keyof ContextRR) => (event: React.ChangeEvent<HTMLInputElement>) => {
     const newSettings = {
       ...settings,
       [field]: Number(event.target.value),
@@ -47,7 +47,7 @@ export default function SelectMethod({ onMethodChange, onSettingsChange }: Selec
   };
 
   const handleSelectOptimizations = (value: boolean) => {
-    const newSettings = { ...settings, OPTIMIZATIONS: value } as ContextRRParams;
+    const newSettings = { ...settings, OPTIMIZATIONS: value } as ContextRR;
     setSettings(newSettings);
     onSettingsChange(newSettings);
   };

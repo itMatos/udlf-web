@@ -1,5 +1,7 @@
-import { ContextRRParams } from "./methods/contextrr";
-import { InputType, OutputFormatType } from "./common";
+import { ContextRR } from "./interfaces/contextrr";
+import { CPRR } from "./interfaces/cprr";
+import { InputSettingsData } from "./interfaces/input";
+import { OutputSettingsData } from "./interfaces/output";
 
 export interface StepProps {
   completed?: boolean;
@@ -14,33 +16,6 @@ export interface InputSettingsProps {
   settings: InputSettingsData | null;
 }
 
-export interface CPRRMethodSettings {
-  L: number;
-  K: number;
-  T: number;
-}
-
-export interface InputSettingsData {
-  inputFile: string;
-  inputType: InputType;
-  inputFileList: string;
-  inputFileClasses: string;
-  datasetImagesPath: string;
-}
-
-export interface OutputSettingsData {
-  enabledOutput: boolean;
-  outputFileName: string;
-  outputFileFormat: OutputFormatType;
-}
-
-export const MAP_INPUT_SETTINGS = {
-  // inputType: "INPUT_FILE_FORMAT",
-  imageListFile: "INPUT_FILE_LIST ",
-  inputClassesFile: "INPUT_FILE_CLASSES",
-  datasetImagesPath: "INPUT_IMAGES_PATH",
-};
-
 export interface EvaluationSettingsData {
   useMap: boolean;
   useEfficiency: boolean;
@@ -50,7 +25,7 @@ export interface EvaluationSettingsData {
 
 export interface SummaryData {
   method: string;
-  methodSettings: CPRRMethodSettings | ContextRRParams;
+  methodSettings: CPRR | ContextRR;
   inputSettings: InputSettingsData;
   outputSettings: OutputSettingsData;
   evaluationSettings: EvaluationSettingsData;

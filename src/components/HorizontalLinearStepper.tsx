@@ -2,23 +2,25 @@
 import React, { useState } from "react";
 import { Box, Stepper, Step, StepLabel, Button, Typography } from "@mui/material";
 import SelectMethod from "./SelectMethod";
-import { StepProps, LabelProps, InputSettingsData, EvaluationSettingsData, OutputSettingsData } from "../ts/interfaces";
+import { StepProps, LabelProps, EvaluationSettingsData } from "../ts/interfaces";
 import InputSettings from "./InputSettings";
 import OutputSettings from "./OutputSettings";
 import EvaluationSettings from "./EvaluationSettings";
 import Summary from "./Summary";
-import { OutputFormatType } from "@/ts/common";
 import ExecuteConfig from "./ExecuteConfig";
-import { ContextRRParams } from "@/ts/methods/contextrr";
 import { CONTEXTRR_DEFAULT_PARAMS } from "@/ts/constants/contextrr";
 import { METHODS, STEPS } from "@/ts/constants/common";
-import { DEFAULT_INPUT_SETTINGS } from "@/ts/constants";
+import { DEFAULT_INPUT_SETTINGS } from "@/ts/constants/input";
+import { ContextRR } from "@/ts/interfaces/contextrr";
+import { OutputFormatType } from "@/ts/types/output";
+import { OutputSettingsData } from "@/ts/interfaces/output";
+import { InputSettingsData } from "@/ts/interfaces/input";
 
 export default function HorizontalLinearStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set<number>());
   const [selectedMethod, setSelectedMethod] = useState<string>(METHODS[0]);
-  const [methodSettings, setMethodSettings] = useState<ContextRRParams>(CONTEXTRR_DEFAULT_PARAMS);
+  const [methodSettings, setMethodSettings] = useState<ContextRR>(CONTEXTRR_DEFAULT_PARAMS);
   const [inputSettings, setInputSettings] = useState<InputSettingsData | null>(DEFAULT_INPUT_SETTINGS);
   const [outputSettings, setOutputSettings] = useState<OutputSettingsData>({
     outputFileName: "",

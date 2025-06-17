@@ -1,11 +1,11 @@
 "use client";
 import { useState } from "react";
 import { Box, MenuItem, Modal, TextField, Tooltip, Typography } from "@mui/material";
-import { InputSettingsData, InputSettingsProps } from "../ts/interfaces";
+import { InputSettingsProps } from "../ts/interfaces";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import { DEFAULT_INPUT_SETTINGS } from "../ts/constants";
-import { INPUT_TYPES } from "@/ts/constants/common";
-import { InputType } from "@/ts/common";
+import { DEFAULT_INPUT_SETTINGS, INPUT_TYPES } from "@/ts/constants/input";
+import { InputType } from "@/ts/types/input";
+import { InputSettingsData } from "@/ts/interfaces/input";
 
 export default function InputSettings({ onSettingsChange }: InputSettingsProps) {
   const [inputSettings, setInputSettings] = useState<InputSettingsData>(DEFAULT_INPUT_SETTINGS);

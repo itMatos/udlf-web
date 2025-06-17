@@ -17,19 +17,21 @@ import {
   TableCell,
   TableBody,
 } from "@mui/material";
-import { InputSettingsData, EvaluationSettingsData, OutputSettingsData } from "../ts/interfaces";
+import { EvaluationSettingsData } from "../ts/interfaces";
 import { baseConfigTemplate } from "@/services/templates/generalConfig";
 import { inputDatasetFilesConfig } from "@/services/templates/inputDataSetFilesConfig";
 import { ConfigGenerator } from "@/services/configGenerator";
 import DownloadIcon from "@mui/icons-material/Download";
 import { outputFilesSettingsConfig } from "@/services/templates/outputFIlesSettingsConfig";
 import { evaluationSettingsConfig } from "@/services/templates/evaluationSettings";
-import { ContextRRParams } from "@/ts/methods/contextrr";
-import { OUTPUT_TYPES } from "@/ts/constants";
+import { ContextRR } from "@/ts/interfaces/contextrr";
+import { OUTPUT_TYPES } from "@/ts/constants/output";
+import { OutputSettingsData } from "@/ts/interfaces/output";
+import { InputSettingsData } from "@/ts/interfaces/input";
 
 interface SummaryProps {
   selectedMethod: string;
-  methodSettings: ContextRRParams;
+  methodSettings: ContextRR;
   inputSettings: InputSettingsData | null;
   outputSettings: OutputSettingsData;
   evaluationSettings: EvaluationSettingsData | null;
@@ -112,7 +114,7 @@ const Summary: React.FC<SummaryProps> = ({
       })),
     };
 
-    const generateContextRRSettings = (methodSettings: ContextRRParams) => {
+    const generateContextRRSettings = (methodSettings: ContextRR) => {
       console.log("methodSettings", methodSettings);
       const ContextRRValueUpdates = {
         PARAM_NONE_L: "1400",
@@ -125,7 +127,7 @@ const Summary: React.FC<SummaryProps> = ({
       return ContextRRValueUpdates;
     };
 
-    const generateCPRRSettings = (methodSettings: ContextRRParams) => {
+    const generateCPRRSettings = (methodSettings: ContextRR) => {
       const CPRRValueUpdates = {
         PARAM_NONE_L: "1400",
         PARAM_CPRR_L: methodSettings?.L,
