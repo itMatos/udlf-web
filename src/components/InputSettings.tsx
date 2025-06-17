@@ -40,23 +40,6 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [fileContentToDisplay, setFileContentToDisplay] = useState("");
   const [currentSelectedFileName, setCurrentSelectedFileName] = useState("");
-  // const [selectedFile, setSelectedFile] = useState<FileState>({
-  //   path: "",
-  //   content: null,
-  //   previousContent: null,
-  // });
-  // const [fileHistory, setFileHistory] = useState<
-  //   Array<{
-  //     type: "added" | "removed";
-  //     path: string;
-  //     timestamp: number;
-  //   }>
-  // >([]);
-  // const [isEditMode, setIsEditMode] = useState(false);
-  // const [editableContent, setEditableContent] = useState("");
-  // const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-
-  // const pathNameToShow = "/Users/italomatos/Documents/UDLF/Datasets/";
 
   // function to validate the input fields
   const validateField = (name: keyof InputSettingsData, value: string): string => {
@@ -91,81 +74,6 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
       [name]: value,
     });
   };
-
-  // const { onDirectorySelection, onClear, files, isBrowserSupported, writeFile, setFiles } = useFs({
-  //   filters: commonFilters,
-  //   onFilesAdded: (newFiles, previousFiles) => {
-  //     console.log("onFilesAdded", newFiles, previousFiles);
-  //     const newEntries = Array.from(newFiles.keys()).map((path) => ({
-  //       type: "added" as const,
-  //       path,
-  //       timestamp: Date.now(),
-  //     }));
-  //     setFileHistory((prev) => [...newEntries, ...prev].slice(0, 50));
-  //   },
-  //   onFilesChanged: (changedFiles, previousFiles) => {
-  //     console.log("onFilesChanged", changedFiles, previousFiles);
-
-  //     const changedFilesArray = Array.from(changedFiles);
-  //     if (changedFilesArray.length > 0) {
-  //       const [filePath, content] = changedFilesArray[0];
-  //       const previousContent = previousFiles.get(filePath) || null;
-  //       setSelectedFile({ path: filePath, content, previousContent });
-  //     }
-  //   },
-  //   onFilesDeleted: (deletedFiles, previousFiles) => {
-  //     console.log("onFilesDeleted", deletedFiles, previousFiles);
-  //     if (deletedFiles.has(selectedFile.path)) {
-  //       setSelectedFile({ path: "", content: null, previousContent: null });
-  //     }
-  //     const deletedEntries = Array.from(deletedFiles.keys()).map((path) => ({
-  //       type: "removed" as const,
-  //       path,
-  //       timestamp: Date.now(),
-  //     }));
-  //     setFileHistory((prev) => [...deletedEntries, ...prev].slice(0, 50));
-  //   },
-  // });
-
-  // const handleFileSelectFs = (path: string) => {
-  //   const content = files.get(path) || null;
-  //   setSelectedFile({
-  //     path,
-  //     content,
-  //     previousContent: null,
-  //   });
-  // };
-
-  // const handleFileSelect = async (fieldName: keyof InputSettingsData) => {
-  //   onDirectorySelection();
-  //   try {
-  //     const input = document.createElement("input");
-  //     input.type = "file";
-  //     input.accept = ".txt,.csv";
-
-  //     input.onchange = (e) => {
-  //       const file = (e.target as HTMLInputElement).files?.[0];
-  //       if (file) {
-  //         handleChange(fieldName, file.name);
-
-  //         const reader = new FileReader();
-  //         reader.onload = (event) => {
-  //           setFileContentToDisplay(event.target?.result as string);
-  //           setCurrentSelectedFileName(file.name);
-  //         };
-  //         reader.readAsText(file);
-  //       }
-  //     };
-
-  //     input.click();
-  //   } catch (error) {
-  //     console.error("Error selecting file:", error);
-  //   }
-  // };
-
-  // const handleViewListFile = () => {
-  //   setIsModalOpen(true);
-  // };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);

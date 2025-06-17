@@ -1,3 +1,4 @@
+import { ContextRRParams } from "./models/contextrr";
 import { InputType, OutputFormatType } from "./types";
 
 export interface StepProps {
@@ -12,14 +13,6 @@ export interface CPRRMethodSettings {
   L: number;
   K: number;
   T: number;
-}
-
-export interface ContextRRMethodSettings {
-  L: number;
-  K: number;
-  T: number;
-  NBYK: number;
-  OPTIMIZATIONS: boolean;
 }
 
 export interface InputSettingsData {
@@ -52,7 +45,7 @@ export interface EvaluationSettingsData {
 
 export interface SummaryData {
   method: string;
-  methodSettings: CPRRMethodSettings | ContextRRMethodSettings;
+  methodSettings: CPRRMethodSettings | ContextRRParams;
   inputSettings: InputSettingsData;
   outputSettings: OutputSettingsData;
   evaluationSettings: EvaluationSettingsData;

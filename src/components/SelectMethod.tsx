@@ -11,41 +11,43 @@ import {
   TextField,
 } from "@mui/material";
 import { useState } from "react";
-import { METHODS, CONTEXTRR_DEFAULT_SETTINGS, CPRR_DEFAULT_SETTINGS } from "./../ts/constants";
-import { ContextRRMethodSettings, CPRRMethodSettings } from "./../ts/interfaces";
+import { METHODS } from "./../ts/constants";
+import { CPRRMethodSettings } from "./../ts/interfaces";
+import { ContextRRParams } from "@/ts/models/contextrr";
+import { CONTEXTRR_DEFAULT_PARAMS } from "@/ts/constants/contextrr";
+import { CPRR_DEFAULT_PARAMS } from "@/ts/constants/cprr";
 
 interface SelectMethodProps {
   onMethodChange: (method: string) => void;
-  onSettingsChange: (settings: ContextRRMethodSettings | CPRRMethodSettings) => void;
+  onSettingsChange: (settings: ContextRRParams | CPRRMethodSettings) => void;
   selectedMethod: string;
   methodSettings: CPRRMethodSettings | null;
 }
 
 export default function SelectMethod({ onMethodChange, onSettingsChange }: SelectMethodProps) {
   const [method, setMethod] = useState<string>(METHODS[0]);
-  const [settings, setSettings] = useState<ContextRRMethodSettings | CPRRMethodSettings>(CONTEXTRR_DEFAULT_SETTINGS);
+  const [settings, setSettings] = useState<ContextRRParams | CPRRMethodSettings>(CONTEXTRR_DEFAULT_PARAMS);
 
   const handleMethodChange = (newMethod: string) => {
     setMethod(newMethod);
     onMethodChange(newMethod);
 
     if (newMethod === "CPRR") {
-      setSettings(CPRR_DEFAULT_SETTINGS);
+      setSettings(CPRR_DEFAULT_PARAMS);
     }
   };
 
-  const handleSettingChange =
-    (field: keyof ContextRRMethodSettings) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      const newSettings = {
-        ...settings,
-        [field]: Number(event.target.value),
-      };
-      setSettings(newSettings);
-      onSettingsChange(newSettings);
+  const handleSettingChange = (field: keyof ContextRRParams) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newSettings = {
+      ...settings,
+      [field]: Number(event.target.value),
     };
+    setSettings(newSettings);
+    onSettingsChange(newSettings);
+  };
 
   const handleSelectOptimizations = (value: boolean) => {
-    const newSettings = { ...settings, OPTIMIZATIONS: value } as ContextRRMethodSettings;
+    const newSettings = { ...settings, OPTIMIZATIONS: value } as ContextRRParams;
     setSettings(newSettings);
     onSettingsChange(newSettings);
   };
