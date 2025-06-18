@@ -9,7 +9,7 @@ import EvaluationSettings from "./EvaluationSettings";
 import Summary from "./Summary";
 import ExecuteConfig from "./ExecuteConfig";
 import { CONTEXTRR_DEFAULT_PARAMS } from "@/ts/constants/contextrr";
-import { METHODS, STEPS } from "@/ts/constants/common";
+import { STEPS, UDLF_METHODS } from "@/ts/constants/common";
 import { DEFAULT_INPUT_SETTINGS } from "@/ts/constants/input";
 import { ContextRR } from "@/ts/interfaces/contextrr";
 import { OutputFormatType } from "@/ts/types/output";
@@ -19,7 +19,7 @@ import { InputSettingsData } from "@/ts/interfaces/input";
 export default function HorizontalLinearStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set<number>());
-  const [selectedMethod, setSelectedMethod] = useState<string>(METHODS[0]);
+  const [selectedMethod, setSelectedMethod] = useState<string>(UDLF_METHODS.CONTEXTRR);
   const [methodSettings, setMethodSettings] = useState<ContextRR>(CONTEXTRR_DEFAULT_PARAMS);
   const [inputSettings, setInputSettings] = useState<InputSettingsData | null>(DEFAULT_INPUT_SETTINGS);
   const [outputSettings, setOutputSettings] = useState<OutputSettingsData>({
