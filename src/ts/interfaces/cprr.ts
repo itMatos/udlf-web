@@ -3,3 +3,8 @@ export interface CPRR {
   K: number;
   T: number;
 }
+
+export interface CPRRSettingsProps {
+  settings: CPRR;
+  setSettings: (settings: CPRR) => void;
+}

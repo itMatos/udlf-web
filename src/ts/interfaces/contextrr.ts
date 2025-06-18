@@ -5,3 +5,8 @@ export interface ContextRR {
   NBYK: number;
   OPTIMIZATIONS: boolean;
 }
+
+export interface ContextRRSettingsProps {
+  settings: ContextRR;
+  setSettings: (settings: ContextRR) => void;
+}

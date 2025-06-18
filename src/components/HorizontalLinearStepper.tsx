@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { Box, Stepper, Step, StepLabel, Button, Typography } from "@mui/material";
-import SelectMethod from "./SelectMethod";
 import { StepProps, LabelProps, EvaluationSettingsData } from "../ts/interfaces";
 import InputSettings from "./InputSettings";
 import OutputSettings from "./OutputSettings";
@@ -15,12 +14,15 @@ import { ContextRR } from "@/ts/interfaces/contextrr";
 import { OutputFormatType } from "@/ts/types/output";
 import { OutputSettingsData } from "@/ts/interfaces/output";
 import { InputSettingsData } from "@/ts/interfaces/input";
+import { CPRR } from "@/ts/interfaces/cprr";
+import MethodSettings from "./MethodSettings";
+import { Method } from "@/ts/types/methods";
 
 export default function HorizontalLinearStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set<number>());
-  const [selectedMethod, setSelectedMethod] = useState<string>(UDLF_METHODS.CONTEXTRR);
-  const [methodSettings, setMethodSettings] = useState<ContextRR>(CONTEXTRR_DEFAULT_PARAMS);
+  const [selectedMethod, setSelectedMethod] = useState<Method>(UDLF_METHODS.CONTEXTRR);
+  const [settings, setSettings] = useState<ContextRR | CPRR>(CONTEXTRR_DEFAULT_PARAMS);
   const [inputSettings, setInputSettings] = useState<InputSettingsData | null>(DEFAULT_INPUT_SETTINGS);
   const [outputSettings, setOutputSettings] = useState<OutputSettingsData>({
     outputFileName: "",
@@ -38,7 +40,7 @@ export default function HorizontalLinearStepper() {
   const isStepComplete = (step: number): boolean => {
     switch (step) {
       case 0:
-        return !!selectedMethod;
+        return true;
       case 1:
         return true;
       case 2:
@@ -98,17 +100,11 @@ export default function HorizontalLinearStepper() {
     switch (activeStep) {
       case 0:
         return (
-          <SelectMethod
-            onMethodChange={setSelectedMethod}
-            onSettingsChange={(settings) => {
-              if ("NBYK" in settings && "OPTIMIZATIONS" in settings) {
-                setMethodSettings(settings);
-              } else {
-                console.error("Invalid settings type passed to setMethodSettings");
-              }
-            }}
+          <MethodSettings
+            settings={settings}
+            setSettings={setSettings}
             selectedMethod={selectedMethod}
-            methodSettings={methodSettings}
+            setSelectedMethod={setSelectedMethod}
           />
         );
       case 1:
@@ -121,7 +117,7 @@ export default function HorizontalLinearStepper() {
         return (
           <Summary
             selectedMethod={selectedMethod}
-            methodSettings={methodSettings}
+            methodSettings={settings}
             inputSettings={inputSettings}
             outputSettings={outputSettings}
             evaluationSettings={evaluationSettings}

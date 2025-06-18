@@ -24,14 +24,16 @@ import { ConfigGenerator } from "@/services/configGenerator";
 import DownloadIcon from "@mui/icons-material/Download";
 import { outputFilesSettingsConfig } from "@/services/templates/outputFIlesSettingsConfig";
 import { evaluationSettingsConfig } from "@/services/templates/evaluationSettings";
-import { ContextRR } from "@/ts/interfaces/contextrr";
 import { OUTPUT_TYPES } from "@/ts/constants/output";
 import { OutputSettingsData } from "@/ts/interfaces/output";
 import { InputSettingsData } from "@/ts/interfaces/input";
+import { Method } from "@/ts/types/methods";
+import { CPRR } from "@/ts/interfaces/cprr";
+import { ContextRR } from "@/ts/interfaces/contextrr";
 
 interface SummaryProps {
-  selectedMethod: string;
-  methodSettings: ContextRR;
+  selectedMethod: Method;
+  methodSettings: ContextRR | CPRR;
   inputSettings: InputSettingsData | null;
   outputSettings: OutputSettingsData;
   evaluationSettings: EvaluationSettingsData | null;
@@ -114,33 +116,12 @@ const Summary: React.FC<SummaryProps> = ({
       })),
     };
 
-    const generateContextRRSettings = (methodSettings: ContextRR) => {
-      console.log("methodSettings", methodSettings);
-      const ContextRRValueUpdates = {
-        PARAM_NONE_L: "1400",
-        PARAM_CONTEXTRR_L: methodSettings?.L,
-        PARAM_CONTEXTRR_K: methodSettings?.K,
-        PARAM_CONTEXTRR_T: methodSettings?.T,
-        PARAM_CONTEXTRR_NBYK: methodSettings?.NBYK,
-        PARAM_CONTEXTRR_OPTIMIZATIONS: methodSettings?.OPTIMIZATIONS ? "TRUE" : "FALSE",
-      };
-      return ContextRRValueUpdates;
-    };
-
-    const generateCPRRSettings = (methodSettings: ContextRR) => {
-      const CPRRValueUpdates = {
-        PARAM_NONE_L: "1400",
-        PARAM_CPRR_L: methodSettings?.L,
-        PARAM_CPRR_K: methodSettings?.K,
-        PARAM_CPRR_T: methodSettings?.T,
-      };
-      return CPRRValueUpdates;
-    };
-
     console.log("methodSettings", methodSettings);
 
     const settingsTemplate =
-      selectedMethod === "CPRR" ? generateCPRRSettings(methodSettings) : generateContextRRSettings(methodSettings);
+      selectedMethod === "ContextRR"
+        ? generateContextRRSettings(methodSettings as ContextRR)
+        : generateCPRRSettings(methodSettings as CPRR);
 
     const methodSettingsTemplate = {
       section: `${selectedMethod.toUpperCase()} SETTINGS`,
@@ -165,6 +146,29 @@ const Summary: React.FC<SummaryProps> = ({
     const blob = generator.generateFile();
 
     return blob;
+  };
+
+  const generateContextRRSettings = (methodSettings: ContextRR) => {
+    console.log("methodSettings", methodSettings);
+    const ContextRRValueUpdates = {
+      PARAM_NONE_L: "1400",
+      PARAM_CONTEXTRR_L: methodSettings?.L,
+      PARAM_CONTEXTRR_K: methodSettings?.K,
+      PARAM_CONTEXTRR_T: methodSettings?.T,
+      PARAM_CONTEXTRR_NBYK: methodSettings?.NBYK,
+      PARAM_CONTEXTRR_OPTIMIZATIONS: methodSettings?.OPTIMIZATIONS ? "TRUE" : "FALSE",
+    };
+    return ContextRRValueUpdates;
+  };
+
+  const generateCPRRSettings = (methodSettings: CPRR) => {
+    const CPRRValueUpdates = {
+      PARAM_NONE_L: "1400",
+      PARAM_CPRR_L: methodSettings?.L,
+      PARAM_CPRR_K: methodSettings?.K,
+      PARAM_CPRR_T: methodSettings?.T,
+    };
+    return CPRRValueUpdates;
   };
 
   const generateConfigFileToDownload = () => {

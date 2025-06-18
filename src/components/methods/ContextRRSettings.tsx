@@ -1,13 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
-import { CONTEXTRR_DEFAULT_PARAMS } from "@/ts/constants/contextrr";
-import { ContextRR } from "@/ts/interfaces/contextrr";
+import React from "react";
+import { ContextRR, ContextRRSettingsProps } from "@/ts/interfaces/contextrr";
 import { Box, FormControl, FormControlLabel, FormHelperText, Switch, TextField } from "@mui/material";
 
-export default function ContextRRSettings() {
-  const [settings, setSettings] = useState<ContextRR>(CONTEXTRR_DEFAULT_PARAMS);
-
+export default function ContextRRSettings({ settings, setSettings }: ContextRRSettingsProps) {
   const handleSettingChange = (field: keyof ContextRR) => (event: React.ChangeEvent<HTMLInputElement>) => {
     const newSettings = {
       ...settings,
