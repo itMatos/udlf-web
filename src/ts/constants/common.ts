@@ -5,4 +5,5 @@ export const STEPS = ["Select method", "Input settings", "Output settings", "Eva
 export const UDLF_METHODS = {
   CONTEXTRR: "ContextRR" as Method,
   CPRR: "CPRR" as Method,
+  LHRR: "LHRR" as Method,
 } as const;

@@ -10,6 +10,9 @@ import { ContextRR } from "@/ts/interfaces/contextrr";
 import { CONTEXTRR_DEFAULT_PARAMS } from "@/ts/constants/contextrr";
 import { CPRR_DEFAULT_PARAMS } from "@/ts/constants/cprr";
 import { MethodSettingsProps } from "@/ts/interfaces/methods";
+import { LHRR_DEFAULT_PARAMS } from "@/ts/constants/lhrr";
+import { LHRR } from "@/ts/interfaces/lhrr";
+import LHRRSettings from "./methods/LHRRSettings";
 
 export default function MethodSettings({
   selectedMethod,
@@ -23,6 +26,8 @@ export default function MethodSettings({
       setSettings(CONTEXTRR_DEFAULT_PARAMS as ContextRR);
     } else if (method === UDLF_METHODS.CPRR) {
       setSettings(CPRR_DEFAULT_PARAMS as CPRR);
+    } else if (method === UDLF_METHODS.LHRR) {
+      setSettings(LHRR_DEFAULT_PARAMS as LHRR);
     }
   };
 
@@ -53,6 +58,9 @@ export default function MethodSettings({
       )}
       {selectedMethod === UDLF_METHODS.CPRR && (
         <CPRRSettings settings={settings as CPRR} setSettings={(s) => setSettings(s as CPRR)} />
+      )}
+      {selectedMethod === UDLF_METHODS.LHRR && (
+        <LHRRSettings settings={settings as LHRR} setSettings={(s) => setSettings(s as LHRR)} />
       )}
     </Box>
   );
