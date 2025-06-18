@@ -1,4 +1,4 @@
-import { SummaryData } from "../interfaces";
+import { SummaryData } from "../interfaces/summary";
 import { CONTEXTRR_DEFAULT_PARAMS } from "./contextrr";
 import { DEFAULT_EVALUATION_SETTINGS } from "./evaluation";
 import { DEFAULT_INPUT_SETTINGS } from "./input";

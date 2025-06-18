@@ -1,7 +1,4 @@
-import { ContextRR } from "./interfaces/contextrr";
-import { CPRR } from "./interfaces/cprr";
 import { InputSettingsData } from "./interfaces/input";
-import { OutputSettingsData } from "./interfaces/output";
 
 export interface StepProps {
   completed?: boolean;
@@ -21,12 +18,4 @@ export interface EvaluationSettingsData {
   useEfficiency: boolean;
   recall: number[];
   precision: number[];
-}
-
-export interface SummaryData {
-  method: string;
-  methodSettings: CPRR | ContextRR;
-  inputSettings: InputSettingsData;
-  outputSettings: OutputSettingsData;
-  evaluationSettings: EvaluationSettingsData;
 }

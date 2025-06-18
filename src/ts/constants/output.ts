@@ -1,6 +1,10 @@
 import { OutputFormatType } from "../types/output";
 
-export const DEFAULT_OUTPUT_SETTINGS: OutputFormatType = "RANKEDLIST_NUMERIC" as const;
+export const DEFAULT_OUTPUT_SETTINGS = {
+  enabledOutput: false,
+  outputFileFormat: "RANKEDLIST_NUMERIC" as OutputFormatType,
+  outputFileName: "",
+} as const;
 
 export const OUTPUT_TYPES = [
   { value: "RANKEDLIST_NUMERIC", label: "Ranked List (numeric)" },
