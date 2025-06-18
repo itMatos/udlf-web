@@ -113,24 +113,8 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
             onChange={(e) => handleChange("inputFileList", e.target.value)}
             error={!!errors.inputFileList}
             helperText={errors.inputFileList}
-            // slotProps={{
-            //   input: {
-            //     endAdornment: (
-            //       <InputAdornment position="end">
-            //         <IconButton onClick={() => handleFileSelect("inputFileList")} edge="end">
-            //           <FolderOpenIcon />
-            //         </IconButton>
-            //       </InputAdornment>
-            //     ),
-            //   },
-            // }}
             fullWidth
           />
-          {/* {inputSettings.inputFileList && (
-            <IconButton onClick={() => handleViewListFile()} aria-label="view image list file content" color="primary">
-              <FileOpenIcon />
-            </IconButton>
-          )} */}
         </Box>
 
         <TextField
@@ -139,17 +123,6 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
           onChange={(e) => handleChange("inputFileClasses", e.target.value)}
           error={!!errors.inputFileClasses}
           helperText={errors.inputFileClasses}
-          // slotProps={{
-          //   input: {
-          //     endAdornment: (
-          //       <InputAdornment position="end">
-          //         <IconButton onClick={() => handleFileSelect("inputFileClasses")} edge="end">
-          //           <FolderOpenIcon />
-          //         </IconButton>
-          //       </InputAdornment>
-          //     ),
-          //   },
-          // }}
         />
 
         <TextField
@@ -158,17 +131,6 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
           onChange={(e) => handleChange("datasetImagesPath", e.target.value)}
           error={!!errors.datasetImagesPath}
           helperText={errors.datasetImagesPath || "Enter the path to dataset images"}
-          // slotProps={{
-          //   input: {
-          //     endAdornment: (
-          //       <InputAdornment position="end">
-          //         <IconButton onClick={() => handleFileSelect("datasetImagesPath")} edge="end">
-          //           <FolderOpenIcon />
-          //         </IconButton>
-          //       </InputAdornment>
-          //     ),
-          //   },
-          // }}
         />
 
         <Modal

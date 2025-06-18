@@ -17,7 +17,6 @@ import {
   TableCell,
   TableBody,
 } from "@mui/material";
-import { EvaluationSettingsData } from "../ts/interfaces";
 import { baseConfigTemplate } from "@/services/templates/generalConfig";
 import { inputDatasetFilesConfig } from "@/services/templates/inputDataSetFilesConfig";
 import { ConfigGenerator } from "@/services/configGenerator";
@@ -25,21 +24,9 @@ import DownloadIcon from "@mui/icons-material/Download";
 import { outputFilesSettingsConfig } from "@/services/templates/outputFIlesSettingsConfig";
 import { evaluationSettingsConfig } from "@/services/templates/evaluationSettings";
 import { OUTPUT_TYPES } from "@/ts/constants/output";
-import { OutputSettingsData } from "@/ts/interfaces/output";
-import { InputSettingsData } from "@/ts/interfaces/input";
-import { Method } from "@/ts/types/methods";
 import { CPRR } from "@/ts/interfaces/cprr";
 import { ContextRR } from "@/ts/interfaces/contextrr";
-
-interface SummaryProps {
-  selectedMethod: Method;
-  methodSettings: ContextRR | CPRR;
-  inputSettings: InputSettingsData | null;
-  outputSettings: OutputSettingsData;
-  evaluationSettings: EvaluationSettingsData | null;
-  setConfigFileToExecute: (file: Blob) => void;
-  setConfigFileName: (fileName: string) => void;
-}
+import { SummaryProps } from "@/ts/interfaces/summary";
 
 const Summary: React.FC<SummaryProps> = ({
   selectedMethod,
@@ -75,9 +62,6 @@ const Summary: React.FC<SummaryProps> = ({
         value: valueUpdates[param.key as keyof typeof valueUpdates] ?? param.value,
       })),
     };
-    console.log("inputSettingsTemplate", inputSettingsTemplate);
-
-    console.log("outputSettings --------", outputSettings);
 
     const valueUpdatesOutput = {
       OUTPUT_FILE_PATH: outputSettings.outputFileName,
@@ -94,7 +78,6 @@ const Summary: React.FC<SummaryProps> = ({
         value: valueUpdatesOutput[param.key as keyof typeof valueUpdatesOutput] ?? param.value,
       })),
     };
-    console.log("outputSettingsTemplate", outputSettingsTemplate);
 
     const recallArrayToString = evaluationSettings?.recall.map((value) => value.toString()).join(", ");
     const precisionArrayToString = evaluationSettings?.precision.map((value) => value.toString()).join(", ");
@@ -116,8 +99,6 @@ const Summary: React.FC<SummaryProps> = ({
       })),
     };
 
-    console.log("methodSettings", methodSettings);
-
     const settingsTemplate =
       selectedMethod === "ContextRR"
         ? generateContextRRSettings(methodSettings as ContextRR)
@@ -130,8 +111,6 @@ const Summary: React.FC<SummaryProps> = ({
         value,
       })),
     };
-
-    console.log("methodSettingsTemplate", methodSettingsTemplate);
 
     const allTemplates = [
       baseConfig,
@@ -149,7 +128,6 @@ const Summary: React.FC<SummaryProps> = ({
   };
 
   const generateContextRRSettings = (methodSettings: ContextRR) => {
-    console.log("methodSettings", methodSettings);
     const ContextRRValueUpdates = {
       PARAM_NONE_L: "1400",
       PARAM_CONTEXTRR_L: methodSettings?.L,
@@ -287,9 +265,16 @@ const Summary: React.FC<SummaryProps> = ({
               <ListItemText
                 primary="Recall Values"
                 secondary={
-                  <Stack direction="row" spacing={1} flexWrap="wrap">
+                  <Stack component={"span"} direction="row" spacing={1} flexWrap="wrap">
                     {evaluationSettings.recall.map((value) => (
-                      <Chip key={value} label={value} size="small" color="primary" variant="outlined" />
+                      <Chip
+                        key={value}
+                        component={"span"}
+                        label={value}
+                        size="small"
+                        color="primary"
+                        variant="outlined"
+                      />
                     ))}
                   </Stack>
                 }
@@ -299,9 +284,16 @@ const Summary: React.FC<SummaryProps> = ({
               <ListItemText
                 primary="Precision Values"
                 secondary={
-                  <Stack direction="row" spacing={1} flexWrap="wrap">
+                  <Stack component={"span"} direction="row" spacing={1} flexWrap="wrap">
                     {evaluationSettings.precision.map((value) => (
-                      <Chip key={value} label={value} size="small" color="primary" variant="outlined" />
+                      <Chip
+                        key={value}
+                        component={"span"}
+                        label={value}
+                        size="small"
+                        color="primary"
+                        variant="outlined"
+                      />
                     ))}
                   </Stack>
                 }

@@ -11,12 +11,12 @@ import { CONTEXTRR_DEFAULT_PARAMS } from "@/ts/constants/contextrr";
 import { STEPS, UDLF_METHODS } from "@/ts/constants/common";
 import { DEFAULT_INPUT_SETTINGS } from "@/ts/constants/input";
 import { ContextRR } from "@/ts/interfaces/contextrr";
-import { OutputFormatType } from "@/ts/types/output";
 import { OutputSettingsData } from "@/ts/interfaces/output";
 import { InputSettingsData } from "@/ts/interfaces/input";
 import { CPRR } from "@/ts/interfaces/cprr";
 import MethodSettings from "./MethodSettings";
 import { Method } from "@/ts/types/methods";
+import { DEFAULT_OUTPUT_SETTINGS } from "@/ts/constants/output";
 
 export default function HorizontalLinearStepper() {
   const [activeStep, setActiveStep] = useState(0);
@@ -24,11 +24,7 @@ export default function HorizontalLinearStepper() {
   const [selectedMethod, setSelectedMethod] = useState<Method>(UDLF_METHODS.CONTEXTRR);
   const [settings, setSettings] = useState<ContextRR | CPRR>(CONTEXTRR_DEFAULT_PARAMS);
   const [inputSettings, setInputSettings] = useState<InputSettingsData | null>(DEFAULT_INPUT_SETTINGS);
-  const [outputSettings, setOutputSettings] = useState<OutputSettingsData>({
-    outputFileName: "",
-    outputFileFormat: "RANKEDLIST_NUMERIC" as OutputFormatType,
-    enabledOutput: false,
-  });
+  const [outputSettings, setOutputSettings] = useState<OutputSettingsData>(DEFAULT_OUTPUT_SETTINGS);
   const [evaluationSettings, setEvaluationSettings] = useState<EvaluationSettingsData | null>(null);
 
   const [configFileToExecute, setConfigFileToExecute] = useState<Blob | null>(null);
