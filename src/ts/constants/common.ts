@@ -6,4 +6,5 @@ export const UDLF_METHODS = {
   CONTEXTRR: "ContextRR" as Method,
   CPRR: "CPRR" as Method,
   LHRR: "LHRR" as Method,
+  BFSTREE: "BFSTree" as Method,
 } as const;

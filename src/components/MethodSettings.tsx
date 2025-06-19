@@ -13,6 +13,9 @@ import { MethodSettingsProps } from "@/ts/interfaces/methods";
 import { LHRR_DEFAULT_PARAMS } from "@/ts/constants/lhrr";
 import { LHRR } from "@/ts/interfaces/lhrr";
 import LHRRSettings from "./methods/LHRRSettings";
+import { BFSTree } from "@/ts/interfaces/bfstree";
+import { BFSTREE_DEFAULT_PARAMS } from "@/ts/constants/bfstree";
+import BFSTreeSettings from "./methods/BFSTreeSettings";
 
 export default function MethodSettings({
   selectedMethod,
@@ -28,6 +31,8 @@ export default function MethodSettings({
       setSettings(CPRR_DEFAULT_PARAMS as CPRR);
     } else if (method === UDLF_METHODS.LHRR) {
       setSettings(LHRR_DEFAULT_PARAMS as LHRR);
+    } else if (method === UDLF_METHODS.BFSTREE) {
+      setSettings(BFSTREE_DEFAULT_PARAMS as BFSTree);
     }
   };
 
@@ -61,6 +66,9 @@ export default function MethodSettings({
       )}
       {selectedMethod === UDLF_METHODS.LHRR && (
         <LHRRSettings settings={settings as LHRR} setSettings={(s) => setSettings(s as LHRR)} />
+      )}
+      {selectedMethod === UDLF_METHODS.BFSTREE && (
+        <BFSTreeSettings settings={settings as BFSTree} setSettings={(s) => setSettings(s as BFSTree)} />
       )}
     </Box>
   );

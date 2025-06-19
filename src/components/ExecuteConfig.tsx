@@ -85,7 +85,14 @@ export default function ExecuteConfig({
         ) : (
           <Box>
             <h3>Execute Configuration</h3>
-            <Button variant="contained" startIcon={<TerminalIcon />} onClick={handleExecute} loading={isLoading}>
+            <Button
+              variant="contained"
+              startIcon={<TerminalIcon />}
+              onClick={handleExecute}
+              loading={isLoading}
+              loadingIndicator="Executing..."
+              disabled={isLoading}
+            >
               Run
             </Button>
           </Box>

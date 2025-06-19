@@ -1,1 +1,1 @@
-export type Method = "ContextRR" | "CPRR";
+export type Method = "ContextRR" | "CPRR" | "LHRR" | "BFSTree";

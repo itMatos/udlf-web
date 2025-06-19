@@ -18,12 +18,13 @@ import MethodSettings from "./MethodSettings";
 import { Method } from "@/ts/types/methods";
 import { DEFAULT_OUTPUT_SETTINGS } from "@/ts/constants/output";
 import { LHRR } from "@/ts/interfaces/lhrr";
+import { BFSTree } from "@/ts/interfaces/bfstree";
 
 export default function HorizontalLinearStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set<number>());
   const [selectedMethod, setSelectedMethod] = useState<Method>(UDLF_METHODS.CONTEXTRR);
-  const [settings, setSettings] = useState<ContextRR | CPRR | LHRR>(CONTEXTRR_DEFAULT_PARAMS);
+  const [settings, setSettings] = useState<ContextRR | CPRR | LHRR | BFSTree>(CONTEXTRR_DEFAULT_PARAMS);
   const [inputSettings, setInputSettings] = useState<InputSettingsData | null>(DEFAULT_INPUT_SETTINGS);
   const [outputSettings, setOutputSettings] = useState<OutputSettingsData>(DEFAULT_OUTPUT_SETTINGS);
   const [evaluationSettings, setEvaluationSettings] = useState<EvaluationSettingsData | null>(null);

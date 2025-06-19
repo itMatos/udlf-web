@@ -27,6 +27,9 @@ import { OUTPUT_TYPES } from "@/ts/constants/output";
 import { CPRR } from "@/ts/interfaces/cprr";
 import { ContextRR } from "@/ts/interfaces/contextrr";
 import { SummaryProps } from "@/ts/interfaces/summary";
+import { LHRR } from "@/ts/interfaces/lhrr";
+import { Method } from "@/ts/types/methods";
+import { BFSTree } from "@/ts/interfaces/bfstree";
 
 const Summary: React.FC<SummaryProps> = ({
   selectedMethod,
@@ -99,10 +102,7 @@ const Summary: React.FC<SummaryProps> = ({
       })),
     };
 
-    const settingsTemplate =
-      selectedMethod === "ContextRR"
-        ? generateContextRRSettings(methodSettings as ContextRR)
-        : generateCPRRSettings(methodSettings as CPRR);
+    const settingsTemplate = generateMethodSettings(selectedMethod);
 
     const methodSettingsTemplate = {
       section: `${selectedMethod.toUpperCase()} SETTINGS`,
@@ -127,6 +127,21 @@ const Summary: React.FC<SummaryProps> = ({
     return blob;
   };
 
+  const generateMethodSettings = (method: Method) => {
+    switch (method) {
+      case "ContextRR":
+        return generateContextRRSettings(methodSettings as ContextRR);
+      case "CPRR":
+        return generateCPRRSettings(methodSettings as CPRR);
+      case "LHRR":
+        return generateLHRRSettings(methodSettings as LHRR);
+      case "BFSTree":
+        return generateBFSTreeSettings(methodSettings as BFSTree);
+      default:
+        return generateContextRRSettings(methodSettings as ContextRR);
+    }
+  };
+
   const generateContextRRSettings = (methodSettings: ContextRR) => {
     const ContextRRValueUpdates = {
       PARAM_NONE_L: "1400",
@@ -147,6 +162,26 @@ const Summary: React.FC<SummaryProps> = ({
       PARAM_CPRR_T: methodSettings?.T,
     };
     return CPRRValueUpdates;
+  };
+
+  const generateLHRRSettings = (methodSettings: LHRR) => {
+    const LHRRValueUpdates = {
+      PARAM_NONE_L: "1400",
+      PARAM_LHRR_L: methodSettings?.L,
+      PARAM_LHRR_K: methodSettings?.K,
+      PARAM_LHRR_T: methodSettings?.T,
+    };
+    return LHRRValueUpdates;
+  };
+
+  const generateBFSTreeSettings = (methodSettings: BFSTree) => {
+    const BFSTreeValueUpdates = {
+      PARAM_BFSTREE_L: methodSettings?.L,
+      PARAM_BFSTREE_K: methodSettings?.K,
+      PARAM_BFSTREE_CORRELATION_METRIC: methodSettings?.Correlation,
+    };
+
+    return BFSTreeValueUpdates;
   };
 
   const generateConfigFileToDownload = () => {
