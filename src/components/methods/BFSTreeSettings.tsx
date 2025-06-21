@@ -1,5 +1,5 @@
-import { BFSTree, BFSTreeSettingsProps } from "@/ts/interfaces/bfstree";
-import { Box, TextField } from "@mui/material";
+import { BFSTree, BFSTreeSettingsProps } from "@/ts/interfaces/methods/bfstree";
+import { Box, MenuItem, TextField } from "@mui/material";
 
 export default function BFSTreeSettings({ settings, setSettings }: BFSTreeSettingsProps) {
   const handleSettingChange = (field: keyof BFSTree) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,11 +31,13 @@ export default function BFSTreeSettings({ settings, setSettings }: BFSTreeSettin
       <TextField
         id="Correlation"
         label="Correlation"
-        type="text"
+        select
         value={settings.Correlation}
         onChange={handleSettingChange("Correlation")}
         variant="outlined"
-      />
+      >
+        <MenuItem value={settings.Correlation}>{settings.Correlation}</MenuItem>
+      </TextField>
     </Box>
   );
 }

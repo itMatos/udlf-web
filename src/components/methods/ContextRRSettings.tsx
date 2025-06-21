@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ContextRR, ContextRRSettingsProps } from "@/ts/interfaces/contextrr";
+import { ContextRR, ContextRRSettingsProps } from "@/ts/interfaces/methods/contextrr";
 import { Box, FormControl, FormControlLabel, FormHelperText, Switch, TextField } from "@mui/material";
 
 export default function ContextRRSettings({ settings, setSettings }: ContextRRSettingsProps) {

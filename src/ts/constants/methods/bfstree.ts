@@ -1,4 +1,4 @@
-import { BFSTree } from "../interfaces/bfstree";
+import { BFSTree } from "../../interfaces/methods/bfstree";
 
 export const BFSTREE_DEFAULT_PARAMS: BFSTree = {
   L: 1400,

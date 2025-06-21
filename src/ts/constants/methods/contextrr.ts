@@ -1,4 +1,4 @@
-import { ContextRR } from "../interfaces/contextrr";
+import { ContextRR } from "../../interfaces/methods/contextrr";
 
 export const CONTEXTRR_DEFAULT_PARAMS: ContextRR = {
   L: 25,

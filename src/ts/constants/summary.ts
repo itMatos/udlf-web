@@ -1,5 +1,5 @@
 import { SummaryData } from "../interfaces/summary";
-import { CONTEXTRR_DEFAULT_PARAMS } from "./contextrr";
+import { CONTEXTRR_DEFAULT_PARAMS } from "./methods/contextrr";
 import { DEFAULT_EVALUATION_SETTINGS } from "./evaluation";
 import { DEFAULT_INPUT_SETTINGS } from "./input";
 import { DEFAULT_OUTPUT_SETTINGS } from "./output";

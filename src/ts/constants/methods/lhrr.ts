@@ -1,4 +1,4 @@
-import { LHRR } from "../interfaces/lhrr";
+import { LHRR } from "@/ts/interfaces/methods/lhrr";
 
 export const LHRR_DEFAULT_PARAMS: LHRR = {
   L: 1400,

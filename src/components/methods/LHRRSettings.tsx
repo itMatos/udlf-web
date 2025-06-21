@@ -1,4 +1,4 @@
-import { LHRR, LHRRSettingsProps } from "@/ts/interfaces/lhrr";
+import { LHRR, LHRRSettingsProps } from "@/ts/interfaces/methods/lhrr";
 import { Box, TextField } from "@mui/material";
 
 export default function LHRRSettings({ settings, setSettings }: LHRRSettingsProps) {

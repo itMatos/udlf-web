@@ -1,4 +1,4 @@
-import { CPRR } from "../interfaces/cprr";
+import { CPRR } from "@/ts/interfaces/methods/cprr";
 
 export const CPRR_DEFAULT_PARAMS: CPRR = {
   L: 400,

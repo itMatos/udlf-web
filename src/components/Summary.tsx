@@ -24,12 +24,14 @@ import DownloadIcon from "@mui/icons-material/Download";
 import { outputFilesSettingsConfig } from "@/services/templates/outputFIlesSettingsConfig";
 import { evaluationSettingsConfig } from "@/services/templates/evaluationSettings";
 import { OUTPUT_TYPES } from "@/ts/constants/output";
-import { CPRR } from "@/ts/interfaces/cprr";
-import { ContextRR } from "@/ts/interfaces/contextrr";
+import { CPRR } from "@/ts/interfaces/methods/cprr";
+import { ContextRR } from "@/ts/interfaces/methods/contextrr";
 import { SummaryProps } from "@/ts/interfaces/summary";
-import { LHRR } from "@/ts/interfaces/lhrr";
+import { LHRR } from "@/ts/interfaces/methods/lhrr";
 import { Method } from "@/ts/types/methods";
-import { BFSTree } from "@/ts/interfaces/bfstree";
+import { BFSTree } from "@/ts/interfaces/methods/bfstree";
+import { CorGraph } from "@/ts/interfaces/methods/corgraph";
+import { UDLF_METHODS } from "@/ts/constants/common";
 
 const Summary: React.FC<SummaryProps> = ({
   selectedMethod,
@@ -129,14 +131,16 @@ const Summary: React.FC<SummaryProps> = ({
 
   const generateMethodSettings = (method: Method) => {
     switch (method) {
-      case "ContextRR":
+      case UDLF_METHODS.CONTEXTRR:
         return generateContextRRSettings(methodSettings as ContextRR);
-      case "CPRR":
+      case UDLF_METHODS.CPRR:
         return generateCPRRSettings(methodSettings as CPRR);
-      case "LHRR":
+      case UDLF_METHODS.LHRR:
         return generateLHRRSettings(methodSettings as LHRR);
-      case "BFSTree":
+      case UDLF_METHODS.BFSTREE:
         return generateBFSTreeSettings(methodSettings as BFSTree);
+      case UDLF_METHODS.CORGRAPH:
+        return generateCorGraphSettings(methodSettings as CorGraph);
       default:
         return generateContextRRSettings(methodSettings as ContextRR);
     }
@@ -182,6 +186,19 @@ const Summary: React.FC<SummaryProps> = ({
     };
 
     return BFSTreeValueUpdates;
+  };
+
+  const generateCorGraphSettings = (methodSettings: CorGraph) => {
+    const CorGraphValueUpdates = {
+      PARAM_CORGRAPH_L: methodSettings?.L,
+      PARAM_CORGRAPH_K: methodSettings?.K,
+      PARAM_CORGRAPH_THRESHOLD_START: methodSettings?.ThresholdStart,
+      PARAM_CORGRAPH_THRESHOLD_END: methodSettings?.ThresholdEnd,
+      PARAM_CORGRAPH_THRESHOLD_INC: methodSettings?.ThresholdInc,
+      PARAM_CORGRAPH_CORRELATION: methodSettings?.Correlation,
+    };
+
+    return CorGraphValueUpdates;
   };
 
   const generateConfigFileToDownload = () => {

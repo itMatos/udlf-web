@@ -5,17 +5,20 @@ import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import ContextRRSettings from "./methods/ContextRRSettings";
 import CPRRSettings from "./methods/CPRRSettings";
 import { Method } from "@/ts/types/methods";
-import { CPRR } from "@/ts/interfaces/cprr";
-import { ContextRR } from "@/ts/interfaces/contextrr";
-import { CONTEXTRR_DEFAULT_PARAMS } from "@/ts/constants/contextrr";
-import { CPRR_DEFAULT_PARAMS } from "@/ts/constants/cprr";
+import { CPRR } from "@/ts/interfaces/methods/cprr";
+import { ContextRR } from "@/ts/interfaces/methods/contextrr";
+import { CONTEXTRR_DEFAULT_PARAMS } from "@/ts/constants/methods/contextrr";
+import { CPRR_DEFAULT_PARAMS } from "@/ts/constants/methods/cprr";
 import { MethodSettingsProps } from "@/ts/interfaces/methods";
-import { LHRR_DEFAULT_PARAMS } from "@/ts/constants/lhrr";
-import { LHRR } from "@/ts/interfaces/lhrr";
+import { LHRR_DEFAULT_PARAMS } from "@/ts/constants/methods/lhrr";
+import { LHRR } from "@/ts/interfaces/methods/lhrr";
 import LHRRSettings from "./methods/LHRRSettings";
-import { BFSTree } from "@/ts/interfaces/bfstree";
-import { BFSTREE_DEFAULT_PARAMS } from "@/ts/constants/bfstree";
+import { BFSTree } from "@/ts/interfaces/methods/bfstree";
+import { BFSTREE_DEFAULT_PARAMS } from "@/ts/constants/methods/bfstree";
 import BFSTreeSettings from "./methods/BFSTreeSettings";
+import { CORGRAPH_DEFAULT_PARAMS } from "@/ts/constants/methods/corgraph";
+import { CorGraph } from "@/ts/interfaces/methods/corgraph";
+import CorGraphSettings from "./methods/CorGraphSettings";
 
 export default function MethodSettings({
   selectedMethod,
@@ -33,8 +36,12 @@ export default function MethodSettings({
       setSettings(LHRR_DEFAULT_PARAMS as LHRR);
     } else if (method === UDLF_METHODS.BFSTREE) {
       setSettings(BFSTREE_DEFAULT_PARAMS as BFSTree);
+    } else if (method === UDLF_METHODS.CORGRAPH) {
+      setSettings(CORGRAPH_DEFAULT_PARAMS as CorGraph);
     }
   };
+
+  const methodsSorted = Object.values(UDLF_METHODS).sort((a, b) => a.localeCompare(b));
 
   return (
     <Box
@@ -51,7 +58,7 @@ export default function MethodSettings({
       <FormControl fullWidth>
         <InputLabel>Method</InputLabel>
         <Select value={selectedMethod} onChange={(e) => handleMethodChange(e.target.value as Method)} label="Method">
-          {Object.values(UDLF_METHODS).map((method) => (
+          {methodsSorted.map((method) => (
             <MenuItem key={method} value={method}>
               {method}
             </MenuItem>
@@ -69,6 +76,9 @@ export default function MethodSettings({
       )}
       {selectedMethod === UDLF_METHODS.BFSTREE && (
         <BFSTreeSettings settings={settings as BFSTree} setSettings={(s) => setSettings(s as BFSTree)} />
+      )}
+      {selectedMethod === UDLF_METHODS.CORGRAPH && (
+        <CorGraphSettings settings={settings as CorGraph} setSettings={(s) => setSettings(s as CorGraph)} />
       )}
     </Box>
   );

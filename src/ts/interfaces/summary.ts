@@ -1,11 +1,12 @@
 import { EvaluationSettingsData } from "../interfaces";
 import { Method } from "../types/methods";
-import { BFSTree } from "./bfstree";
-import { ContextRR } from "./contextrr";
-import { CPRR } from "./cprr";
+import { BFSTree } from "./methods/bfstree";
+import { ContextRR } from "./methods/contextrr";
+import { CPRR } from "./methods/cprr";
 import { InputSettingsData } from "./input";
-import { LHRR } from "./lhrr";
+import { LHRR } from "./methods/lhrr";
 import { OutputSettingsData } from "./output";
+import { CorGraph } from "./methods/corgraph";
 
 export interface SummaryData {
   method: string;
@@ -17,7 +18,7 @@ export interface SummaryData {
 
 export interface SummaryProps {
   selectedMethod: Method;
-  methodSettings: ContextRR | CPRR | LHRR | BFSTree;
+  methodSettings: ContextRR | CPRR | LHRR | BFSTree | CorGraph;
   inputSettings: InputSettingsData | null;
   outputSettings: OutputSettingsData;
   evaluationSettings: EvaluationSettingsData | null;
