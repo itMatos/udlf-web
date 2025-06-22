@@ -33,6 +33,7 @@ import { BFSTree } from "@/ts/interfaces/methods/bfstree";
 import { CorGraph } from "@/ts/interfaces/methods/corgraph";
 import { UDLF_METHODS } from "@/ts/constants/common";
 import { RDPAC } from "@/ts/interfaces/methods/rdpac";
+import { ReckNNGraph } from "@/ts/interfaces/methods/recknngraph";
 
 const Summary: React.FC<SummaryProps> = ({
   selectedMethod,
@@ -144,6 +145,8 @@ const Summary: React.FC<SummaryProps> = ({
         return generateCorGraphSettings(methodSettings as CorGraph);
       case UDLF_METHODS.RDPAC:
         return generateRDPACSettings(methodSettings as RDPAC);
+      case UDLF_METHODS.RECKNNGRAPH:
+        return generateReckNNGraphSettings(methodSettings as ReckNNGraph);
       default:
         return generateContextRRSettings(methodSettings as ContextRR);
     }
@@ -216,6 +219,15 @@ const Summary: React.FC<SummaryProps> = ({
     };
 
     return RDPACValueUpdates;
+  };
+
+  const generateReckNNGraphSettings = (methodSettings: ReckNNGraph) => {
+    const ReckNNGraphValueUpdates = {
+      PARAM_RECKNNGRAPH_L: methodSettings?.L,
+      PARAM_RECKNNGRAPH_K: methodSettings?.K,
+      PARAM_RECKNNGRAPH_EPSILON: methodSettings?.EPSILON,
+    };
+    return ReckNNGraphValueUpdates;
   };
 
   const generateConfigFileToDownload = () => {

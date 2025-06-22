@@ -9,4 +9,5 @@ export const UDLF_METHODS = {
   BFSTREE: "BFSTree" as Method,
   CORGRAPH: "CorGraph" as Method,
   RDPAC: "RDPAC" as Method,
+  RECKNNGRAPH: "ReckNNGraph" as Method,
 } as const;

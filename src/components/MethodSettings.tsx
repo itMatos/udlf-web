@@ -22,6 +22,9 @@ import CorGraphSettings from "./methods/CorGraphSettings";
 import { RDPAC_DEFAULT_PARAMS } from "@/ts/constants/methods/rdpac";
 import { RDPAC } from "@/ts/interfaces/methods/rdpac";
 import RDPACSettings from "./methods/RDPACSettings";
+import { RECKNNGRAPH_DEFAULT_PARAMS } from "@/ts/constants/methods/recknngraph";
+import { ReckNNGraph } from "@/ts/interfaces/methods/recknngraph";
+import ReckNNGraphSettings from "./methods/ReckNNGraph";
 
 export default function MethodSettings({
   selectedMethod,
@@ -43,6 +46,8 @@ export default function MethodSettings({
       setSettings(CORGRAPH_DEFAULT_PARAMS as CorGraph);
     } else if (method === UDLF_METHODS.RDPAC) {
       setSettings(RDPAC_DEFAULT_PARAMS as RDPAC);
+    } else if (method === UDLF_METHODS.RECKNNGRAPH) {
+      setSettings(RECKNNGRAPH_DEFAULT_PARAMS as ReckNNGraph);
     }
   };
 
@@ -87,6 +92,9 @@ export default function MethodSettings({
       )}
       {selectedMethod === UDLF_METHODS.RDPAC && (
         <RDPACSettings settings={settings as RDPAC} setSettings={(s) => setSettings(s as RDPAC)} />
+      )}
+      {selectedMethod === UDLF_METHODS.RECKNNGRAPH && (
+        <ReckNNGraphSettings settings={settings as ReckNNGraph} setSettings={(s) => setSettings(s as ReckNNGraph)} />
       )}
     </Box>
   );
