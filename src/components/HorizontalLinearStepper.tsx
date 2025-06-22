@@ -20,12 +20,15 @@ import { DEFAULT_OUTPUT_SETTINGS } from "@/ts/constants/output";
 import { LHRR } from "@/ts/interfaces/methods/lhrr";
 import { BFSTree } from "@/ts/interfaces/methods/bfstree";
 import { CorGraph } from "@/ts/interfaces/methods/corgraph";
+import { RDPAC } from "@/ts/interfaces/methods/rdpac";
 
 export default function HorizontalLinearStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set<number>());
   const [selectedMethod, setSelectedMethod] = useState<Method>(UDLF_METHODS.CONTEXTRR);
-  const [settings, setSettings] = useState<ContextRR | CPRR | LHRR | BFSTree | CorGraph>(CONTEXTRR_DEFAULT_PARAMS);
+  const [settings, setSettings] = useState<ContextRR | CPRR | LHRR | BFSTree | CorGraph | RDPAC>(
+    CONTEXTRR_DEFAULT_PARAMS
+  );
   const [inputSettings, setInputSettings] = useState<InputSettingsData | null>(DEFAULT_INPUT_SETTINGS);
   const [outputSettings, setOutputSettings] = useState<OutputSettingsData>(DEFAULT_OUTPUT_SETTINGS);
   const [evaluationSettings, setEvaluationSettings] = useState<EvaluationSettingsData | null>(null);

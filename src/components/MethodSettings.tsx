@@ -19,6 +19,9 @@ import BFSTreeSettings from "./methods/BFSTreeSettings";
 import { CORGRAPH_DEFAULT_PARAMS } from "@/ts/constants/methods/corgraph";
 import { CorGraph } from "@/ts/interfaces/methods/corgraph";
 import CorGraphSettings from "./methods/CorGraphSettings";
+import { RDPAC_DEFAULT_PARAMS } from "@/ts/constants/methods/rdpac";
+import { RDPAC } from "@/ts/interfaces/methods/rdpac";
+import RDPACSettings from "./methods/RDPACSettings";
 
 export default function MethodSettings({
   selectedMethod,
@@ -38,6 +41,8 @@ export default function MethodSettings({
       setSettings(BFSTREE_DEFAULT_PARAMS as BFSTree);
     } else if (method === UDLF_METHODS.CORGRAPH) {
       setSettings(CORGRAPH_DEFAULT_PARAMS as CorGraph);
+    } else if (method === UDLF_METHODS.RDPAC) {
+      setSettings(RDPAC_DEFAULT_PARAMS as RDPAC);
     }
   };
 
@@ -58,9 +63,9 @@ export default function MethodSettings({
       <FormControl fullWidth>
         <InputLabel>Method</InputLabel>
         <Select value={selectedMethod} onChange={(e) => handleMethodChange(e.target.value as Method)} label="Method">
-          {methodsSorted.map((method) => (
+          {methodsSorted.map((method, index) => (
             <MenuItem key={method} value={method}>
-              {method}
+              {`${index + 1}. ${method}`}
             </MenuItem>
           ))}
         </Select>
@@ -79,6 +84,9 @@ export default function MethodSettings({
       )}
       {selectedMethod === UDLF_METHODS.CORGRAPH && (
         <CorGraphSettings settings={settings as CorGraph} setSettings={(s) => setSettings(s as CorGraph)} />
+      )}
+      {selectedMethod === UDLF_METHODS.RDPAC && (
+        <RDPACSettings settings={settings as RDPAC} setSettings={(s) => setSettings(s as RDPAC)} />
       )}
     </Box>
   );

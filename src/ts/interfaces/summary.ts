@@ -7,6 +7,7 @@ import { InputSettingsData } from "./input";
 import { LHRR } from "./methods/lhrr";
 import { OutputSettingsData } from "./output";
 import { CorGraph } from "./methods/corgraph";
+import { RDPAC } from "./methods/rdpac";
 
 export interface SummaryData {
   method: string;
@@ -18,7 +19,7 @@ export interface SummaryData {
 
 export interface SummaryProps {
   selectedMethod: Method;
-  methodSettings: ContextRR | CPRR | LHRR | BFSTree | CorGraph;
+  methodSettings: ContextRR | CPRR | LHRR | BFSTree | CorGraph | RDPAC;
   inputSettings: InputSettingsData | null;
   outputSettings: OutputSettingsData;
   evaluationSettings: EvaluationSettingsData | null;
