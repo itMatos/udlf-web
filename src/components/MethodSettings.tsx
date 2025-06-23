@@ -28,6 +28,9 @@ import ReckNNGraphSettings from "./methods/ReckNNGraph";
 import { RFE_DEFAULT_PARAMS } from "@/ts/constants/methods/rfe";
 import { RFE } from "@/ts/interfaces/methods/rfe";
 import RFESettings from "./methods/RFESettings";
+import { RLSIM_DEFAULT_PARAMS } from "@/ts/constants/methods/rlsim";
+import { RLSim } from "@/ts/interfaces/methods/rlsim";
+import RLSimSettings from "./methods/RLSimSettings";
 
 export default function MethodSettings({
   selectedMethod,
@@ -53,6 +56,8 @@ export default function MethodSettings({
       setSettings(RECKNNGRAPH_DEFAULT_PARAMS as ReckNNGraph);
     } else if (method === UDLF_METHODS.RFE) {
       setSettings(RFE_DEFAULT_PARAMS as RFE);
+    } else if (method === UDLF_METHODS.RLSIM) {
+      setSettings(RLSIM_DEFAULT_PARAMS as RLSim);
     }
   };
 
@@ -103,6 +108,9 @@ export default function MethodSettings({
       )}
       {selectedMethod === UDLF_METHODS.RFE && (
         <RFESettings settings={settings as RFE} setSettings={(s) => setSettings(s as RFE)} />
+      )}
+      {selectedMethod === UDLF_METHODS.RLSIM && (
+        <RLSimSettings settings={settings as RLSim} setSettings={(s) => setSettings(s as RLSim)} />
       )}
     </Box>
   );

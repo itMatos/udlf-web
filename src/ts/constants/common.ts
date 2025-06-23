@@ -11,4 +11,5 @@ export const UDLF_METHODS = {
   RDPAC: "RDPAC" as Method,
   RECKNNGRAPH: "ReckNNGraph" as Method,
   RFE: "RFE" as Method,
+  RLSIM: "RLSim" as Method,
 } as const;
