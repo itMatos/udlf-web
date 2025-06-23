@@ -1,7 +1,7 @@
-import { ReckNNGraph, ReckNNGraphParams } from "@/ts/interfaces/methods/recknngraph";
+import { ReckNNGraph, ReckNNGraphSettingsProps } from "@/ts/interfaces/methods/recknngraph";
 import { Box, TextField } from "@mui/material";
 
-export default function ReckNNGraphSettings({ settings, setSettings }: ReckNNGraphParams) {
+export default function ReckNNGraphSettings({ settings, setSettings }: ReckNNGraphSettingsProps) {
   const handleSettingChange = (field: keyof ReckNNGraph) => (event: React.ChangeEvent<HTMLInputElement>) => {
     const newSettings = {
       ...settings,

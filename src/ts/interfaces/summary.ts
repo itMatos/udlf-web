@@ -9,10 +9,11 @@ import { OutputSettingsData } from "./output";
 import { CorGraph } from "./methods/corgraph";
 import { RDPAC } from "./methods/rdpac";
 import { ReckNNGraph } from "./methods/recknngraph";
+import { RFE } from "./methods/rfe";
 
 export interface SummaryData {
   method: string;
-  methodSettings: CPRR | ContextRR;
+  methodSettings: CPRR | ContextRR | LHRR | BFSTree | CorGraph | RDPAC | ReckNNGraph | RFE;
   inputSettings: InputSettingsData;
   outputSettings: OutputSettingsData;
   evaluationSettings: EvaluationSettingsData;
@@ -20,7 +21,7 @@ export interface SummaryData {
 
 export interface SummaryProps {
   selectedMethod: Method;
-  methodSettings: ContextRR | CPRR | LHRR | BFSTree | CorGraph | RDPAC | ReckNNGraph;
+  methodSettings: ContextRR | CPRR | LHRR | BFSTree | CorGraph | RDPAC | ReckNNGraph | RFE;
   inputSettings: InputSettingsData | null;
   outputSettings: OutputSettingsData;
   evaluationSettings: EvaluationSettingsData | null;

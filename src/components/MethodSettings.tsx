@@ -25,6 +25,9 @@ import RDPACSettings from "./methods/RDPACSettings";
 import { RECKNNGRAPH_DEFAULT_PARAMS } from "@/ts/constants/methods/recknngraph";
 import { ReckNNGraph } from "@/ts/interfaces/methods/recknngraph";
 import ReckNNGraphSettings from "./methods/ReckNNGraph";
+import { RFE_DEFAULT_PARAMS } from "@/ts/constants/methods/rfe";
+import { RFE } from "@/ts/interfaces/methods/rfe";
+import RFESettings from "./methods/RFESettings";
 
 export default function MethodSettings({
   selectedMethod,
@@ -48,6 +51,8 @@ export default function MethodSettings({
       setSettings(RDPAC_DEFAULT_PARAMS as RDPAC);
     } else if (method === UDLF_METHODS.RECKNNGRAPH) {
       setSettings(RECKNNGRAPH_DEFAULT_PARAMS as ReckNNGraph);
+    } else if (method === UDLF_METHODS.RFE) {
+      setSettings(RFE_DEFAULT_PARAMS as RFE);
     }
   };
 
@@ -95,6 +100,9 @@ export default function MethodSettings({
       )}
       {selectedMethod === UDLF_METHODS.RECKNNGRAPH && (
         <ReckNNGraphSettings settings={settings as ReckNNGraph} setSettings={(s) => setSettings(s as ReckNNGraph)} />
+      )}
+      {selectedMethod === UDLF_METHODS.RFE && (
+        <RFESettings settings={settings as RFE} setSettings={(s) => setSettings(s as RFE)} />
       )}
     </Box>
   );

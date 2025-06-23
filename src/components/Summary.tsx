@@ -34,6 +34,7 @@ import { CorGraph } from "@/ts/interfaces/methods/corgraph";
 import { UDLF_METHODS } from "@/ts/constants/common";
 import { RDPAC } from "@/ts/interfaces/methods/rdpac";
 import { ReckNNGraph } from "@/ts/interfaces/methods/recknngraph";
+import { RFE, RFEConfigParams } from "@/ts/interfaces/methods/rfe";
 
 const Summary: React.FC<SummaryProps> = ({
   selectedMethod,
@@ -147,6 +148,8 @@ const Summary: React.FC<SummaryProps> = ({
         return generateRDPACSettings(methodSettings as RDPAC);
       case UDLF_METHODS.RECKNNGRAPH:
         return generateReckNNGraphSettings(methodSettings as ReckNNGraph);
+      case UDLF_METHODS.RFE:
+        return generateRFESettings(methodSettings as RFE);
       default:
         return generateContextRRSettings(methodSettings as ContextRR);
     }
@@ -228,6 +231,22 @@ const Summary: React.FC<SummaryProps> = ({
       PARAM_RECKNNGRAPH_EPSILON: methodSettings?.EPSILON,
     };
     return ReckNNGraphValueUpdates;
+  };
+
+  const generateRFESettings = (methodSettings: RFE): RFEConfigParams => {
+    const RFEValueUpdates: RFEConfigParams = {
+      PARAM_RFE_K: methodSettings?.K,
+      PARAM_RFE_T: methodSettings?.L,
+      PARAM_RFE_L: methodSettings?.T,
+      PARAM_RFE_PA: methodSettings?.PA,
+      PARAM_RFE_TH_CC: methodSettings?.TH_CC,
+      PARAM_RFE_PERFORM_CCS: methodSettings?.PERFORM_CCS ? "TRUE" : "FALSE",
+      PARAM_RFE_RERANK_BY_EMB: methodSettings?.RERANK_BY_EMB ? "TRUE" : "FALSE",
+      PARAM_RFE_EXPORT_EMBEDDINGS: methodSettings?.EXPORT_EMBEDDINGS ? "TRUE" : "FALSE",
+      PARAM_RFE_EMBEDDINGS_PATH: methodSettings?.EMBEDDINGS_PATH,
+      PARAM_RFE_CCS_PATH: methodSettings?.CCS_PATH,
+    };
+    return RFEValueUpdates;
   };
 
   const generateConfigFileToDownload = () => {

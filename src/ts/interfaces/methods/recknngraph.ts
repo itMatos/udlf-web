@@ -4,7 +4,7 @@ export interface ReckNNGraph {
   EPSILON: number;
 }
 
-export interface ReckNNGraphParams {
+export interface ReckNNGraphSettingsProps {
   settings: ReckNNGraph;
   setSettings: (settings: ReckNNGraph) => void;
 }
