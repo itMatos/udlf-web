@@ -1,1 +1,1 @@
-export type Method = "ContextRR" | "CPRR" | "LHRR" | "BFSTree" | "CorGraph" | "RDPAC" | "ReckNNGraph" | "RFE" | "RLSim";
+export type Method = "ContextRR" | "CPRR" | "LHRR" | "BFSTree" | "CorGraph" | "RDPAC" | "ReckNNGraph" | "RFE" | "RLSim" | "RKGraph";

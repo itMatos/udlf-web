@@ -12,4 +12,5 @@ export const UDLF_METHODS = {
   RECKNNGRAPH: "ReckNNGraph" as Method,
   RFE: "RFE" as Method,
   RLSIM: "RLSim" as Method,
+  RKGRAPH: "RKGraph" as Method,
 } as const;

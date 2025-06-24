@@ -11,10 +11,11 @@ import { RDPAC } from "./methods/rdpac";
 import { ReckNNGraph } from "./methods/recknngraph";
 import { RFE } from "./methods/rfe";
 import { RLSim } from "./methods/rlsim";
+import { RKGraph } from "./methods/rkgraph";
 
 export interface SummaryData {
   method: string;
-  methodSettings: ContextRR | CPRR | LHRR | BFSTree | CorGraph | RDPAC | ReckNNGraph | RFE | RLSim;
+  methodSettings: ContextRR | CPRR | LHRR | BFSTree | CorGraph | RDPAC | ReckNNGraph | RFE | RLSim | RKGraph;
   inputSettings: InputSettingsData;
   outputSettings: OutputSettingsData;
   evaluationSettings: EvaluationSettingsData;
@@ -22,7 +23,7 @@ export interface SummaryData {
 
 export interface SummaryProps {
   selectedMethod: Method;
-  methodSettings: ContextRR | CPRR | LHRR | BFSTree | CorGraph | RDPAC | ReckNNGraph | RFE | RLSim;
+  methodSettings: ContextRR | CPRR | LHRR | BFSTree | CorGraph | RDPAC | ReckNNGraph | RFE | RLSim | RKGraph;
   inputSettings: InputSettingsData | null;
   outputSettings: OutputSettingsData;
   evaluationSettings: EvaluationSettingsData | null;

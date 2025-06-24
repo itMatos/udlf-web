@@ -31,6 +31,9 @@ import RFESettings from "./methods/RFESettings";
 import { RLSIM_DEFAULT_PARAMS } from "@/ts/constants/methods/rlsim";
 import { RLSim } from "@/ts/interfaces/methods/rlsim";
 import RLSimSettings from "./methods/RLSimSettings";
+import { RKGRAPH_DEFAULT_PARAMS } from "@/ts/constants/methods/rkgraph";
+import { RKGraph } from "@/ts/interfaces/methods/rkgraph";
+import RKGraphSettings from "./methods/RKGraphSettings";
 
 export default function MethodSettings({
   selectedMethod,
@@ -58,6 +61,8 @@ export default function MethodSettings({
       setSettings(RFE_DEFAULT_PARAMS as RFE);
     } else if (method === UDLF_METHODS.RLSIM) {
       setSettings(RLSIM_DEFAULT_PARAMS as RLSim);
+    } else if (method === UDLF_METHODS.RKGRAPH) {
+      setSettings(RKGRAPH_DEFAULT_PARAMS as RKGraph);
     }
   };
 
@@ -111,6 +116,9 @@ export default function MethodSettings({
       )}
       {selectedMethod === UDLF_METHODS.RLSIM && (
         <RLSimSettings settings={settings as RLSim} setSettings={(s) => setSettings(s as RLSim)} />
+      )}
+      {selectedMethod === UDLF_METHODS.RKGRAPH && (
+        <RKGraphSettings settings={settings as RKGraph} setSettings={(s) => setSettings(s as RKGraph)} />
       )}
     </Box>
   );
