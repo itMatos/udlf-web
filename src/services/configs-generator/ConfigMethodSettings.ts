@@ -7,6 +7,8 @@ import { RDPAC } from "@/ts/interfaces/methods/rdpac";
 import { ReckNNGraph } from "@/ts/interfaces/methods/recknngraph";
 import { RFE, RFEConfigParams } from "@/ts/interfaces/methods/rfe";
 import { RKGraph, RKGraphConfigParams } from "@/ts/interfaces/methods/rkgraph";
+import { RLRecom, RLRecomConfigParams } from "@/ts/interfaces/methods/rlrecom";
+import { RLSim, RLSimConfigParams } from "@/ts/interfaces/methods/rlsim";
 
 export const generateContextRRSettings = (methodSettings: ContextRR) => {
   const ContextRRValueUpdates = {
@@ -110,4 +112,24 @@ export const generateRKGraphSettings = (methodSettings: RKGraph): RKGraphConfigP
     PARAM_RKGRAPH_L: methodSettings?.L,
   };
   return RKGraphValueUpdates;
+};
+
+export const generateRLSimSettings = (methodSettings: RLSim) => {
+  const RLSimValueUpdates: RLSimConfigParams = {
+    PARAM_RLSIM_TOPK: methodSettings?.TOPK,
+    PARAM_RLSIM_CK: methodSettings?.CK,
+    PARAM_RLSIM_T: methodSettings?.T,
+    PARAM_RLSIM_METRIC: methodSettings?.METRIC,
+  };
+  return RLSimValueUpdates;
+};
+
+export const generateRLRecomSettings = (methodSettings: RLRecom): RLRecomConfigParams => {
+  const RLRecomValueUpdates: RLRecomConfigParams = {
+    PARAM_RLRECOM_K: methodSettings?.K,
+    PARAM_RLRECOM_L: methodSettings?.L,
+    PARAM_RLRECOM_LAMBDA: methodSettings?.LAMBDA,
+    PARAM_RLRECOM_EPSILON: methodSettings?.EPSILON,
+  };
+  return RLRecomValueUpdates;
 };

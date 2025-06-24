@@ -123,10 +123,12 @@ const Summary: React.FC<SummaryProps> = ({
 
     const methodSettingsTemplate = {
       section: `${selectedMethod.toUpperCase()} SETTINGS`,
-      parameters: Object.entries(settingsTemplate).map(([key, value]) => ({
-        key,
-        value,
-      })),
+      parameters: settingsTemplate
+        ? Object.entries(settingsTemplate).map(([key, value]) => ({
+            key,
+            value,
+          }))
+        : [],
     };
 
     const allTemplates = [
@@ -164,6 +166,8 @@ const Summary: React.FC<SummaryProps> = ({
         return generateRFESettings(methodSettings as RFE);
       case UDLF_METHODS.RKGRAPH:
         return generateRKGraphSettings(methodSettings as RKGraph);
+      case UDLF_METHODS.RLSIM:
+        return;
       default:
         return generateContextRRSettings(methodSettings as ContextRR);
     }

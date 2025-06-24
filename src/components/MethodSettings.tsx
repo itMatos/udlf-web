@@ -34,6 +34,9 @@ import RLSimSettings from "./methods/RLSimSettings";
 import { RKGRAPH_DEFAULT_PARAMS } from "@/ts/constants/methods/rkgraph";
 import { RKGraph } from "@/ts/interfaces/methods/rkgraph";
 import RKGraphSettings from "./methods/RKGraphSettings";
+import { RLRECOM_DEFAULT_PARAMS } from "@/ts/constants/methods/rkrecom";
+import { RLRecom } from "@/ts/interfaces/methods/rlrecom";
+import RLRecomSettings from "./methods/RLRecom";
 
 export default function MethodSettings({
   selectedMethod,
@@ -63,6 +66,8 @@ export default function MethodSettings({
       setSettings(RLSIM_DEFAULT_PARAMS as RLSim);
     } else if (method === UDLF_METHODS.RKGRAPH) {
       setSettings(RKGRAPH_DEFAULT_PARAMS as RKGraph);
+    } else if (method === UDLF_METHODS.RLRECOM) {
+      setSettings(RLRECOM_DEFAULT_PARAMS as RLRecom);
     }
   };
 
@@ -83,9 +88,9 @@ export default function MethodSettings({
       <FormControl fullWidth>
         <InputLabel>Method</InputLabel>
         <Select value={selectedMethod} onChange={(e) => handleMethodChange(e.target.value as Method)} label="Method">
-          {methodsSorted.map((method, index) => (
+          {methodsSorted.map((method) => (
             <MenuItem key={method} value={method}>
-              {`${index + 1}. ${method}`}
+              {method}
             </MenuItem>
           ))}
         </Select>
@@ -119,6 +124,9 @@ export default function MethodSettings({
       )}
       {selectedMethod === UDLF_METHODS.RKGRAPH && (
         <RKGraphSettings settings={settings as RKGraph} setSettings={(s) => setSettings(s as RKGraph)} />
+      )}
+      {selectedMethod === UDLF_METHODS.RLRECOM && (
+        <RLRecomSettings settings={settings as RLRecom} setSettings={(s) => setSettings(s as RLRecom)} />
       )}
     </Box>
   );

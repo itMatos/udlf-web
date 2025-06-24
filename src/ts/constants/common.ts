@@ -13,4 +13,5 @@ export const UDLF_METHODS = {
   RFE: "RFE" as Method,
   RLSIM: "RLSim" as Method,
   RKGRAPH: "RKGraph" as Method,
+  RLRECOM: "RLRecom" as Method,
 } as const;
