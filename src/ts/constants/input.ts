@@ -16,7 +16,7 @@ export const INPUT_TYPES = [
 
 export const DEFAULT_INPUT_SETTINGS: InputSettingsData = {
   inputType: "AUTO",
-  inputFile: "/Users/italomatos/Documents/IC/UDLF/Datasets/mpeg7/ranked_lists/AIR.txt",
+  inputFiles: ["/Users/italomatos/Documents/IC/UDLF/Datasets/mpeg7/ranked_lists/AIR.txt"],
   inputFileList: "/Users/italomatos/Documents/IC/UDLF/Datasets/mpeg7/lists_mpeg7.txt",
   inputFileClasses: "/Users/italomatos/Documents/IC/UDLF/Datasets/mpeg7/classes_mpeg7.txt",
   datasetImagesPath: "/Users/italomatos/Documents/IC/UDLF/Datasets/mpeg7/original/",
