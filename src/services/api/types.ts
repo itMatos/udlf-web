@@ -3,3 +3,8 @@ export interface ResponseApi {
   error: string;
   output: string;
 }
+
+export interface LineContentResponse {
+  line: number;
+  lineContent: string;
+}

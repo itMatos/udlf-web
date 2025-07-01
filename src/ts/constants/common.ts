@@ -15,3 +15,5 @@ export const UDLF_METHODS = {
   RKGRAPH: "RKGraph" as Method,
   RLRECOM: "RLRecom" as Method,
 } as const;
+
+export const IMAGES_PER_PAGE_DEFAULT = 20 as const;
