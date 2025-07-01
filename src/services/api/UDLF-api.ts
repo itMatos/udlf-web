@@ -17,3 +17,14 @@ export const executeUDLF = async (configFile: Blob, fileName: string) => {
     throw error;
   }
 };
+
+export const getUDLFOutputs = async (outputFileName: string) => {
+  try {
+    const endpointToGetOutputs = `/output-file/${outputFileName}`;
+    const response = await udlfApi.get(endpointToGetOutputs);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching UDLF outputs:", error);
+    throw error;
+  }
+};
