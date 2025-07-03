@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import {
   Box,
   Typography,
@@ -47,6 +47,7 @@ import {
   generateRFESettings,
   generateRKGraphSettings,
 } from "@/services/configs-generator/ConfigMethodSettings";
+import { generateFileName, generateUniqueId } from "@/utils/helpers";
 
 const Summary: React.FC<SummaryProps> = ({
   selectedMethod,
@@ -57,7 +58,13 @@ const Summary: React.FC<SummaryProps> = ({
   setConfigFileToExecute,
   setConfigFileName,
 }) => {
-  const generateConfigFile = () => {
+  const { configFileName } = useMemo(() => {
+    const id = generateUniqueId();
+    const name = generateFileName(selectedMethod, id);
+    return { configFileId: id, configFileName: name };
+  }, [selectedMethod]);
+
+  const generateConfigFile = (fileName: string) => {
     const baseConfig = {
       ...baseConfigTemplate,
       parameters: baseConfigTemplate.parameters.map((param) => ({
@@ -89,7 +96,9 @@ const Summary: React.FC<SummaryProps> = ({
       OUTPUT_FILE_FORMAT: outputSettings.outputFileFormat.includes("RANKEDLIST") ? "RK" : "MATRIX",
       OUTPUT_MATRIX_TYPE: outputSettings.outputFileFormat.includes("DISTANCE") ? "DIST" : "SIM",
       OUTPUT_RK_FORMAT: outputSettings.outputFileFormat.includes("NUMERIC") ? "NUM" : "STR",
+      OUTPUT_LOG_FILE_PATH: "log_" + fileName,
     };
+    console.log("2. OUTPUT_LOG_FILE_PATH (inside generateConfigFile):", "log_" + fileName);
 
     const outputSettingsTemplate = {
       section: "OUTPUT SETTINGS",
@@ -173,14 +182,14 @@ const Summary: React.FC<SummaryProps> = ({
     }
   };
 
-  const generateConfigFileToDownload = () => {
-    const blob = generateConfigFile();
-    const fileNameToDownload = `${selectedMethod}_config.ini`;
+  const generatedConfigFile = generateConfigFile(configFileName);
 
-    const url = window.URL.createObjectURL(blob);
+  const generateConfigFileToDownload = () => {
+    const url = window.URL.createObjectURL(generatedConfigFile);
+    console.log("3. Filename for download:", configFileName);
     const link = document.createElement("a");
     link.href = url;
-    link.download = fileNameToDownload;
+    link.download = configFileName;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -188,9 +197,10 @@ const Summary: React.FC<SummaryProps> = ({
   };
 
   useEffect(() => {
-    const configFile = generateConfigFile();
-    setConfigFileToExecute(configFile);
-    setConfigFileName(`${selectedMethod}_config.ini`);
+    setConfigFileToExecute(generatedConfigFile);
+    setConfigFileName(configFileName);
+    console.log("4. configFileName sent to backend (via useEffect):", configFileName); // <-- Adicione este log
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
