@@ -11,18 +11,21 @@ export default function Homepage() {
       <Box
         sx={{
           display: "flex",
+          flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
           height: "80vh",
+          gap: 2,
+          width: "100%",
+          maxWidth: "20rem",
+          margin: "0 auto",
         }}
       >
-        <Button
-          size="large"
-          variant="contained"
-          endIcon={<ArrowForwardIosIcon />}
-          href="/get-started"
-        >
-          Get started
+        <Button size="large" variant="contained" endIcon={<ArrowForwardIosIcon />} href="/get-started" fullWidth>
+          Create new config file
+        </Button>
+        <Button size="large" variant="contained" endIcon={<ArrowForwardIosIcon />} href="/load-config" fullWidth>
+          Run existing config file
         </Button>
       </Box>
     </React.Fragment>
