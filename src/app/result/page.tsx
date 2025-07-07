@@ -1,13 +1,23 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Box, Card, CardMedia, LinearProgress } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardMedia,
+  FormControl,
+  InputLabel,
+  LinearProgress,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+} from "@mui/material";
 import Appbar from "@/components/Appbar";
 import { getImageNameByLineNumber, getUDLFOutputFileByLine } from "@/services/api/UDLF-api";
 import { IMAGES_PER_PAGE_DEFAULT } from "@/ts/constants/common";
 
 export default function Result() {
   const [lineContent, setLineContent] = useState<string>("");
-  const imagesPerPage = IMAGES_PER_PAGE_DEFAULT;
+  const [imagesPerPage, setImagesPerPage] = useState<number>(IMAGES_PER_PAGE_DEFAULT);
   const [imagesToShow, setImagesToShow] = useState<number[]>([]);
   const [objectIndexNameFile, setObjectIndexNameFile] = useState<{ [key: number]: string }>({});
 
@@ -25,6 +35,11 @@ export default function Result() {
   useEffect(() => {
     fetchOutputFileByLine(1);
   }, []);
+
+  const handleChange = (event: SelectChangeEvent) => {
+    const selectedValue = Number(event.target.value);
+    setImagesPerPage(selectedValue);
+  };
 
   useEffect(() => {
     if (lineContent) {
@@ -60,9 +75,42 @@ export default function Result() {
   return (
     <React.Fragment>
       <Appbar />
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          maxWidth: "100%",
+          p: 2,
+        }}
+      >
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">Images</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={imagesPerPage.toString()}
+            label="images"
+            onChange={handleChange}
+          >
+            <MenuItem value={10}>10</MenuItem>
+            <MenuItem value={20}>20</MenuItem>
+            <MenuItem value={30}>30</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
       <h1>Resultados</h1>
       {objectIndexNameFile && Object.keys(objectIndexNameFile).length > 0 ? (
-        <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            alignItems: "center",
+            gap: 1,
+          }}
+        >
           {imagesToShow.map((imageIndex) => (
             <Card key={imageIndex} sx={{ p: 1 }}>
               <CardMedia

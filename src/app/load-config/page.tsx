@@ -5,11 +5,14 @@ import { Box, Button, Typography, Paper } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import Appbar from "@/components/Appbar"; // Assumindo que você tem um componente Appbar
+import ExecuteConfig from "@/components/ExecuteConfig";
 
 export default function UploadPage() {
   // Tipagem para selectedFile: pode ser um File (objeto de arquivo) ou null
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null); // Tipagem para o ref do input de arquivo
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [fileName, setFileName] = useState<string>("");
+  const [showFileLog, setShowFileLog] = useState<boolean>(false);
 
   // Lida com a seleção do arquivo
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -54,6 +57,8 @@ export default function UploadPage() {
 
     // Lê o arquivo como texto. TypeScript garante que selectedFile não é null aqui.
     reader.readAsText(selectedFile);
+    setFileName(selectedFile.name);
+    setShowFileLog(true);
   };
 
   return (
@@ -117,6 +122,12 @@ export default function UploadPage() {
           >
             Executar Arquivo
           </Button>
+
+          {showFileLog && selectedFile && (
+            <Box sx={{ mt: 2, width: "100%" }}>
+              <ExecuteConfig configFileToExecute={selectedFile} configFileName={fileName} />
+            </Box>
+          )}
         </Paper>
       </Box>
     </React.Fragment>
