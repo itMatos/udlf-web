@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Snackbar } from "@mui/material";
+import { Alert, Box, Button, Link, Snackbar, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { executeUDLF } from "@/services/api/UDLF-api";
 import { ResponseApi } from "@/services/api/types";
@@ -11,6 +11,7 @@ export default function ExecuteConfig({
   configFileToExecute: Blob;
   configFileName: string;
 }) {
+  console.log("(ExecuteConfig) configFileName:", configFileName);
   const [resultUdlf, setResultUdlf] = useState<ResponseApi | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
@@ -54,13 +55,28 @@ export default function ExecuteConfig({
   };
 
   console.log("Executing configuration with file:", configFileToExecute);
+  const resultFileName = "output_" + configFileName + ".txt";
 
   return (
     <Box>
       <Box sx={{ mb: 2 }}>
         {resultUdlf ? (
           <Box>
-            <h3>Execution Result</h3>
+            <Box>
+              <Link
+                href={`/result/${resultFileName}`}
+                underline="hover"
+                color="primary"
+                sx={{ display: "flex", alignItems: "center", mb: 2 }}
+              >
+                <TerminalIcon sx={{ mr: 1 }} />
+                View Execution Result
+              </Link>
+            </Box>
+            <Typography variant="h4" gutterBottom>
+              Execution Result
+            </Typography>
+            <Typography variant="h5">Log: {configFileName}</Typography>
             <Snackbar
               anchorOrigin={{ vertical: "top", horizontal: "right" }}
               open={showSuccessMessage}

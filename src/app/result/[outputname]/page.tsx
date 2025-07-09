@@ -15,8 +15,21 @@ import {
 import Appbar from "@/components/Appbar";
 import { getImageNameByLineNumber, getUDLFOutputFileByLine } from "@/services/api/UDLF-api";
 import { IMAGES_PER_PAGE_DEFAULT } from "@/ts/constants/common";
+import { useRouter } from "next/navigation";
 
-export default function Result() {
+interface ResultPageProps {
+  params: {
+    outputname: string;
+  };
+}
+
+export default function Result({ params }: ResultPageProps) {
+  const router = useRouter();
+  const { outputname } = params;
+  console.log("Output name from params:", outputname);
+  console.log("Router:", router);
+
+  console.log("Output file name from query:", outputname);
   const [lineContent, setLineContent] = useState<string>("");
   const [imagesPerPage, setImagesPerPage] = useState<number>(IMAGES_PER_PAGE_DEFAULT);
   const [imagesToShow, setImagesToShow] = useState<number[]>([]);
@@ -24,8 +37,7 @@ export default function Result() {
 
   const fetchOutputFileByLine = async (lineNumber: number) => {
     try {
-      const outputFileName = "teste3-30jun.txt";
-      const response = await getUDLFOutputFileByLine(outputFileName, lineNumber);
+      const response = await getUDLFOutputFileByLine(outputname, lineNumber);
       console.log(`Fetched output for line ${lineNumber}:`, response);
       setLineContent(response.lineContent || "");
     } catch (error) {
