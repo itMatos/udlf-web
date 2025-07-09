@@ -1,11 +1,10 @@
 "use client";
-
 import React, { useState, useRef, ChangeEvent } from "react";
 import { Box, Button, Typography, Paper } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import Appbar from "@/components/Appbar"; // Assumindo que você tem um componente Appbar
-import ExecuteConfig from "@/components/ExecuteConfig";
+import ExecuteConfig from "../execute/[configFileName]/page";
 
 export default function UploadPage() {
   // Tipagem para selectedFile: pode ser um File (objeto de arquivo) ou null
@@ -125,7 +124,7 @@ export default function UploadPage() {
 
           {showFileLog && selectedFile && (
             <Box sx={{ mt: 2, width: "100%" }}>
-              <ExecuteConfig configFileToExecute={selectedFile} configFileName={fileName} />
+              <ExecuteConfig configFileName={fileName} />
             </Box>
           )}
         </Paper>

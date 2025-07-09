@@ -6,7 +6,6 @@ import InputSettings from "./InputSettings";
 import OutputSettings from "./OutputSettings";
 import EvaluationSettings from "./EvaluationSettings";
 import Summary from "./Summary";
-import ExecuteConfig from "./ExecuteConfig";
 import { CONTEXTRR_DEFAULT_PARAMS } from "@/ts/constants/methods/contextrr";
 import { STEPS, UDLF_METHODS } from "@/ts/constants/common";
 import { DEFAULT_INPUT_SETTINGS } from "@/ts/constants/input";
@@ -24,6 +23,7 @@ import { RDPAC } from "@/ts/interfaces/methods/rdpac";
 import { RLSim } from "@/ts/interfaces/methods/rlsim";
 import { RFE } from "@/ts/interfaces/methods/rfe";
 import { ReckNNGraph } from "@/ts/interfaces/methods/recknngraph";
+import { uploadUDLFConfig } from "@/services/api/UDLF-api";
 
 export default function HorizontalLinearStepper() {
   const [activeStep, setActiveStep] = useState(0);
@@ -41,6 +41,17 @@ export default function HorizontalLinearStepper() {
 
   const isStepOptional = (step: number) => step === -1;
   const isStepSkipped = (step: number) => skipped.has(step);
+
+  const redirectToExecuteConfig = (configFileToExecute: Blob, configFileName: string) => {
+    console.log("Redirecting to execute config with file:", configFileToExecute, "and name:", configFileName);
+    try {
+      uploadUDLFConfig(configFileToExecute, configFileName);
+      console.log("Config file uploaded successfully:", configFileName);
+    } catch (error) {
+      console.error("Error uploading config file:", error);
+    }
+    console.log("aqui vai ser redirecionado");
+  };
 
   const isStepComplete = (step: number): boolean => {
     switch (step) {
@@ -131,11 +142,7 @@ export default function HorizontalLinearStepper() {
           />
         );
       case 5:
-        return (
-          configFileToExecute && (
-            <ExecuteConfig configFileToExecute={configFileToExecute} configFileName={configFileName} />
-          )
-        );
+        return configFileToExecute && redirectToExecuteConfig(configFileToExecute, configFileName);
       default:
         return <Typography>Step content in development</Typography>;
     }
@@ -179,11 +186,7 @@ export default function HorizontalLinearStepper() {
 
       <Box sx={{ mt: 4, mb: 2 }}>
         {activeStep === STEPS.length ? (
-          <>
-            {configFileToExecute && (
-              <ExecuteConfig configFileToExecute={configFileToExecute} configFileName={configFileName} />
-            )}
-          </>
+          <>{configFileToExecute && configFileName && redirectToExecuteConfig(configFileToExecute, configFileName)}</>
         ) : (
           <>
             <Typography sx={{ mb: 2 }}>{stepTitle[activeStep]}</Typography>

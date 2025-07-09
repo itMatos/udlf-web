@@ -1,16 +1,17 @@
+"use client";
 import { Alert, Box, Button, Link, Snackbar, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { executeUDLF } from "@/services/api/UDLF-api";
 import { ResponseApi } from "@/services/api/types";
 import TerminalIcon from "@mui/icons-material/Terminal";
+import Appbar from "@/components/Appbar";
 
-export default function ExecuteConfig({
-  configFileToExecute,
-  configFileName,
-}: {
-  configFileToExecute: Blob;
+export interface ExecuteConfigPageProps {
   configFileName: string;
-}) {
+}
+
+export default function ExecuteConfig(params: ExecuteConfigPageProps) {
+  const { configFileName } = params;
   console.log("(ExecuteConfig) configFileName:", configFileName);
   const [resultUdlf, setResultUdlf] = useState<ResponseApi | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -38,7 +39,7 @@ export default function ExecuteConfig({
 
   const handleExecute = async () => {
     try {
-      const result = (await executeUDLF(configFileToExecute, configFileName)) as ResponseApi;
+      const result = (await executeUDLF(configFileName)) as ResponseApi;
       setResultUdlf(result);
       console.log("UDLF execution result:", result);
       console.log("Execution result:", result);
@@ -54,11 +55,11 @@ export default function ExecuteConfig({
     }
   };
 
-  console.log("Executing configuration with file:", configFileToExecute);
   const resultFileName = "output_" + configFileName + ".txt";
 
   return (
     <Box>
+      <Appbar />
       <Box sx={{ mb: 2 }}>
         {resultUdlf ? (
           <Box>
@@ -113,7 +114,9 @@ export default function ExecuteConfig({
               padding: "20px",
             }}
           >
-            <h3>Execute Configuration</h3>
+            <Typography variant="h5" gutterBottom>
+              Execute Configuration File: {configFileName}
+            </Typography>
             <Button
               variant="contained"
               startIcon={<TerminalIcon />}

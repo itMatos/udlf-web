@@ -18,9 +18,9 @@ export default function OutputSettings({ onSettingsChange, settings }: OutputSet
     });
   };
 
-  const handleOutputFileNameChange = (value: string) => {
-    onSettingsChange({ ...settings, outputFileName: value });
-  };
+  // const handleOutputFileNameChange = (value: string) => {
+  //   onSettingsChange({ ...settings, outputFileName: value });
+  // };
 
   const handleOutputFileFormatChange = (value: OutputFormatType) => {
     console.log("Output file format changed:", value);
@@ -49,7 +49,7 @@ export default function OutputSettings({ onSettingsChange, settings }: OutputSet
 
         {enabledOutput && (
           <Box sx={{ mb: 2 }}>
-            <TextField
+            {/* <TextField
               fullWidth
               id="outputFilePath"
               label="Output file name"
@@ -59,7 +59,7 @@ export default function OutputSettings({ onSettingsChange, settings }: OutputSet
               style={{ marginBottom: "16px" }}
               required
               helperText="Specify the name of the output file (without extension)"
-            />
+            /> */}
             <TextField
               fullWidth
               id="inputType"

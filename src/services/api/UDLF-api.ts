@@ -6,12 +6,25 @@ const udlfApi = axios.create({
   baseURL: config.udlfApi,
 });
 
-export const executeUDLF = async (configFile: Blob, fileName: string) => {
+export const uploadUDLFConfig = async (configFile: Blob, fileName: string) => {
   const formData = new FormData();
   formData.append("config_file", configFile, fileName);
   try {
-    const endpointToExecute = "/execute";
-    const response = await udlfApi.post(endpointToExecute, formData);
+    const endpointToUpload = "/upload-file";
+    const response = await udlfApi.post(endpointToUpload, formData);
+    return response.data;
+  } catch (error) {
+    console.error("Error uploading UDLF config:", error);
+    throw error;
+  }
+};
+
+export const executeUDLF = async (fileName: string) => {
+  const formData = new FormData();
+  formData.append("config_file", fileName);
+  try {
+    const endpointToExecute = "/execute/" + fileName;
+    const response = await udlfApi.get(endpointToExecute);
     return response.data;
   } catch (error) {
     console.error("Error executing UDLF:", error);
