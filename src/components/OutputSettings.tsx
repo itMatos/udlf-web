@@ -1,13 +1,8 @@
 import { OUTPUT_TYPES } from "@/ts/constants/output";
-import { OutputSettingsData } from "@/ts/interfaces/output";
+import { OutputSettingsProps } from "@/ts/interfaces/output";
 import { OutputFormatType } from "@/ts/types/output";
 import { Box, FormControlLabel, FormGroup, MenuItem, Switch, TextField } from "@mui/material";
 import { useState } from "react";
-
-interface OutputSettingsProps {
-  onSettingsChange: (settings: OutputSettingsData) => void;
-  settings: OutputSettingsData;
-}
 
 export default function OutputSettings({ onSettingsChange, settings }: OutputSettingsProps) {
   const [enabledOutput, setEnabledOutput] = useState<boolean>(false);

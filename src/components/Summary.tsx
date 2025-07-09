@@ -91,7 +91,7 @@ const Summary: React.FC<SummaryProps> = ({
     };
 
     const valueUpdatesOutput = {
-      OUTPUT_FILE_PATH: outputSettings.outputFileName,
+      OUTPUT_FILE_PATH: outputSettings.outputFileName ? outputSettings.outputFileName : "output_" + fileName,
       OUTPUT_FILE: outputSettings.enabledOutput ? "TRUE" : "FALSE",
       OUTPUT_FILE_FORMAT: outputSettings.outputFileFormat.includes("RANKEDLIST") ? "RK" : "MATRIX",
       OUTPUT_MATRIX_TYPE: outputSettings.outputFileFormat.includes("DISTANCE") ? "DIST" : "SIM",

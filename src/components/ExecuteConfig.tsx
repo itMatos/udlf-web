@@ -30,8 +30,12 @@ export default function ExecuteConfig({
     }, 10000);
   };
 
-  const handleExecute = async () => {
+  const initExecution = () => {
     setIsLoading(true);
+    handleExecute();
+  };
+
+  const handleExecute = async () => {
     try {
       const result = (await executeUDLF(configFileToExecute, configFileName)) as ResponseApi;
       setResultUdlf(result);
@@ -83,17 +87,27 @@ export default function ExecuteConfig({
             </p>
           </Box>
         ) : (
-          <Box>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "100%",
+              padding: "20px",
+            }}
+          >
             <h3>Execute Configuration</h3>
             <Button
               variant="contained"
               startIcon={<TerminalIcon />}
-              onClick={handleExecute}
+              onClick={initExecution}
               loading={isLoading}
-              loadingIndicator="Executing..."
+              loadingPosition="start"
               disabled={isLoading}
+              sx={{ width: "200px", marginTop: "20px" }}
             >
-              Run
+              {isLoading ? "Executing..." : "Run"}
             </Button>
           </Box>
         )}

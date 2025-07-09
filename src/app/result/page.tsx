@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import {
   Box,
   Card,
+  CardHeader,
   CardMedia,
   FormControl,
   InputLabel,
@@ -112,10 +113,10 @@ export default function Result() {
           }}
         >
           {imagesToShow.map((imageIndex) => (
-            <Card key={imageIndex} sx={{ p: 1 }}>
+            <Card key={imageIndex} sx={{ p: 1, m: 1, width: 150, cursor: "pointer" }}>
+              <CardHeader subheader={`${objectIndexNameFile[imageIndex]}`} />
               <CardMedia
                 component="img"
-                height="70"
                 image={"http://localhost:8080/image-file/" + objectIndexNameFile[imageIndex]}
                 alt={`${objectIndexNameFile[imageIndex]}`}
               />
