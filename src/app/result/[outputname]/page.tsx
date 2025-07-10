@@ -18,12 +18,10 @@ import { IMAGES_PER_PAGE_DEFAULT } from "@/ts/constants/common";
 import { useRouter } from "next/navigation";
 
 interface ResultPageProps {
-  params: {
-    outputname: string;
-  };
+  outputname: string;
 }
 
-export default function Result({ params }: ResultPageProps) {
+export default function Result(params: ResultPageProps) {
   const router = useRouter();
   const { outputname } = params;
   console.log("Output name from params:", outputname);

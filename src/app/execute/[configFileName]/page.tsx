@@ -6,11 +6,11 @@ import { ResponseApi } from "@/services/api/types";
 import TerminalIcon from "@mui/icons-material/Terminal";
 import Appbar from "@/components/Appbar";
 
-export interface ExecuteConfigPageProps {
+interface ExecuteConfigPagePros {
   configFileName: string;
 }
 
-export default function ExecuteConfig(params: ExecuteConfigPageProps) {
+export default function ExecuteConfig(params: ExecuteConfigPagePros) {
   const { configFileName } = params;
   console.log("(ExecuteConfig) configFileName:", configFileName);
   const [resultUdlf, setResultUdlf] = useState<ResponseApi | null>(null);
