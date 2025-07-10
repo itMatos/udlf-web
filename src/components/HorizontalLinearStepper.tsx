@@ -47,6 +47,8 @@ export default function HorizontalLinearStepper() {
     try {
       uploadUDLFConfig(configFileToExecute, configFileName);
       console.log("Config file uploaded successfully:", configFileName);
+
+      window.location.href = `/execute/${configFileName}`;
     } catch (error) {
       console.error("Error uploading config file:", error);
     }

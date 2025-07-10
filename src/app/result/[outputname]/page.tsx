@@ -15,15 +15,14 @@ import {
 import Appbar from "@/components/Appbar";
 import { getImageNameByLineNumber, getUDLFOutputFileByLine } from "@/services/api/UDLF-api";
 import { IMAGES_PER_PAGE_DEFAULT } from "@/ts/constants/common";
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 
-interface ResultPageProps {
-  outputname: string;
-}
-
-export default function Result(params: ResultPageProps) {
-  const router = useRouter();
-  const { outputname } = params;
+export default function Result() {
+  const router = useParams();
+  let outputname = router?.outputname || "";
+  if (Array.isArray(outputname)) {
+    outputname = outputname[0] || "";
+  }
   console.log("Output name from params:", outputname);
   console.log("Router:", router);
 

@@ -3,19 +3,13 @@ import React, { useState, useRef, ChangeEvent } from "react";
 import { Box, Button, Typography, Paper } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import Appbar from "@/components/Appbar"; // Assumindo que você tem um componente Appbar
-import ExecuteConfig from "../execute/[configFileName]/page";
+import Appbar from "@/components/Appbar";
 
 export default function UploadPage() {
-  // Tipagem para selectedFile: pode ser um File (objeto de arquivo) ou null
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [fileName, setFileName] = useState<string>("");
-  const [showFileLog, setShowFileLog] = useState<boolean>(false);
 
-  // Lida com a seleção do arquivo
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    // Verifica se há arquivos e pega o primeiro
     const file = event.target.files ? event.target.files[0] : null;
     if (file) {
       setSelectedFile(file);
@@ -25,15 +19,12 @@ export default function UploadPage() {
     }
   };
 
-  // Aciona o input de arquivo quando o botão de upload é clicado
   const handleUploadButtonClick = () => {
-    // Acessa o input nativo através da referência e simula o clique
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
 
-  // Simula a "execução" do arquivo (lê o conteúdo e exibe)
   const handleExecuteFile = () => {
     if (!selectedFile) {
       alert("Por favor, selecione um arquivo primeiro para executar.");
@@ -43,10 +34,8 @@ export default function UploadPage() {
     const reader = new FileReader();
 
     reader.onload = (e: ProgressEvent<FileReader>) => {
-      // e.target.result é o conteúdo do arquivo, tipado como string para readAsText
       const fileContent = e.target?.result as string;
       console.log("Conteúdo do arquivo:", fileContent);
-      // Aqui você adicionaria a lógica para enviar para um backend ou processar
     };
 
     reader.onerror = (e: ProgressEvent<FileReader>) => {
@@ -54,10 +43,19 @@ export default function UploadPage() {
       alert("Erro ao ler o arquivo.");
     };
 
-    // Lê o arquivo como texto. TypeScript garante que selectedFile não é null aqui.
     reader.readAsText(selectedFile);
-    setFileName(selectedFile.name);
-    setShowFileLog(true);
+    handleRedirectToExecute();
+  };
+
+  const handleRedirectToExecute = () => {
+    if (!selectedFile) {
+      alert("Por favor, selecione um arquivo primeiro para executar.");
+      return;
+    }
+
+    const fileName = selectedFile.name;
+    console.log("Redirecionando para executar o arquivo:", fileName);
+    window.location.href = `/execute/${fileName}`;
   };
 
   return (
@@ -121,12 +119,6 @@ export default function UploadPage() {
           >
             Executar Arquivo
           </Button>
-
-          {showFileLog && selectedFile && (
-            <Box sx={{ mt: 2, width: "100%" }}>
-              <ExecuteConfig configFileName={fileName} />
-            </Box>
-          )}
         </Paper>
       </Box>
     </React.Fragment>

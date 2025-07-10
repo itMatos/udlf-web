@@ -5,14 +5,13 @@ import { executeUDLF } from "@/services/api/UDLF-api";
 import { ResponseApi } from "@/services/api/types";
 import TerminalIcon from "@mui/icons-material/Terminal";
 import Appbar from "@/components/Appbar";
+import { useParams } from "next/navigation";
 
-interface ExecuteConfigPagePros {
-  configFileName: string;
-}
+export default function ExecuteConfig() {
+  const params = useParams();
+  const configFileName = params?.configFileName || "";
 
-export default function ExecuteConfig(params: ExecuteConfigPagePros) {
-  const { configFileName } = params;
-  console.log("(ExecuteConfig) configFileName:", configFileName);
+  console.log("Config file name from search params:", configFileName);
   const [resultUdlf, setResultUdlf] = useState<ResponseApi | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
@@ -39,7 +38,13 @@ export default function ExecuteConfig(params: ExecuteConfigPagePros) {
 
   const handleExecute = async () => {
     try {
-      const result = (await executeUDLF(configFileName)) as ResponseApi;
+      if (!configFileName || (Array.isArray(configFileName) && configFileName.length === 0)) {
+        console.error("Configuration file name is not provided.");
+        return;
+      }
+      console.log("Executing configuration file:", configFileName);
+      const fileName = configFileName.toString(); // Ensure it's a string
+      const result = (await executeUDLF(fileName)) as ResponseApi;
       setResultUdlf(result);
       console.log("UDLF execution result:", result);
       console.log("Execution result:", result);
@@ -115,7 +120,7 @@ export default function ExecuteConfig(params: ExecuteConfigPagePros) {
             }}
           >
             <Typography variant="h5" gutterBottom>
-              Execute Configuration File: {configFileName}
+              Execute File: {configFileName}
             </Typography>
             <Button
               variant="contained"
@@ -123,7 +128,7 @@ export default function ExecuteConfig(params: ExecuteConfigPagePros) {
               onClick={initExecution}
               loading={isLoading}
               loadingPosition="start"
-              disabled={isLoading}
+              disabled={isLoading || !configFileName}
               sx={{ width: "200px", marginTop: "20px" }}
             >
               {isLoading ? "Executing..." : "Run"}
