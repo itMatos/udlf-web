@@ -6,6 +6,7 @@ import { ResponseApi } from "@/services/api/types";
 import TerminalIcon from "@mui/icons-material/Terminal";
 import Appbar from "@/components/Appbar";
 import { useParams } from "next/navigation";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 export default function ExecuteConfig() {
   const params = useParams();
@@ -65,7 +66,7 @@ export default function ExecuteConfig() {
   return (
     <Box>
       <Appbar />
-      <Box sx={{ mb: 2 }}>
+      <Box sx={{ p: 2 }}>
         {resultUdlf ? (
           <Box>
             <Box>
@@ -78,6 +79,14 @@ export default function ExecuteConfig() {
                 <TerminalIcon sx={{ mr: 1 }} />
                 View Execution Result
               </Link>
+              <Button
+                variant="contained"
+                endIcon={<ArrowForwardIosIcon />}
+                onClick={() => (window.location.href = `/result/${resultFileName}`)}
+                sx={{ width: "auto", my: 2 }}
+              >
+                View Execution Result
+              </Button>
             </Box>
             <Typography variant="h4" gutterBottom>
               Execution Result
