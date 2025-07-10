@@ -6,6 +6,59 @@ const udlfApi = axios.create({
   baseURL: config.udlfApi,
 });
 
+/**
+ * Função interna para lidar com a lógica de download de arquivos.
+ * @param fileName O nome completo do arquivo a ser baixado (ex: "output_meuarquivo.txt", "log_config.log").
+ * @param endpoint O endpoint da API para download (ex: "/download-output/").
+ */
+const performDownload = async (fileName: string, endpoint: string) => {
+  const fullEndpoint = `${endpoint}${fileName}`;
+
+  try {
+    const response = await udlfApi.get<Blob>(fullEndpoint, {
+      responseType: "blob", // Importante para receber dados binários
+    });
+
+    // Cria uma URL temporária para o Blob recebido
+    const url = window.URL.createObjectURL(response.data);
+
+    // Cria um link oculto e simula um clique para iniciar o download
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", fileName); // Define o nome do arquivo para download
+    document.body.appendChild(link);
+    link.click();
+
+    // Limpa: remove o link e revoga a URL temporária
+    link.remove();
+    window.URL.revokeObjectURL(url);
+
+    console.log(`File ${fileName} downloaded successfully!`);
+  } catch (error) {
+    console.error(`Error downloading file ${fileName}:`, error);
+    // Relança o erro para que o chamador possa tratá-lo
+    throw error;
+  }
+};
+
+/**
+ * Baixa um arquivo de saída formatado como "output_[nomeArquivo].txt".
+ * @param outputFileName O nome base do arquivo de saída (ex: "meuarquivo").
+ */
+export const downloadOutputFile = async (outputFileName: string) => {
+  const fileName = `output_${outputFileName}.txt`;
+  await performDownload(fileName, "/download-output/");
+};
+
+/**
+ * Baixa um arquivo de log formatado como "log_[nomeConfig]".
+ * @param configFileName O nome base do arquivo de configuração (ex: "config_01.json").
+ */
+export const downloadLogFile = async (configFileName: string) => {
+  const fileName = `log_${configFileName}`;
+  await performDownload(fileName, "/download-output/");
+};
+
 export const uploadUDLFConfig = async (configFile: Blob, fileName: string) => {
   const formData = new FormData();
   formData.append("config_file", configFile, fileName);

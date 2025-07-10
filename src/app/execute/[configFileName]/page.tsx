@@ -1,16 +1,19 @@
 "use client";
-import { Alert, Box, Button, Link, Snackbar, Typography } from "@mui/material";
+import { Alert, Box, Button, Snackbar, Typography } from "@mui/material";
 import React, { useState } from "react";
-import { executeUDLF } from "@/services/api/UDLF-api";
+import { downloadLogFile, downloadOutputFile, executeUDLF } from "@/services/api/UDLF-api";
 import { ResponseApi } from "@/services/api/types";
 import TerminalIcon from "@mui/icons-material/Terminal";
 import Appbar from "@/components/Appbar";
 import { useParams } from "next/navigation";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 
 export default function ExecuteConfig() {
   const params = useParams();
-  const configFileName = params?.configFileName || "";
+  const configFileName: string = Array.isArray(params?.configFileName)
+    ? params?.configFileName[0] || ""
+    : params?.configFileName || "";
 
   console.log("Config file name from search params:", configFileName);
   const [resultUdlf, setResultUdlf] = useState<ResponseApi | null>(null);
@@ -22,7 +25,7 @@ export default function ExecuteConfig() {
     setShowSuccessMessage(true);
     setTimeout(() => {
       setShowSuccessMessage(false);
-    }, 3000); // Hide after 3 seconds
+    }, 3000);
   };
 
   const handleShowWarningMessage = () => {
@@ -61,6 +64,34 @@ export default function ExecuteConfig() {
     }
   };
 
+  const onClickDownloadOutputFile = async () => {
+    if (!resultUdlf || !resultUdlf.output) {
+      console.error("No output available to download.");
+      return;
+    }
+
+    try {
+      const response = await downloadOutputFile(configFileName);
+      console.log("Download response:", response);
+    } catch (error) {
+      console.error("Error downloading output file:", error);
+    }
+  };
+
+  const onClickDownloadLogFile = async () => {
+    if (!configFileName) {
+      console.error("No configuration file name provided for downloading log file.");
+      return;
+    }
+
+    try {
+      const response = await downloadLogFile(configFileName);
+      console.log("Log file download response:", response);
+    } catch (error) {
+      console.error("Error downloading log file:", error);
+    }
+  };
+
   const resultFileName = "output_" + configFileName + ".txt";
 
   return (
@@ -69,16 +100,24 @@ export default function ExecuteConfig() {
       <Box sx={{ p: 2 }}>
         {resultUdlf ? (
           <Box>
-            <Box>
-              <Link
-                href={`/result/${resultFileName}`}
-                underline="hover"
-                color="primary"
-                sx={{ display: "flex", alignItems: "center", mb: 2 }}
-              >
-                <TerminalIcon sx={{ mr: 1 }} />
-                View Execution Result
-              </Link>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "100%",
+                padding: 2,
+                gap: 2,
+              }}
+            >
+              <Button variant="outlined" onClick={onClickDownloadOutputFile} startIcon={<FileDownloadIcon />}>
+                Output file
+              </Button>
+
+              <Button variant="outlined" onClick={onClickDownloadLogFile} startIcon={<FileDownloadIcon />}>
+                Log File
+              </Button>
               <Button
                 variant="contained"
                 endIcon={<ArrowForwardIosIcon />}
