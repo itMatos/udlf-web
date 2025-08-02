@@ -23,13 +23,13 @@
     "use-fs": "^0.0.12"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.1.2",
     "@eslint/eslintrc": "^3",
     "@types/axios": "^0.9.36",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "15.2.3",
-    "typescript": "^5"
+    "typescript": "^5",
+    "ultracite": "5.1.2"
   }
 }

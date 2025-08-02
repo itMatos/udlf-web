@@ -1,41 +1,25 @@
-import React, { useEffect, useMemo } from "react";
+import DownloadIcon from '@mui/icons-material/Download';
 import {
   Box,
-  Typography,
+  Button,
+  Chip,
   Divider,
   List,
   ListItem,
   ListItemText,
   Paper,
-  Chip,
   Stack,
-  Button,
-  TableContainer,
   Table,
+  TableBody,
+  TableCell,
+  TableContainer,
   TableHead,
   TableRow,
-  TableCell,
-  TableBody,
-} from "@mui/material";
-import { baseConfigTemplate } from "@/services/templates/generalConfig";
-import { inputDatasetFilesConfig } from "@/services/templates/inputDataSetFilesConfig";
-import { ConfigGenerator } from "@/services/configGenerator";
-import DownloadIcon from "@mui/icons-material/Download";
-import { outputFilesSettingsConfig } from "@/services/templates/outputFIlesSettingsConfig";
-import { evaluationSettingsConfig } from "@/services/templates/evaluationSettings";
-import { OUTPUT_TYPES } from "@/ts/constants/output";
-import { CPRR } from "@/ts/interfaces/methods/cprr";
-import { ContextRR } from "@/ts/interfaces/methods/contextrr";
-import { SummaryProps } from "@/ts/interfaces/summary";
-import { LHRR } from "@/ts/interfaces/methods/lhrr";
-import { Method } from "@/ts/types/methods";
-import { BFSTree } from "@/ts/interfaces/methods/bfstree";
-import { CorGraph } from "@/ts/interfaces/methods/corgraph";
-import { UDLF_METHODS } from "@/ts/constants/common";
-import { RDPAC } from "@/ts/interfaces/methods/rdpac";
-import { ReckNNGraph } from "@/ts/interfaces/methods/recknngraph";
-import { RFE } from "@/ts/interfaces/methods/rfe";
-import { RKGraph } from "@/ts/interfaces/methods/rkgraph";
+  Typography,
+} from '@mui/material';
+import type React from 'react';
+import { useEffect, useMemo } from 'react';
+import { ConfigGenerator } from '@/services/configGenerator';
 import {
   generateBFSTreeSettings,
   generateContextRRSettings,
@@ -46,8 +30,25 @@ import {
   generateReckNNGraphSettings,
   generateRFESettings,
   generateRKGraphSettings,
-} from "@/services/configs-generator/ConfigMethodSettings";
-import { generateFileName, generateUniqueId } from "@/utils/helpers";
+} from '@/services/configs-generator/ConfigMethodSettings';
+import { evaluationSettingsConfig } from '@/services/templates/evaluationSettings';
+import { baseConfigTemplate } from '@/services/templates/generalConfig';
+import { inputDatasetFilesConfig } from '@/services/templates/inputDataSetFilesConfig';
+import { outputFilesSettingsConfig } from '@/services/templates/outputFIlesSettingsConfig';
+import { UDLF_METHODS } from '@/ts/constants/common';
+import { OUTPUT_TYPES } from '@/ts/constants/output';
+import type { BFSTree } from '@/ts/interfaces/methods/bfstree';
+import type { ContextRR } from '@/ts/interfaces/methods/contextrr';
+import type { CorGraph } from '@/ts/interfaces/methods/corgraph';
+import type { CPRR } from '@/ts/interfaces/methods/cprr';
+import type { LHRR } from '@/ts/interfaces/methods/lhrr';
+import type { RDPAC } from '@/ts/interfaces/methods/rdpac';
+import type { ReckNNGraph } from '@/ts/interfaces/methods/recknngraph';
+import type { RFE } from '@/ts/interfaces/methods/rfe';
+import type { RKGraph } from '@/ts/interfaces/methods/rkgraph';
+import type { SummaryProps } from '@/ts/interfaces/summary';
+import type { Method } from '@/ts/types/methods';
+import { generateFileName, generateUniqueId } from '@/utils/helpers';
 
 const Summary: React.FC<SummaryProps> = ({
   selectedMethod,
@@ -69,11 +70,11 @@ const Summary: React.FC<SummaryProps> = ({
       ...baseConfigTemplate,
       parameters: baseConfigTemplate.parameters.map((param) => ({
         ...param,
-        value: param.key === "UDL_METHOD" ? selectedMethod.toUpperCase() : param.value,
+        value: param.key === 'UDL_METHOD' ? selectedMethod.toUpperCase() : param.value,
       })),
     };
 
-    console.log("inputSettings", inputSettings);
+    console.log('inputSettings', inputSettings);
 
     const valueUpdates = {
       INPUT_FILE_FORMAT: inputSettings?.inputType,
@@ -91,37 +92,37 @@ const Summary: React.FC<SummaryProps> = ({
     };
 
     const valueUpdatesOutput = {
-      OUTPUT_FILE_PATH: outputSettings.outputFileName ? outputSettings.outputFileName : "output_" + fileName,
-      OUTPUT_FILE: outputSettings.enabledOutput ? "TRUE" : "FALSE",
-      OUTPUT_FILE_FORMAT: outputSettings.outputFileFormat.includes("RANKEDLIST") ? "RK" : "MATRIX",
-      OUTPUT_MATRIX_TYPE: outputSettings.outputFileFormat.includes("DISTANCE") ? "DIST" : "SIM",
-      OUTPUT_RK_FORMAT: outputSettings.outputFileFormat.includes("NUMERIC") ? "NUM" : "STR",
-      OUTPUT_LOG_FILE_PATH: "log_" + fileName,
+      OUTPUT_FILE_PATH: outputSettings.outputFileName ? outputSettings.outputFileName : `output_${fileName}`,
+      OUTPUT_FILE: outputSettings.enabledOutput ? 'TRUE' : 'FALSE',
+      OUTPUT_FILE_FORMAT: outputSettings.outputFileFormat.includes('RANKEDLIST') ? 'RK' : 'MATRIX',
+      OUTPUT_MATRIX_TYPE: outputSettings.outputFileFormat.includes('DISTANCE') ? 'DIST' : 'SIM',
+      OUTPUT_RK_FORMAT: outputSettings.outputFileFormat.includes('NUMERIC') ? 'NUM' : 'STR',
+      OUTPUT_LOG_FILE_PATH: `log_${fileName}`,
     };
-    console.log("2. OUTPUT_LOG_FILE_PATH (inside generateConfigFile):", "log_" + fileName);
+    console.log(`2. OUTPUT_LOG_FILE_PATH (inside generateConfigFile): log_${fileName}`);
 
     const outputSettingsTemplate = {
-      section: "OUTPUT SETTINGS",
+      section: 'OUTPUT SETTINGS',
       parameters: outputFilesSettingsConfig.parameters.map((param) => ({
         ...param,
         value: valueUpdatesOutput[param.key as keyof typeof valueUpdatesOutput] ?? param.value,
       })),
     };
 
-    const recallArrayToString = evaluationSettings?.recall.map((value) => value.toString()).join(", ");
-    const precisionArrayToString = evaluationSettings?.precision.map((value) => value.toString()).join(", ");
+    const recallArrayToString = evaluationSettings?.recall.map((value) => value.toString()).join(', ');
+    const precisionArrayToString = evaluationSettings?.precision.map((value) => value.toString()).join(', ');
 
     // TODO: tratar caso de recall e precision vazios
 
     const valueUpdatesEval = {
-      EFFECTIVENESS_COMPUTE_MAP: evaluationSettings?.useMap ? "TRUE" : "FALSE",
-      EFFICIENCY_EVAL: evaluationSettings?.useEfficiency ? "TRUE" : "FALSE",
-      EFFECTIVENESS_RECALLS_TO_COMPUTE: evaluationSettings?.recall.length ? recallArrayToString : "1",
-      EFFECTIVENESS_PRECISIONS_TO_COMPUTE: evaluationSettings?.precision.length ? precisionArrayToString : "1",
+      EFFECTIVENESS_COMPUTE_MAP: evaluationSettings?.useMap ? 'TRUE' : 'FALSE',
+      EFFICIENCY_EVAL: evaluationSettings?.useEfficiency ? 'TRUE' : 'FALSE',
+      EFFECTIVENESS_RECALLS_TO_COMPUTE: evaluationSettings?.recall.length ? recallArrayToString : '1',
+      EFFECTIVENESS_PRECISIONS_TO_COMPUTE: evaluationSettings?.precision.length ? precisionArrayToString : '1',
     };
 
     const evaluationSettingsTemplate = {
-      section: "EVALUATION SETTINGS",
+      section: 'EVALUATION SETTINGS',
       parameters: evaluationSettingsConfig.parameters.map((param) => ({
         ...param,
         value: valueUpdatesEval[param.key as keyof typeof valueUpdatesEval] ?? param.value,
@@ -147,7 +148,7 @@ const Summary: React.FC<SummaryProps> = ({
       evaluationSettingsTemplate,
       methodSettingsTemplate,
     ];
-    console.log("allTemplates", allTemplates);
+    console.log('allTemplates', allTemplates);
 
     const generator = new ConfigGenerator(allTemplates);
     const blob = generator.generateFile();
@@ -186,8 +187,7 @@ const Summary: React.FC<SummaryProps> = ({
 
   const generateConfigFileToDownload = () => {
     const url = window.URL.createObjectURL(generatedConfigFile);
-    console.log("3. Filename for download:", configFileName);
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = url;
     link.download = configFileName;
     document.body.appendChild(link);
@@ -199,54 +199,48 @@ const Summary: React.FC<SummaryProps> = ({
   useEffect(() => {
     setConfigFileToExecute(generatedConfigFile);
     setConfigFileName(configFileName);
-    console.log("4. configFileName sent to backend (via useEffect):", configFileName); // <-- Adicione este log
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <Paper elevation={3} sx={{ p: 3 }}>
-      <Typography variant="h5" gutterBottom>
+      <Typography gutterBottom variant="h5">
         Configuration Summary
       </Typography>
 
       <Box sx={{ mb: 3 }}>
-        <Typography variant="h6" color="primary" gutterBottom>
+        <Typography color="primary" gutterBottom variant="h6">
           Selected Method: {selectedMethod}
         </Typography>
         {methodSettings && (
-          <>
-            <TableContainer component={Paper} sx={{ mt: 2 }}>
-              <Table sx={{ minWidth: 300 }} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Parameter</TableCell>
-                    <TableCell align="right">Value</TableCell>
+          <TableContainer component={Paper} sx={{ mt: 2 }}>
+            <Table aria-label="simple table" sx={{ minWidth: 300 }}>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Parameter</TableCell>
+                  <TableCell align="right">Value</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {Object.entries(methodSettings).map(([key, value]) => (
+                  <TableRow key={key}>
+                    <TableCell component="th" scope="row">
+                      {key}
+                    </TableCell>
+                    <TableCell align="right">{typeof value === 'boolean' ? (value ? 'Yes' : 'No') : value}</TableCell>
                   </TableRow>
-                </TableHead>
-                <TableBody>
-                  {Object.entries(methodSettings).map(([key, value]) => (
-                    <TableRow key={key}>
-                      <TableCell component="th" scope="row">
-                        {key}
-                      </TableCell>
-                      <TableCell align="right">
-                        {console.log("value", value)}
-                        {typeof value === "boolean" ? (value ? "Yes" : "No") : value}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         )}
       </Box>
 
       <Divider sx={{ my: 2 }} />
 
       <Box sx={{ mb: 3 }}>
-        <Typography variant="h6" color="primary" gutterBottom>
+        <Typography color="primary" gutterBottom variant="h6">
           Input
         </Typography>
         {inputSettings && (
@@ -263,22 +257,26 @@ const Summary: React.FC<SummaryProps> = ({
       <Divider sx={{ my: 2 }} />
 
       <Box sx={{ mb: 3 }}>
-        <Typography variant="h6" color="primary" gutterBottom>
+        <Typography color="primary" gutterBottom variant="h6">
           Output
         </Typography>
 
         {outputSettings.enabledOutput ? (
           <Box sx={{ mb: 2 }}>
-            <Typography variant="body1">File name: {outputSettings.outputFileName || <Typography component={'span'} fontStyle={'oblique'}>
-              Default
-            </Typography>}
+            <Typography variant="body1">
+              File name:{' '}
+              {outputSettings.outputFileName || (
+                <Typography component={'span'} fontStyle={'oblique'}>
+                  Default
+                </Typography>
+              )}
             </Typography>
             <Typography variant="body1">
               Format Type: {OUTPUT_TYPES.find((type) => type.value === outputSettings.outputFileFormat)?.label}
             </Typography>
           </Box>
         ) : (
-          <Typography variant="body2" color="textSecondary">
+          <Typography color="textSecondary" variant="body2">
             No output settings configured.
           </Typography>
         )}
@@ -287,29 +285,29 @@ const Summary: React.FC<SummaryProps> = ({
       <Divider sx={{ my: 2 }} />
 
       <Box>
-        <Typography variant="h6" color="primary" gutterBottom>
+        <Typography color="primary" gutterBottom variant="h6">
           Evaluation Configuration
         </Typography>
         {evaluationSettings && (
           <List dense>
             <ListItem>
-              <ListItemText primary="MAP" secondary={evaluationSettings.useMap ? "Yes" : "No"} />
+              <ListItemText primary="MAP" secondary={evaluationSettings.useMap ? 'Yes' : 'No'} />
             </ListItem>
             <ListItem>
-              <ListItemText primary="Efficiency" secondary={evaluationSettings.useEfficiency ? "Yes" : "No"} />
+              <ListItemText primary="Efficiency" secondary={evaluationSettings.useEfficiency ? 'Yes' : 'No'} />
             </ListItem>
             <ListItem>
               <ListItemText
                 primary="Recall Values"
                 secondary={
-                  <Stack component={"span"} direction="row" spacing={1} flexWrap="wrap">
+                  <Stack component={'span'} direction="row" flexWrap="wrap" spacing={1}>
                     {evaluationSettings.recall.map((value) => (
                       <Chip
+                        color="primary"
+                        component={'span'}
                         key={value}
-                        component={"span"}
                         label={value}
                         size="small"
-                        color="primary"
                         variant="outlined"
                       />
                     ))}
@@ -321,14 +319,14 @@ const Summary: React.FC<SummaryProps> = ({
               <ListItemText
                 primary="Precision Values"
                 secondary={
-                  <Stack component={"span"} direction="row" spacing={1} flexWrap="wrap">
+                  <Stack component={'span'} direction="row" flexWrap="wrap" spacing={1}>
                     {evaluationSettings.precision.map((value) => (
                       <Chip
+                        color="primary"
+                        component={'span'}
                         key={value}
-                        component={"span"}
                         label={value}
                         size="small"
-                        color="primary"
                         variant="outlined"
                       />
                     ))}
@@ -340,16 +338,16 @@ const Summary: React.FC<SummaryProps> = ({
         )}
 
         <Box sx={{ mt: 2 }}>
-          <Typography variant="body2" color="textSecondary">
+          <Typography color="textSecondary" variant="body2">
             Click the button below to generate the configuration file.
           </Typography>
 
           <Button
-            variant="contained"
             color="primary"
             onClick={() => generateConfigFileToDownload()}
-            sx={{ mt: 2 }}
             startIcon={<DownloadIcon />}
+            sx={{ mt: 2 }}
+            variant="contained"
           >
             Download Config File
           </Button>
