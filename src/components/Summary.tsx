@@ -269,7 +269,10 @@ const Summary: React.FC<SummaryProps> = ({
 
         {outputSettings.enabledOutput ? (
           <Box sx={{ mb: 2 }}>
-            <Typography variant="body1">File name: {outputSettings.outputFileName || "Not specified"}</Typography>
+            <Typography variant="body1">File name: {outputSettings.outputFileName || <Typography component={'span'} fontStyle={'oblique'}>
+              Default
+            </Typography>}
+            </Typography>
             <Typography variant="body1">
               Format Type: {OUTPUT_TYPES.find((type) => type.value === outputSettings.outputFileFormat)?.label}
             </Typography>

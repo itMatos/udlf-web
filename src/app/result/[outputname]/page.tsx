@@ -17,6 +17,8 @@ import { getImageNameByLineNumber, getUDLFOutputFileByLine } from "@/services/ap
 import { IMAGES_PER_PAGE_DEFAULT } from "@/ts/constants/common";
 import { useParams } from "next/navigation";
 
+const FILES_LENGTH = 100;
+
 export default function Result() {
   const router = useParams();
   let outputname = router?.outputname || "";
@@ -31,6 +33,7 @@ export default function Result() {
   const [imagesPerPage, setImagesPerPage] = useState<number>(IMAGES_PER_PAGE_DEFAULT);
   const [imagesToShow, setImagesToShow] = useState<number[]>([]);
   const [objectIndexNameFile, setObjectIndexNameFile] = useState<{ [key: number]: string }>({});
+  const [filterImages, setFilterImages] = useState<boolean>(false);
 
   const fetchOutputFileByLine = async (lineNumber: number) => {
     try {
@@ -53,12 +56,13 @@ export default function Result() {
 
   useEffect(() => {
     if (lineContent) {
-      console.log("Line content fetched:", lineContent);
+      // console.log("Line content fetched:", lineContent);
       const elementsArray = lineContent.split(" ");
       const images = elementsArray.slice(0, imagesPerPage).map(Number);
-      console.log("images to show:", images);
+      // console.log("images to show:", images);
       setImagesToShow(images);
-      console.log("Images to show:", images);
+      imagesFromListFile();
+      // console.log("Images to show:", images);
     } else {
       console.warn("No line content available.");
     }
@@ -76,11 +80,31 @@ export default function Result() {
           console.error(`Error fetching image name for line ${number}:`, error);
         }
       }
+      console.log("Fetched image names:", newObject);
       setObjectIndexNameFile(newObject);
     };
 
     fetchImageNames();
   }, [imagesToShow]);
+
+  const filterBySelectedImage = async (selectedImageIndex: number) => {
+    // buscar na linha do output o nome do arquivo correspondente ao índice selecionado
+    const selectedImageName = objectIndexNameFile[selectedImageIndex];
+    if (selectedImageName) {
+      fetchOutputFileByLine(selectedImageIndex);
+      setFilterImages(true);
+      console.log(`Selected image name: ${selectedImageName}`);
+      // Aqui você pode fazer algo com o nome da imagem selecionada, como exibir ou processar
+    } else {
+      console.warn(`No image found for index ${selectedImageIndex}`);
+    }
+  };
+
+  const imagesFromListFile = () => {
+    const linesFromFileList: number[] = Array.from({ length: FILES_LENGTH + 1 }, (_, i) => i);
+    console.log("Lines from file list:", linesFromFileList);
+    setImagesToShow(linesFromFileList);
+  };
 
   return (
     <React.Fragment>
@@ -121,16 +145,32 @@ export default function Result() {
             gap: 1,
           }}
         >
-          {imagesToShow.map((imageIndex) => (
-            <Card key={imageIndex} sx={{ p: 1, m: 1, width: 150, cursor: "pointer" }}>
-              <CardHeader subheader={`${objectIndexNameFile[imageIndex]}`} />
-              <CardMedia
-                component="img"
-                image={"http://localhost:8080/image-file/" + objectIndexNameFile[imageIndex]}
-                alt={`${objectIndexNameFile[imageIndex]}`}
-              />
-            </Card>
-          ))}
+          {filterImages
+            ? imagesToShow.map((imageIndex) => {
+                const imageName = objectIndexNameFile[imageIndex];
+                return (
+                  <Card key={imageIndex} sx={{ p: 1, m: 1, width: 150, cursor: "pointer" }}>
+                    <CardHeader subheader={`${imageName}`} />
+                    <CardMedia
+                      onClick={() => filterBySelectedImage(imageIndex)}
+                      component="img"
+                      image={"http://localhost:8080/image-file/" + imageName}
+                      alt={`${imageName}`}
+                    />
+                  </Card>
+                );
+              })
+            : imagesToShow.map((imageIndex) => (
+                <Card key={imageIndex} sx={{ p: 1, m: 1, width: 150, cursor: "pointer" }}>
+                  <CardHeader subheader={`${objectIndexNameFile[imageIndex]}`} />
+                  <CardMedia
+                    onClick={() => filterBySelectedImage(imageIndex)}
+                    component="img"
+                    image={"http://localhost:8080/image-file/" + objectIndexNameFile[imageIndex]}
+                    alt={`${objectIndexNameFile[imageIndex]}`}
+                  />
+                </Card>
+              ))}
         </Box>
       ) : (
         <LinearProgress />
