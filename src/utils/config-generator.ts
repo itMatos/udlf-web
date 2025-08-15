@@ -1,3 +1,8 @@
+import type { EvaluationSettingsData } from '@/ts/interfaces';
+import type { InputSettingsData } from '@/ts/interfaces/input';
+import type { OutputSettingsData } from '@/ts/interfaces/output';
+import type { BaseConfigType, ConfigSectionType } from '@/ts/types/config-generator';
+
 /**
  * Função genérica para criar uma seção de configuração.
  * Abstrai a lógica repetitiva de mapear parâmetros e atualizar seus valores.
@@ -19,10 +24,11 @@ const createConfigSection = (configTemplate: any, valueUpdates: Record<string, a
 /**
  * Cria a configuração base.
  */
-const createBaseConfig = (baseConfigTemplate: any, selectedMethod: string) => {
+
+export const createBaseConfig = (baseConfigTemplate: BaseConfigType, selectedMethod: string) => {
   return {
     ...baseConfigTemplate,
-    parameters: baseConfigTemplate.parameters.map((param: any) => ({
+    parameters: baseConfigTemplate.parameters.map((param: BaseConfigType['parameters'][number]) => ({
       ...param,
       value: param.key === 'UDL_METHOD' ? selectedMethod.toUpperCase() : param.value,
     })),
@@ -32,7 +38,10 @@ const createBaseConfig = (baseConfigTemplate: any, selectedMethod: string) => {
 /**
  * Cria a configuração de entrada (Input).
  */
-const createInputSettings = (inputSettings: any, inputDatasetFilesConfig: any) => {
+export const createInputSettings = (
+  inputSettings: InputSettingsData | null,
+  inputDatasetFilesConfig: ConfigSectionType
+) => {
   const valueUpdates = {
     INPUT_FILE_FORMAT: inputSettings?.inputType,
     INPUT_FILE_LIST: inputSettings?.inputFileList,
@@ -45,7 +54,11 @@ const createInputSettings = (inputSettings: any, inputDatasetFilesConfig: any) =
 /**
  * Cria a configuração de saída (Output).
  */
-const createOutputSettings = (outputSettings: any, outputFilesSettingsConfig: any, fileName: string) => {
+export const createOutputSettings = (
+  outputSettings: OutputSettingsData,
+  outputFilesSettingsConfig: ConfigSectionType,
+  fileName: string
+) => {
   const valueUpdates = {
     OUTPUT_FILE_PATH: outputSettings.outputFileName ? outputSettings.outputFileName : `output_${fileName}`,
     OUTPUT_FILE: outputSettings.enabledOutput ? 'TRUE' : 'FALSE',
@@ -60,7 +73,10 @@ const createOutputSettings = (outputSettings: any, outputFilesSettingsConfig: an
 /**
  * Cria a configuração de avaliação (Evaluation).
  */
-const createEvaluationSettings = (evaluationSettings: any, evaluationSettingsConfig: any) => {
+export const createEvaluationSettings = (
+  evaluationSettings: EvaluationSettingsData | null,
+  evaluationSettingsConfig: ConfigSectionType
+) => {
   // TODO: tratar caso de recall e precision vazios de forma mais robusta se necessário.
   const recallArrayToString = evaluationSettings?.recall?.join(', ') || '1';
   const precisionArrayToString = evaluationSettings?.precision?.join(', ') || '1';

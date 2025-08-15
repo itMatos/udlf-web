@@ -48,6 +48,12 @@ import type { RFE } from '@/ts/interfaces/methods/rfe';
 import type { RKGraph } from '@/ts/interfaces/methods/rkgraph';
 import type { SummaryProps } from '@/ts/interfaces/summary';
 import type { Method } from '@/ts/types/methods';
+import {
+  createBaseConfig,
+  createEvaluationSettings,
+  createInputSettings,
+  createOutputSettings,
+} from '@/utils/config-generator';
 import { generateFileName, generateUniqueId } from '@/utils/helpers';
 
 const Summary: React.FC<SummaryProps> = ({
@@ -66,68 +72,10 @@ const Summary: React.FC<SummaryProps> = ({
   }, [selectedMethod]);
 
   const generateConfigFile = (fileName: string) => {
-    const baseConfig = {
-      ...baseConfigTemplate,
-      parameters: baseConfigTemplate.parameters.map((param) => ({
-        ...param,
-        value: param.key === 'UDL_METHOD' ? selectedMethod.toUpperCase() : param.value,
-      })),
-    };
-
-    console.log('inputSettings', inputSettings);
-
-    const valueUpdates = {
-      INPUT_FILE_FORMAT: inputSettings?.inputType,
-      INPUT_FILE_LIST: inputSettings?.inputFileList,
-      INPUT_FILE_CLASSES: inputSettings?.inputFileClasses,
-      INPUT_IMAGES_PATH: inputSettings?.datasetImagesPath,
-    };
-
-    const inputSettingsTemplate = {
-      section: inputDatasetFilesConfig.section,
-      parameters: inputDatasetFilesConfig.parameters.map((param) => ({
-        ...param,
-        value: valueUpdates[param.key as keyof typeof valueUpdates] ?? param.value,
-      })),
-    };
-
-    const valueUpdatesOutput = {
-      OUTPUT_FILE_PATH: outputSettings.outputFileName ? outputSettings.outputFileName : `output_${fileName}`,
-      OUTPUT_FILE: outputSettings.enabledOutput ? 'TRUE' : 'FALSE',
-      OUTPUT_FILE_FORMAT: outputSettings.outputFileFormat.includes('RANKEDLIST') ? 'RK' : 'MATRIX',
-      OUTPUT_MATRIX_TYPE: outputSettings.outputFileFormat.includes('DISTANCE') ? 'DIST' : 'SIM',
-      OUTPUT_RK_FORMAT: outputSettings.outputFileFormat.includes('NUMERIC') ? 'NUM' : 'STR',
-      OUTPUT_LOG_FILE_PATH: `log_${fileName}`,
-    };
-    console.log(`2. OUTPUT_LOG_FILE_PATH (inside generateConfigFile): log_${fileName}`);
-
-    const outputSettingsTemplate = {
-      section: 'OUTPUT SETTINGS',
-      parameters: outputFilesSettingsConfig.parameters.map((param) => ({
-        ...param,
-        value: valueUpdatesOutput[param.key as keyof typeof valueUpdatesOutput] ?? param.value,
-      })),
-    };
-
-    const recallArrayToString = evaluationSettings?.recall.map((value) => value.toString()).join(', ');
-    const precisionArrayToString = evaluationSettings?.precision.map((value) => value.toString()).join(', ');
-
-    // TODO: tratar caso de recall e precision vazios
-
-    const valueUpdatesEval = {
-      EFFECTIVENESS_COMPUTE_MAP: evaluationSettings?.useMap ? 'TRUE' : 'FALSE',
-      EFFICIENCY_EVAL: evaluationSettings?.useEfficiency ? 'TRUE' : 'FALSE',
-      EFFECTIVENESS_RECALLS_TO_COMPUTE: evaluationSettings?.recall.length ? recallArrayToString : '1',
-      EFFECTIVENESS_PRECISIONS_TO_COMPUTE: evaluationSettings?.precision.length ? precisionArrayToString : '1',
-    };
-
-    const evaluationSettingsTemplate = {
-      section: 'EVALUATION SETTINGS',
-      parameters: evaluationSettingsConfig.parameters.map((param) => ({
-        ...param,
-        value: valueUpdatesEval[param.key as keyof typeof valueUpdatesEval] ?? param.value,
-      })),
-    };
+    const baseConfig = createBaseConfig(baseConfigTemplate, selectedMethod);
+    const inputSettingsTemplate = createInputSettings(inputSettings, inputDatasetFilesConfig);
+    const outputSettingsTemplate = createOutputSettings(outputSettings, outputFilesSettingsConfig, fileName);
+    const evaluationSettingsTemplate = createEvaluationSettings(evaluationSettings, evaluationSettingsConfig);
 
     const settingsTemplate = generateMethodSettings(selectedMethod);
 
