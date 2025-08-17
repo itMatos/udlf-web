@@ -1,19 +1,11 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import {
-  Box,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Pagination,
-  Select,
-  SelectChangeEvent,
-  Typography,
-} from "@mui/material";
-import Appbar from "@/components/Appbar";
-import { getPaginatedListFilenames, getUDLFOutputFileByLine } from "@/services/api/UDLF-api";
-import { IMAGES_PER_PAGE_DEFAULT } from "@/ts/constants/common";
+import { Box, FormControl, InputLabel, MenuItem, Pagination, Select, type SelectChangeEvent, Typography } from "@mui/material";
 import { useParams } from "next/navigation";
+import type React from "react";
+import { useEffect, useState } from "react";
+import Appbar from "@/components/Appbar";
+import { getPaginatedListFilenames } from "@/services/api/UDLF-api";
+import { IMAGES_PER_PAGE_DEFAULT } from "@/ts/constants/common";
 
 export default function Result() {
   const router = useParams();
@@ -24,23 +16,22 @@ export default function Result() {
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(IMAGES_PER_PAGE_DEFAULT);
   const [totalPages, setTotalPages] = useState<number>(1);
-  
-  useEffect(() => {
-    fetchImageNames();
-  }, []);
 
-  const fetchImageNames = async () => {
-        try {
-          const imageName = await getPaginatedListFilenames(outputname, page, pageSize);
-          console.log(`Fetched image names for output ${outputname}:`, imageName);
-          setTotalPages(imageName.totalPages);
-        } catch (error) {
-          console.error(`Error fetching image names for output ${outputname}:`, error);
-        }
+  useEffect(() => {
+    const fetchImageNames = async () => {
+      try {
+        const imageName = await getPaginatedListFilenames(outputname, page, pageSize);
+        setTotalPages(imageName.totalPages);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(`Error fetching image names for output ${outputname}:`, error);
       }
+    };
+    fetchImageNames();
+  }, [outputname, page, pageSize]);
 
   const handlePageSizeChange = (event: SelectChangeEvent) => {
-    const newPageSize = parseInt(event.target.value, 10);
+    const newPageSize = Number.parseInt(event.target.value, 10);
     setPageSize(newPageSize);
     setPage(1);
   };
@@ -52,30 +43,26 @@ export default function Result() {
   };
 
   return (
-    <React.Fragment>
+    <>
       <Appbar />
-      <Typography variant="h6">Results for: 
-        <Typography variant="h6" component="span" style={{ fontWeight: 'bold' }}>
-          {" " +outputname}
+      <Typography variant="h6">
+        Results for:
+        <Typography component="span" style={{ fontWeight: "bold" }} variant="h6">
+          {` ${outputname}`}
         </Typography>
       </Typography>
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 4, mb: 2, gap: 2 }}>
-        <Pagination 
-          count={totalPages} 
-          page={page} 
-          onChange={handlePageChange}
-          color="primary" 
-        />
-        
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", mt: 4, mb: 2, gap: 2 }}>
+        <Pagination color="primary" count={totalPages} onChange={handlePageChange} page={page} />
+
         {/* NOVO: Seletor de Itens por Página */}
-        <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+        <FormControl size="small" sx={{ m: 1, minWidth: 120 }}>
           <InputLabel id="page-size-select-label">Itens por pág.</InputLabel>
           <Select
-            labelId="page-size-select-label"
             id="page-size-select"
-            value={pageSize.toString()}
             label="Itens por pág."
+            labelId="page-size-select-label"
             onChange={(e) => handlePageSizeChange(e)}
+            value={pageSize.toString()}
           >
             <MenuItem value={25}>25</MenuItem>
             <MenuItem value={50}>50</MenuItem>
@@ -83,7 +70,6 @@ export default function Result() {
           </Select>
         </FormControl>
       </Box>
-
-    </React.Fragment>
+    </>
   );
 }

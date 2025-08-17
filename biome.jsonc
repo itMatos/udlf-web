@@ -12,7 +12,7 @@
     "rules": {
       "correctness": {},
       "suspicious": {
-        "noConsole": "info"
+        "noConsole": "off"
       }
     }
   }
