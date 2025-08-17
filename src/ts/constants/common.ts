@@ -16,4 +16,4 @@ export const UDLF_METHODS = {
   RLRECOM: "RLRecom" as Method,
 } as const;
 
-export const IMAGES_PER_PAGE_DEFAULT = 20 as const;
+export const IMAGES_PER_PAGE_DEFAULT = 100 as const;

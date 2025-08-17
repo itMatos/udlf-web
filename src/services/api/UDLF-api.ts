@@ -1,6 +1,7 @@
 import axios from "axios";
 import config from "./config";
 import { LineContentResponse } from "./types";
+import { PaginatedResponse } from "./models";
 
 const udlfApi = axios.create({
   baseURL: config.udlfApi,
@@ -130,3 +131,19 @@ export const getImageFileByName = async (imageFileName: string) => {
     throw error;
   }
 };
+
+export const getPaginatedListFilenames = async (filename: string, page: number, pageSize: number): Promise<PaginatedResponse> => {
+  try {
+    const endpointToGetPaginatedList = `/paginated-file-list/${filename}/page/${page}`;
+    const params = {
+      filename,
+      page,
+      pageSize
+    };
+    const response = await udlfApi.get(endpointToGetPaginatedList, { params });
+    return response.data as PaginatedResponse;
+  } catch (error) {
+    console.error("Error fetching paginated list of filenames:", error);
+    throw error;
+  }
+}
