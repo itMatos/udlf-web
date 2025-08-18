@@ -32,7 +32,7 @@ export const inputDatasetFilesConfig: ConfigTemplate = {
     },
     {
       key: "INPUT_FILE",
-      value: "/Users/italomatos/Documents/IC/UDLF/Datasets/mpeg7/ranked_lists/AIR.txt",
+      value: process.env.INPUT_FILES_DEFAULT || "",
       description: "#Path of the main input file (matrix/ranked lists) for UDL tasks",
     },
     {
