@@ -25,6 +25,7 @@ export default function Result() {
         const imageName = await getPaginatedListFilenames(outputname, page, pageSize);
         setTotalPages(imageName.totalPages);
         setImagesCurrentPage(imageName.items);
+        console.log("Fetched image names:", imageName.items);
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error(`Error fetching image names for output ${outputname}:`, error);
@@ -69,7 +70,7 @@ export default function Result() {
                 alt={`${imageName}`}
                 component="img"
                 image={`http://localhost:8080/image-file/${imageName}`}
-                // onClick={() => filterBySelectedImage(imageIndex)}
+                onClick={() => (window.location.href = `/result/${outputname}/${imageName}`)}
               />
             </Card>
           );
@@ -78,10 +79,10 @@ export default function Result() {
       <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", mt: 4, mb: 2, gap: 2 }}>
         <Pagination color="primary" count={totalPages} onChange={handlePageChange} page={page} />
         <FormControl size="small" sx={{ m: 1, minWidth: 120 }}>
-          <InputLabel id="page-size-select-label">Itens por pág.</InputLabel>
+          <InputLabel id="page-size-select-label">Items per page</InputLabel>
           <Select
             id="page-size-select"
-            label="Itens por pág."
+            label="Items per page"
             labelId="page-size-select-label"
             onChange={(e) => handlePageSizeChange(e)}
             value={pageSize.toString()}

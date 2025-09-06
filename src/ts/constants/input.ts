@@ -1,5 +1,6 @@
 import { InputSettingsData } from "../interfaces/input";
 
+
 export const INPUT_TYPES = [
   {
     value: "AUTO",
@@ -16,8 +17,8 @@ export const INPUT_TYPES = [
 
 export const DEFAULT_INPUT_SETTINGS: InputSettingsData = {
   inputType: "AUTO",
-  inputFiles: [process.env.INPUT_FILES_DEFAULT || ""],
-  inputFileList: process.env.INPUT_FILE_LIST_DEFAULT || "",
-  inputFileClasses: process.env.INPUT_FILE_CLASSES_DEFAULT || "",
-  datasetImagesPath: process.env.DATASET_IMAGES_PATH_DEFAULT || "",
+  inputFiles: [process.env.NEXT_PUBLIC_INPUT_FILES_DEFAULT || ""],
+  inputFileList: process.env.NEXT_PUBLIC_INPUT_FILE_LIST_DEFAULT || "",
+  inputFileClasses: process.env.NEXT_PUBLIC_INPUT_FILE_CLASSES_DEFAULT || "",
+  datasetImagesPath: process.env.NEXT_PUBLIC_DATASET_IMAGES_PATH_DEFAULT || "",
 } as const;
