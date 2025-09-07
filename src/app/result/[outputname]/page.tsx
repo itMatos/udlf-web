@@ -1,5 +1,18 @@
 "use client";
-import { Box, Card, CardHeader, CardMedia, FormControl, InputLabel, MenuItem, Pagination, Select, type SelectChangeEvent, Typography } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardHeader,
+  CardMedia,
+  FormControl,
+  InputLabel,
+  LinearProgress,
+  MenuItem,
+  Pagination,
+  Select,
+  type SelectChangeEvent,
+  Typography,
+} from "@mui/material";
 import { useParams } from "next/navigation";
 import type React from "react";
 import { useEffect, useState } from "react";
@@ -14,6 +27,7 @@ export default function Result() {
   if (Array.isArray(outputname)) {
     outputname = outputname[0] || "";
   }
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(IMAGES_PER_PAGE_DEFAULT);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -29,6 +43,8 @@ export default function Result() {
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error(`Error fetching image names for output ${outputname}:`, error);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchImageNames();
@@ -53,6 +69,11 @@ export default function Result() {
           {` ${outputname}`}
         </Typography>
       </Typography>
+      {isLoading && (
+        <Box sx={{ width: "100%" }}>
+          <LinearProgress />
+        </Box>
+      )}
       <Box
         sx={{
           display: "flex",
@@ -64,14 +85,13 @@ export default function Result() {
         {imagesCurrentPage.map((image) => {
           const imageName = image.fileInputNameLine;
           return (
-            <Card key={image.fileInputNameLine} sx={{ p: 1, m: 1, width: 150, cursor: "pointer" }}>
+            <Card
+              key={image.fileInputNameLine}
+              sx={{ p: 1, m: 1, width: 150, cursor: "pointer" }}
+              onClick={() => (window.location.href = `/result/${outputname}/${imageName}`)}
+            >
               <CardHeader subheader={`${imageName}`} />
-              <CardMedia
-                alt={`${imageName}`}
-                component="img"
-                image={`http://localhost:8080/image-file/${imageName}`}
-                onClick={() => (window.location.href = `/result/${outputname}/${imageName}`)}
-              />
+              <CardMedia alt={`${imageName}`} component="img" image={`http://localhost:8080/image-file/${imageName}`} />
             </Card>
           );
         })}
