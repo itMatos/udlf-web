@@ -62,9 +62,9 @@ export default function Result() {
         }}
       >
         {imagesCurrentPage.map((image) => {
-          const imageName = image.content;
+          const imageName = image.fileInputNameLine;
           return (
-            <Card key={image.content} sx={{ p: 1, m: 1, width: 150, cursor: "pointer" }}>
+            <Card key={image.fileInputNameLine} sx={{ p: 1, m: 1, width: 150, cursor: "pointer" }}>
               <CardHeader subheader={`${imageName}`} />
               <CardMedia
                 alt={`${imageName}`}

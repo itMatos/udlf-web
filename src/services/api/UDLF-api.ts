@@ -1,6 +1,6 @@
 import axios from 'axios';
 import config from './config';
-import type { PaginatedResponse } from './models';
+import type { lineContent, PaginatedResponse } from './models';
 import type { ImageNameLineMatch, LineContentResponse } from './types';
 
 const udlfApi = axios.create({
@@ -108,11 +108,14 @@ export const getUDLFOutputFileByLine = async (outputFileName: string, lineNumber
   }
 };
 
-export const getImageNameByLineNumber = async (lineNumber: number) => {
-  const endpointToGetImageName = `/file-name-by-index/${lineNumber}`;
+export const getImageNamesByIndexesList = async (lineNumbers: number[]) => {
+  const indexesAsString = lineNumbers.join(',');
+  const endpointToGetImageName = `/file-input-name-by-index?indexList=${indexesAsString}`;
+  console.log("Fetching image names from:", endpointToGetImageName);
+
   try {
     const response = await udlfApi.get(endpointToGetImageName);
-    return response.data as LineContentResponse;
+    return response.data as lineContent[];
   } catch (error) {
     console.error('Error fetching image name by line number:', error);
     throw error;
