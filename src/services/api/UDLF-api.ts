@@ -138,9 +138,9 @@ export const getImageFileByName = async (imageFileName: string) => {
   const endpointToGetImageFile = `/image-file/${imageFileName}`;
   try {
     const response = await udlfApi.get(endpointToGetImageFile, {
-      responseType: 'blob', // Ensure the response is treated as a Blob
+      responseType: 'blob',
     });
-    return response.data; // This will be a Blob
+    return response.data;
   } catch (error) {
     console.error('Error fetching image file by name:', error);
   }
@@ -160,3 +160,9 @@ export const getPaginatedListFilenames = async (
   const response = await udlfApi.get(endpointToGetPaginatedList, { params });
   return response.data as PaginatedResponse;
 };
+
+export const getAllFilenames = async (filename: string): Promise<string[]> => {
+  const endpointToGetAllFilenames = `/get-all-input-file-names`;
+  const response = await udlfApi.get(endpointToGetAllFilenames);
+  return response.data as string[];
+}
