@@ -36,7 +36,7 @@ export default function Result() {
   const [pageSize, setPageSize] = useState<number>(IMAGES_PER_PAGE_DEFAULT);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [imagesCurrentPage, setImagesCurrentPage] = useState<lineContent[]>([]);
-  const [aspectRatio, setAspectRatio] = useState<"original" | "square">("original");
+  const [aspectRatio, setAspectRatio] = useState<"original" | "square">("square");
   const [inputImageNames, setInputImageNames] = useState<string[]>([]);
 
   useEffect(() => {
@@ -94,14 +94,16 @@ export default function Result() {
             {` ${outputname}`}
           </Typography>
           <Typography component="div" style={{ fontWeight: "normal" }} variant="h6">
-            Select an input image to see similar images.
+            Select or search an input image to view similar images.
           </Typography>
         </Typography>
+
+        {/* Actions menu */}
         <Box sx={{ my: 2, mx: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Box sx={{ my: 2, display: "flex", alignItems: "center" }}>
             <Autocomplete
               options={inputImageNames}
-              renderInput={(params) => <TextField {...params} label="Search..." />}
+              renderInput={(params) => <TextField {...params} label="Search input file..." />}
               onChange={(_event, value) => {
                 if (value) {
                   router.push(`/result/${outputname}/${value}`);
@@ -140,7 +142,7 @@ export default function Result() {
             display: "flex",
             flexDirection: "row",
             flexWrap: "wrap",
-            justifyContent: "flex-start",
+            justifyContent: "center",
           }}
         >
           {imagesCurrentPage.map((image) => {
@@ -148,7 +150,7 @@ export default function Result() {
             return (
               <Card
                 key={image.fileInputNameLine}
-                sx={{ p: 1, m: 1, width: 150, cursor: "pointer" }}
+                sx={{ p: 1, m: 2, width: 150, cursor: "pointer" }}
                 onClick={() => router.push(`/result/${outputname}/${imageName}`)}
               >
                 <CardHeader subheader={`${imageName}`} />
@@ -168,6 +170,8 @@ export default function Result() {
             );
           })}
         </Box>
+
+        {/* Pagination and Page Size Selector */}
         <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", mt: 4, mb: 2, gap: 2 }}>
           <Pagination color="primary" count={totalPages} onChange={handlePageChange} page={page} />
           <FormControl size="small" sx={{ m: 1, minWidth: 120 }}>
