@@ -68,6 +68,9 @@ export default function Result() {
         <Typography component="span" style={{ fontWeight: "bold" }} variant="h6">
           {` ${outputname}`}
         </Typography>
+        <Typography component="div" style={{ fontWeight: "normal" }} variant="h6">
+          Select an input image to see similar images.
+        </Typography>
       </Typography>
       {isLoading && (
         <Box sx={{ width: "100%" }}>

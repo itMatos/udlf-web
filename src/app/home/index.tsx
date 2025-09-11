@@ -28,7 +28,6 @@ export default function Homepage() {
         <Button size="large" variant="contained" endIcon={<ArrowForwardIosIcon />} href="/load-config" fullWidth>
           Run existing config file
         </Button>
-        <BasicBars />
       </Box>
     </React.Fragment>
   );

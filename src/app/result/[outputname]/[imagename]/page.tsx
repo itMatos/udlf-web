@@ -70,8 +70,7 @@ export default function ImagePage() {
 
   return (
     <div>
-      <h1>Image Page</h1>
-      <p>Image Name: {imagename}</p>
+      <h1>Ranked list for image: {imagename} </h1>
 
       <Box
         sx={{

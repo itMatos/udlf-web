@@ -5,15 +5,14 @@ import { downloadLogFile, downloadOutputFile, executeUDLF } from "@/services/api
 import { ResponseApi } from "@/services/api/types";
 import TerminalIcon from "@mui/icons-material/Terminal";
 import Appbar from "@/components/Appbar";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 
 export default function ExecuteConfig() {
   const params = useParams();
-  const configFileName: string = Array.isArray(params?.configFileName)
-    ? params?.configFileName[0] || ""
-    : params?.configFileName || "";
+  const router = useRouter();
+  const configFileName: string = Array.isArray(params?.configFileName) ? params?.configFileName[0] || "" : params?.configFileName || "";
 
   console.log("Config file name from search params:", configFileName);
   const [resultUdlf, setResultUdlf] = useState<ResponseApi | null>(null);
@@ -121,15 +120,12 @@ export default function ExecuteConfig() {
               <Button
                 variant="contained"
                 endIcon={<ArrowForwardIosIcon />}
-                onClick={() => (window.location.href = `/result/${resultFileName}`)}
+                onClick={() => router.replace(`/result/${resultFileName}`)}
                 sx={{ width: "auto", my: 2 }}
               >
                 View Execution Result
               </Button>
             </Box>
-            <Typography variant="h4" gutterBottom>
-              Execution Result
-            </Typography>
             <Typography variant="h5">Log: {configFileName}</Typography>
             <Snackbar
               anchorOrigin={{ vertical: "top", horizontal: "right" }}
@@ -152,9 +148,7 @@ export default function ExecuteConfig() {
               </Alert>
             </Snackbar>
 
-            <p>
-              <strong>Output:</strong> <pre>{resultUdlf.output}</pre>
-            </p>
+            <pre>{resultUdlf.output}</pre>
           </Box>
         ) : (
           <Box
