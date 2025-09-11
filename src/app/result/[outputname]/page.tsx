@@ -10,7 +10,7 @@ import {
   MenuItem,
   Pagination,
   Select,
-  type SelectChangeEvent,
+  SelectChangeEvent,
   Typography,
 } from "@mui/material";
 import { useParams } from "next/navigation";
@@ -32,6 +32,7 @@ export default function Result() {
   const [pageSize, setPageSize] = useState<number>(IMAGES_PER_PAGE_DEFAULT);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [imagesCurrentPage, setImagesCurrentPage] = useState<lineContent[]>([]);
+  const [aspectRatio, setAspectRatio] = useState<"original" | "square">("original");
 
   useEffect(() => {
     const fetchImageNames = async () => {
@@ -60,6 +61,10 @@ export default function Result() {
     setPage(value);
   };
 
+  const handleAspectRatioChange = (event: SelectChangeEvent) => {
+    setAspectRatio(event.target.value as "original" | "square");
+  };
+
   return (
     <>
       <Appbar />
@@ -72,6 +77,25 @@ export default function Result() {
           Select an input image to see similar images.
         </Typography>
       </Typography>
+
+      <Box sx={{ my: 2, mx: 2, display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+        <Typography variant="body1" sx={{ mr: 2 }}>
+          Aspect Ratio:
+        </Typography>
+        <Select
+          value={aspectRatio}
+          onChange={handleAspectRatioChange}
+          displayEmpty
+          inputProps={{ "aria-label": "Without label" }}
+          sx={{
+            width: 150,
+          }}
+        >
+          <MenuItem value="original">Original</MenuItem>
+          <MenuItem value="square">1:1</MenuItem>
+        </Select>
+      </Box>
+
       {isLoading && (
         <Box sx={{ width: "100%" }}>
           <LinearProgress />
@@ -94,7 +118,18 @@ export default function Result() {
               onClick={() => (window.location.href = `/result/${outputname}/${imageName}`)}
             >
               <CardHeader subheader={`${imageName}`} />
-              <CardMedia alt={`${imageName}`} component="img" image={`http://localhost:8080/image-file/${imageName}`} />
+              <CardMedia
+                alt={`${imageName}`}
+                component="img"
+                image={`http://localhost:8080/image-file/${imageName}`}
+                sx={{
+                  ...(aspectRatio === "square" && {
+                    aspectRatio: "1 / 1",
+                    objectFit: "cover",
+                    height: 150,
+                  }),
+                }}
+              />
             </Card>
           );
         })}
