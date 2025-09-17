@@ -21,7 +21,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import Appbar from "@/components/Appbar";
 import type { lineContent } from "@/services/api/models";
-import { getAllFilenames, getPaginatedListFilenames } from "@/services/api/UDLF-api";
+import { getAllClasses, getAllFilenames, getPaginatedListFilenames } from "@/services/api/UDLF-api";
 import { IMAGES_PER_PAGE_DEFAULT } from "@/ts/constants/common";
 
 export default function Result() {
@@ -68,6 +68,18 @@ export default function Result() {
       }
     };
     fetchInputImageNames();
+  }, [outputname]);
+
+  useEffect(() => {
+    const getAllClassesForOutput = async () => {
+      try {
+        const classes = await getAllClasses(outputname);
+        console.log("Fetched classes for output:", classes);
+      } catch (error) {
+        console.error(`Error fetching classes for output ${outputname}:`, error);
+      }
+    };
+    getAllClassesForOutput();
   }, [outputname]);
 
   const handlePageSizeChange = (event: SelectChangeEvent) => {

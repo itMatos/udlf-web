@@ -166,3 +166,9 @@ export const getAllFilenames = async (filename: string): Promise<string[]> => {
   const response = await udlfApi.get(endpointToGetAllFilenames);
   return response.data as string[];
 }
+
+export const getAllClasses = async (filename: string): Promise<string[]> => {
+  const endpointToGetAllClasses = `/get-all-class-names`;
+  const response = await udlfApi.get(endpointToGetAllClasses);
+  return response.data as string[];
+}

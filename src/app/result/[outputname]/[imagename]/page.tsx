@@ -14,7 +14,7 @@ export default function ImagePage() {
   const { imagename, outputname } = params as { imagename: string; outputname: string };
   const [indexesResultByCurrentInput, setIndexesResultByCurrentInput] = useState<string | null>(null);
   const [similarImages, setSimilarImages] = useState<lineContent[]>([]);
-  const [aspectRatio, setAspectRatio] = useState<"original" | "square">("original");
+  const [aspectRatio, setAspectRatio] = useState<"original" | "square">("square");
 
   useEffect(() => {
     const fetchLineNumber = async () => {
