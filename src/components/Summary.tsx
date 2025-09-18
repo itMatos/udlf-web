@@ -1,4 +1,4 @@
-import DownloadIcon from '@mui/icons-material/Download';
+import DownloadIcon from "@mui/icons-material/Download";
 import {
   Box,
   Button,
@@ -16,10 +16,10 @@ import {
   TableHead,
   TableRow,
   Typography,
-} from '@mui/material';
-import type React from 'react';
-import { useEffect, useMemo } from 'react';
-import { ConfigGenerator } from '@/services/configGenerator';
+} from "@mui/material";
+import type React from "react";
+import { useEffect, useMemo } from "react";
+import { ConfigGenerator } from "@/services/configGenerator";
 import {
   generateBFSTreeSettings,
   generateContextRRSettings,
@@ -30,31 +30,26 @@ import {
   generateReckNNGraphSettings,
   generateRFESettings,
   generateRKGraphSettings,
-} from '@/services/configs-generator/ConfigMethodSettings';
-import { evaluationSettingsConfig } from '@/services/templates/evaluationSettings';
-import { baseConfigTemplate } from '@/services/templates/generalConfig';
-import { inputDatasetFilesConfig } from '@/services/templates/inputDataSetFilesConfig';
-import { outputFilesSettingsConfig } from '@/services/templates/outputFIlesSettingsConfig';
-import { UDLF_METHODS } from '@/ts/constants/common';
-import { OUTPUT_TYPES } from '@/ts/constants/output';
-import type { BFSTree } from '@/ts/interfaces/methods/bfstree';
-import type { ContextRR } from '@/ts/interfaces/methods/contextrr';
-import type { CorGraph } from '@/ts/interfaces/methods/corgraph';
-import type { CPRR } from '@/ts/interfaces/methods/cprr';
-import type { LHRR } from '@/ts/interfaces/methods/lhrr';
-import type { RDPAC } from '@/ts/interfaces/methods/rdpac';
-import type { ReckNNGraph } from '@/ts/interfaces/methods/recknngraph';
-import type { RFE } from '@/ts/interfaces/methods/rfe';
-import type { RKGraph } from '@/ts/interfaces/methods/rkgraph';
-import type { SummaryProps } from '@/ts/interfaces/summary';
-import type { Method } from '@/ts/types/methods';
-import {
-  createBaseConfig,
-  createEvaluationSettings,
-  createInputSettings,
-  createOutputSettings,
-} from '@/utils/config-generator';
-import { generateFileName, generateUniqueId } from '@/utils/helpers';
+} from "@/services/configs-generator/ConfigMethodSettings";
+import { evaluationSettingsConfig } from "@/services/templates/evaluationSettings";
+import { baseConfigTemplate } from "@/services/templates/generalConfig";
+import { inputDatasetFilesConfig } from "@/services/templates/inputDataSetFilesConfig";
+import { outputFilesSettingsConfig } from "@/services/templates/outputFIlesSettingsConfig";
+import { UDLF_METHODS } from "@/ts/constants/common";
+import { OUTPUT_TYPES } from "@/ts/constants/output";
+import type { BFSTree } from "@/ts/interfaces/methods/bfstree";
+import type { ContextRR } from "@/ts/interfaces/methods/contextrr";
+import type { CorGraph } from "@/ts/interfaces/methods/corgraph";
+import type { CPRR } from "@/ts/interfaces/methods/cprr";
+import type { LHRR } from "@/ts/interfaces/methods/lhrr";
+import type { RDPAC } from "@/ts/interfaces/methods/rdpac";
+import type { ReckNNGraph } from "@/ts/interfaces/methods/recknngraph";
+import type { RFE } from "@/ts/interfaces/methods/rfe";
+import type { RKGraph } from "@/ts/interfaces/methods/rkgraph";
+import type { SummaryProps } from "@/ts/interfaces/summary";
+import type { Method } from "@/ts/types/methods";
+import { createBaseConfig, createEvaluationSettings, createInputSettings, createOutputSettings } from "@/utils/config-generator";
+import { generateFileName, generateUniqueId } from "@/utils/helpers";
 
 const Summary: React.FC<SummaryProps> = ({
   selectedMethod,
@@ -89,14 +84,8 @@ const Summary: React.FC<SummaryProps> = ({
         : [],
     };
 
-    const allTemplates = [
-      baseConfig,
-      inputSettingsTemplate,
-      outputSettingsTemplate,
-      evaluationSettingsTemplate,
-      methodSettingsTemplate,
-    ];
-    console.log('allTemplates', allTemplates);
+    const allTemplates = [baseConfig, inputSettingsTemplate, outputSettingsTemplate, evaluationSettingsTemplate, methodSettingsTemplate];
+    console.log("allTemplates", allTemplates);
 
     const generator = new ConfigGenerator(allTemplates);
     const blob = generator.generateFile();
@@ -135,7 +124,7 @@ const Summary: React.FC<SummaryProps> = ({
 
   const generateConfigFileToDownload = () => {
     const url = window.URL.createObjectURL(generatedConfigFile);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
     link.download = configFileName;
     document.body.appendChild(link);
@@ -144,6 +133,7 @@ const Summary: React.FC<SummaryProps> = ({
     window.URL.revokeObjectURL(url);
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: we need to set the config file to execute and the config file name
   useEffect(() => {
     setConfigFileToExecute(generatedConfigFile);
     setConfigFileName(configFileName);
@@ -176,7 +166,7 @@ const Summary: React.FC<SummaryProps> = ({
                     <TableCell component="th" scope="row">
                       {key}
                     </TableCell>
-                    <TableCell align="right">{typeof value === 'boolean' ? (value ? 'Yes' : 'No') : value}</TableCell>
+                    <TableCell align="right">{typeof value === "boolean" ? (value ? "Yes" : "No") : value}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -212,16 +202,14 @@ const Summary: React.FC<SummaryProps> = ({
         {outputSettings.enabledOutput ? (
           <Box sx={{ mb: 2 }}>
             <Typography variant="body1">
-              File name:{' '}
+              File name:{" "}
               {outputSettings.outputFileName || (
-                <Typography component={'span'} fontStyle={'oblique'}>
+                <Typography component={"span"} fontStyle={"oblique"}>
                   Default
                 </Typography>
               )}
             </Typography>
-            <Typography variant="body1">
-              Format Type: {OUTPUT_TYPES.find((type) => type.value === outputSettings.outputFileFormat)?.label}
-            </Typography>
+            <Typography variant="body1">Format Type: {OUTPUT_TYPES.find((type) => type.value === outputSettings.outputFileFormat)?.label}</Typography>
           </Box>
         ) : (
           <Typography color="textSecondary" variant="body2">
@@ -239,25 +227,18 @@ const Summary: React.FC<SummaryProps> = ({
         {evaluationSettings && (
           <List dense>
             <ListItem>
-              <ListItemText primary="MAP" secondary={evaluationSettings.useMap ? 'Yes' : 'No'} />
+              <ListItemText primary="MAP" secondary={evaluationSettings.useMap ? "Yes" : "No"} />
             </ListItem>
             <ListItem>
-              <ListItemText primary="Efficiency" secondary={evaluationSettings.useEfficiency ? 'Yes' : 'No'} />
+              <ListItemText primary="Efficiency" secondary={evaluationSettings.useEfficiency ? "Yes" : "No"} />
             </ListItem>
             <ListItem>
               <ListItemText
                 primary="Recall Values"
                 secondary={
-                  <Stack component={'span'} direction="row" flexWrap="wrap" spacing={1}>
+                  <Stack component={"span"} direction="row" flexWrap="wrap" spacing={1}>
                     {evaluationSettings.recall.map((value) => (
-                      <Chip
-                        color="primary"
-                        component={'span'}
-                        key={value}
-                        label={value}
-                        size="small"
-                        variant="outlined"
-                      />
+                      <Chip color="primary" component={"span"} key={value} label={value} size="small" variant="outlined" />
                     ))}
                   </Stack>
                 }
@@ -267,16 +248,9 @@ const Summary: React.FC<SummaryProps> = ({
               <ListItemText
                 primary="Precision Values"
                 secondary={
-                  <Stack component={'span'} direction="row" flexWrap="wrap" spacing={1}>
+                  <Stack component={"span"} direction="row" flexWrap="wrap" spacing={1}>
                     {evaluationSettings.precision.map((value) => (
-                      <Chip
-                        color="primary"
-                        component={'span'}
-                        key={value}
-                        label={value}
-                        size="small"
-                        variant="outlined"
-                      />
+                      <Chip color="primary" component={"span"} key={value} label={value} size="small" variant="outlined" />
                     ))}
                   </Stack>
                 }
@@ -290,13 +264,7 @@ const Summary: React.FC<SummaryProps> = ({
             Click the button below to generate the configuration file.
           </Typography>
 
-          <Button
-            color="primary"
-            onClick={() => generateConfigFileToDownload()}
-            startIcon={<DownloadIcon />}
-            sx={{ mt: 2 }}
-            variant="contained"
-          >
+          <Button color="primary" onClick={() => generateConfigFileToDownload()} startIcon={<DownloadIcon />} sx={{ mt: 2 }} variant="contained">
             Download Config File
           </Button>
         </Box>

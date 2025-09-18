@@ -1,8 +1,8 @@
 "use client";
-import React, { useState, useRef, ChangeEvent } from "react";
-import { Box, Button, Typography, Paper } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import { Box, Button, Paper, Typography } from "@mui/material";
+import { type ChangeEvent, useRef, useState } from "react";
 import Appbar from "@/components/Appbar";
 
 export default function UploadPage() {
@@ -59,7 +59,7 @@ export default function UploadPage() {
   };
 
   return (
-    <React.Fragment>
+    <>
       <Appbar />
       <Box
         sx={{
@@ -72,7 +72,7 @@ export default function UploadPage() {
           px: 2,
         }}
       >
-        <Typography variant="h5" component="h1" gutterBottom>
+        <Typography component="h1" gutterBottom variant="h5">
           Upload and run a file
         </Typography>
 
@@ -89,38 +89,23 @@ export default function UploadPage() {
           }}
         >
           {/* Input de arquivo oculto */}
-          <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: "none" }} />
+          <input onChange={handleFileChange} ref={fileInputRef} style={{ display: "none" }} type="file" />
 
-          <Button
-            variant="contained"
-            component="span"
-            size="large"
-            startIcon={<CloudUploadIcon />}
-            onClick={handleUploadButtonClick}
-            fullWidth
-          >
+          <Button component="span" fullWidth onClick={handleUploadButtonClick} size="large" startIcon={<CloudUploadIcon />} variant="contained">
             {selectedFile ? `File: ${selectedFile.name}` : "Select config file to upload"}
           </Button>
 
           {selectedFile && (
-            <Typography variant="body2" color="text.secondary">
+            <Typography color="text.secondary" variant="body2">
               Tamanho: {(selectedFile.size / 1024).toFixed(2)} KB
             </Typography>
           )}
 
-          <Button
-            variant="contained"
-            color="success"
-            size="large"
-            startIcon={<PlayArrowIcon />}
-            onClick={handleExecuteFile}
-            disabled={!selectedFile}
-            fullWidth
-          >
+          <Button color="success" disabled={!selectedFile} fullWidth onClick={handleExecuteFile} size="large" startIcon={<PlayArrowIcon />} variant="contained">
             Executar Arquivo
           </Button>
         </Paper>
       </Box>
-    </React.Fragment>
+    </>
   );
 }
