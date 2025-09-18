@@ -8,3 +8,15 @@ export interface LineContentResponse {
   line: number;
   lineContent: string;
 }
+
+export interface ImageNameLineMatch {
+  imageName: string;
+  lineNumber: number;
+}
+
+export interface InputFileDetail {
+  [inputFileName: string]: {
+    class: string;
+    lineIndexInInputFile: number;
+  }
+}

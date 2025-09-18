@@ -1,10 +1,10 @@
-"use client";
-import { Menu } from "@mui/icons-material";
-import { AppBar, Box, Button, Drawer, IconButton, Toolbar, Typography } from "@mui/material";
-import { useState } from "react";
-import HomeIcon from "@mui/icons-material/Home";
-import NoteAddIcon from "@mui/icons-material/NoteAdd";
-import TerminalIcon from "@mui/icons-material/Terminal";
+'use client';
+import { Menu } from '@mui/icons-material';
+import HomeIcon from '@mui/icons-material/Home';
+import NoteAddIcon from '@mui/icons-material/NoteAdd';
+import TerminalIcon from '@mui/icons-material/Terminal';
+import { AppBar, Box, Button, Drawer, IconButton, Toolbar, Typography } from '@mui/material';
+import { useState } from 'react';
 
 export default function Appbar() {
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -13,32 +13,36 @@ export default function Appbar() {
     setOpenDrawer(!openDrawer);
   };
 
+  const handleNavigateTo = (path: string) => {
+    window.location.href = path;
+  };
+
   return (
-    <Box sx={{ flexGrow: 1 }} component={"div"}>
+    <Box component={'div'} sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={toggleDrawer}>
+          <IconButton aria-label="menu" color="inherit" edge="start" onClick={toggleDrawer} sx={{ mr: 2 }}>
             <Menu />
           </IconButton>
-          <Typography variant="h6" color="inherit" component="div">
+          <Typography color="inherit" component="div" variant="h6">
             UDLF Web
           </Typography>
         </Toolbar>
       </AppBar>
 
-      <Drawer anchor="left" open={openDrawer} onClose={toggleDrawer}>
-        <Typography variant="h6" sx={{ padding: 2 }}>
+      <Drawer anchor="left" onClose={toggleDrawer} open={openDrawer}>
+        <Typography sx={{ padding: 2 }} variant="h6">
           Menu UDLF Web
         </Typography>
-        <Box sx={{ width: 300 }} role="presentation" onClick={toggleDrawer} onKeyDown={toggleDrawer}>
+        <Box onClick={toggleDrawer} onKeyDown={toggleDrawer} role="presentation" sx={{ width: 300 }}>
           <Box sx={{ padding: 2 }}>
-            <Button variant="text" startIcon={<HomeIcon />} onClick={() => (window.location.href = "/")}>
+            <Button onClick={() => handleNavigateTo('/')} startIcon={<HomeIcon />} variant="text">
               Home
             </Button>
-            <Button variant="text" onClick={() => (window.location.href = "/get-started")} startIcon={<NoteAddIcon />}>
+            <Button onClick={() => handleNavigateTo('/get-started')} startIcon={<NoteAddIcon />} variant="text">
               Create new config file
             </Button>
-            <Button variant="text" onClick={() => (window.location.href = "/load-config")} startIcon={<TerminalIcon />}>
+            <Button onClick={() => handleNavigateTo('/load-config')} startIcon={<TerminalIcon />} variant="text">
               Run config file
             </Button>
           </Box>

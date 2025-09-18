@@ -1,29 +1,29 @@
-"use client";
-import React, { useState } from "react";
-import { Box, Stepper, Step, StepLabel, Button, Typography } from "@mui/material";
-import { StepProps, LabelProps, EvaluationSettingsData } from "../ts/interfaces";
-import InputSettings from "./InputSettings";
-import OutputSettings from "./OutputSettings";
-import EvaluationSettings from "./EvaluationSettings";
-import Summary from "./Summary";
-import { CONTEXTRR_DEFAULT_PARAMS } from "@/ts/constants/methods/contextrr";
-import { STEPS, UDLF_METHODS } from "@/ts/constants/common";
-import { DEFAULT_INPUT_SETTINGS } from "@/ts/constants/input";
-import { ContextRR } from "@/ts/interfaces/methods/contextrr";
-import { OutputSettingsData } from "@/ts/interfaces/output";
-import { InputSettingsData } from "@/ts/interfaces/input";
-import { CPRR } from "@/ts/interfaces/methods/cprr";
-import MethodSettings from "./MethodSettings";
-import { Method } from "@/ts/types/methods";
-import { DEFAULT_OUTPUT_SETTINGS } from "@/ts/constants/output";
-import { LHRR } from "@/ts/interfaces/methods/lhrr";
-import { BFSTree } from "@/ts/interfaces/methods/bfstree";
-import { CorGraph } from "@/ts/interfaces/methods/corgraph";
-import { RDPAC } from "@/ts/interfaces/methods/rdpac";
-import { RLSim } from "@/ts/interfaces/methods/rlsim";
-import { RFE } from "@/ts/interfaces/methods/rfe";
-import { ReckNNGraph } from "@/ts/interfaces/methods/recknngraph";
-import { uploadUDLFConfig } from "@/services/api/UDLF-api";
+'use client';
+import { Box, Button, Step, StepLabel, Stepper, Typography } from '@mui/material';
+import React, { useState } from 'react';
+import { uploadUDLFConfig } from '@/services/api/UDLF-api';
+import { STEPS, UDLF_METHODS } from '@/ts/constants/common';
+import { DEFAULT_INPUT_SETTINGS } from '@/ts/constants/input';
+import { CONTEXTRR_DEFAULT_PARAMS } from '@/ts/constants/methods/contextrr';
+import { DEFAULT_OUTPUT_SETTINGS } from '@/ts/constants/output';
+import type { InputSettingsData } from '@/ts/interfaces/input';
+import type { BFSTree } from '@/ts/interfaces/methods/bfstree';
+import type { ContextRR } from '@/ts/interfaces/methods/contextrr';
+import type { CorGraph } from '@/ts/interfaces/methods/corgraph';
+import type { CPRR } from '@/ts/interfaces/methods/cprr';
+import type { LHRR } from '@/ts/interfaces/methods/lhrr';
+import type { RDPAC } from '@/ts/interfaces/methods/rdpac';
+import type { ReckNNGraph } from '@/ts/interfaces/methods/recknngraph';
+import type { RFE } from '@/ts/interfaces/methods/rfe';
+import type { RLSim } from '@/ts/interfaces/methods/rlsim';
+import type { OutputSettingsData } from '@/ts/interfaces/output';
+import type { Method } from '@/ts/types/methods';
+import type { EvaluationSettingsData, LabelProps, StepProps } from '../ts/interfaces';
+import EvaluationSettings from './EvaluationSettings';
+import InputSettings from './InputSettings';
+import MethodSettings from './MethodSettings';
+import OutputSettings from './OutputSettings';
+import Summary from './Summary';
 
 export default function HorizontalLinearStepper() {
   const [activeStep, setActiveStep] = useState(0);
@@ -37,22 +37,22 @@ export default function HorizontalLinearStepper() {
   const [evaluationSettings, setEvaluationSettings] = useState<EvaluationSettingsData | null>(null);
 
   const [configFileToExecute, setConfigFileToExecute] = useState<Blob | null>(null);
-  const [configFileName, setConfigFileName] = useState<string>("");
+  const [configFileName, setConfigFileName] = useState<string>('');
 
   const isStepOptional = (step: number) => step === -1;
   const isStepSkipped = (step: number) => skipped.has(step);
 
   const redirectToExecuteConfig = (configFileToExecute: Blob, configFileName: string) => {
-    console.log("Redirecting to execute config with file:", configFileToExecute, "and name:", configFileName);
+    console.log('Redirecting to execute config with file:', configFileToExecute, 'and name:', configFileName);
     try {
       uploadUDLFConfig(configFileToExecute, configFileName);
-      console.log("Config file uploaded successfully:", configFileName);
+      console.log('Config file uploaded successfully:', configFileName);
 
       window.location.href = `/execute/${configFileName}`;
     } catch (error) {
-      console.error("Error uploading config file:", error);
+      console.error('Error uploading config file:', error);
     }
-    console.log("aqui vai ser redirecionado");
+    console.log('aqui vai ser redirecionado');
   };
 
   const isStepComplete = (step: number): boolean => {
@@ -72,11 +72,11 @@ export default function HorizontalLinearStepper() {
     }
   };
 
-  const stepTitle = ["Select method", "Input settings", "Output settings", "Evaluation settings", "Summary"];
+  const stepTitle = ['Select method', 'Input settings', 'Output settings', 'Evaluation settings', 'Summary'];
 
   const handleNext = () => {
     let newSkipped = skipped;
-    console.log("skipped", skipped);
+    console.log('skipped', skipped);
     if (isStepSkipped(activeStep)) {
       newSkipped = new Set(newSkipped.values());
       newSkipped.delete(activeStep);
@@ -86,8 +86,8 @@ export default function HorizontalLinearStepper() {
     setSkipped(newSkipped);
 
     if (activeStep === STEPS.length - 1) {
-      console.log("Final step reached, preparing configuration file for execution");
-      console.log("configFileToExecute", configFileToExecute);
+      console.log('Final step reached, preparing configuration file for execution');
+      console.log('configFileToExecute', configFileToExecute);
     }
   };
 
@@ -119,10 +119,10 @@ export default function HorizontalLinearStepper() {
       case 0:
         return (
           <MethodSettings
-            settings={settings}
-            setSettings={setSettings}
             selectedMethod={selectedMethod}
             setSelectedMethod={setSelectedMethod}
+            setSettings={setSettings}
+            settings={settings}
           />
         );
       case 1:
@@ -134,13 +134,13 @@ export default function HorizontalLinearStepper() {
       case 4:
         return (
           <Summary
-            selectedMethod={selectedMethod}
-            methodSettings={settings}
-            inputSettings={inputSettings}
-            outputSettings={outputSettings}
             evaluationSettings={evaluationSettings}
-            setConfigFileToExecute={setConfigFileToExecute}
+            inputSettings={inputSettings}
+            methodSettings={settings}
+            outputSettings={outputSettings}
+            selectedMethod={selectedMethod}
             setConfigFileName={setConfigFileName}
+            setConfigFileToExecute={setConfigFileToExecute}
           />
         );
       case 5:
@@ -157,12 +157,12 @@ export default function HorizontalLinearStepper() {
 
   return (
     <Box
-      component={"div"}
+      component={'div'}
       sx={{
-        width: "100%",
-        margin: "auto",
+        width: '100%',
+        margin: 'auto',
         py: 4,
-        justifyItems: "center",
+        justifyItems: 'center',
       }}
     >
       <Stepper activeStep={activeStep}>
@@ -193,18 +193,18 @@ export default function HorizontalLinearStepper() {
           <>
             <Typography sx={{ mb: 2 }}>{stepTitle[activeStep]}</Typography>
             {renderStepContent()}
-            <Box sx={{ display: "flex", pt: 2, width: "100%" }}>
+            <Box sx={{ display: 'flex', pt: 2, width: '100%' }}>
               <Button color="inherit" disabled={activeStep === 0} onClick={handleBack} sx={{ mr: 1 }}>
                 Back
               </Button>
-              <Box sx={{ flex: "1 1 auto" }} />
+              <Box sx={{ flex: '1 1 auto' }} />
               {isStepOptional(activeStep) && (
                 <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
                   Skip
                 </Button>
               )}
-              <Button onClick={handleNext} disabled={!canProceed()}>
-                {activeStep === STEPS.length - 1 ? "Execute" : "Next"}
+              <Button disabled={!canProceed()} onClick={handleNext}>
+                {activeStep === STEPS.length - 1 ? 'Execute' : 'Next'}
               </Button>
             </Box>
           </>

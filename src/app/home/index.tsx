@@ -3,6 +3,7 @@ import React from "react";
 import { Box, Button } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import Appbar from "@/components/Appbar";
+import BasicBars from "@/components/methods/Charts";
 
 export default function Homepage() {
   return (

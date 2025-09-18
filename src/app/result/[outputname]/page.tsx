@@ -1,7 +1,8 @@
 "use client";
-import React, { useEffect, useState } from "react";
 import {
+  Autocomplete,
   Box,
+  Button,
   Card,
   CardHeader,
   CardMedia,
@@ -9,172 +10,198 @@ import {
   InputLabel,
   LinearProgress,
   MenuItem,
+  Pagination,
   Select,
   SelectChangeEvent,
+  TextField,
+  Typography,
 } from "@mui/material";
+import { useParams, useRouter } from "next/navigation";
+import React from "react";
+import { useEffect, useState } from "react";
 import Appbar from "@/components/Appbar";
-import { getImageNameByLineNumber, getUDLFOutputFileByLine } from "@/services/api/UDLF-api";
+import type { lineContent } from "@/services/api/models";
+import { getAllClasses, getAllFilenames, getPaginatedListFilenames } from "@/services/api/UDLF-api";
 import { IMAGES_PER_PAGE_DEFAULT } from "@/ts/constants/common";
-import { useParams } from "next/navigation";
-
-const FILES_LENGTH = 100;
 
 export default function Result() {
-  const router = useParams();
-  let outputname = router?.outputname || "";
+  const params = useParams();
+  const router = useRouter();
+  let outputname = params?.outputname || "";
   if (Array.isArray(outputname)) {
     outputname = outputname[0] || "";
   }
-  console.log("Output name from params:", outputname);
-  console.log("Router:", router);
-
-  console.log("Output file name from query:", outputname);
-  const [lineContent, setLineContent] = useState<string>("");
-  const [imagesPerPage, setImagesPerPage] = useState<number>(IMAGES_PER_PAGE_DEFAULT);
-  const [imagesToShow, setImagesToShow] = useState<number[]>([]);
-  const [objectIndexNameFile, setObjectIndexNameFile] = useState<{ [key: number]: string }>({});
-  const [filterImages, setFilterImages] = useState<boolean>(false);
-
-  const fetchOutputFileByLine = async (lineNumber: number) => {
-    try {
-      const response = await getUDLFOutputFileByLine(outputname, lineNumber);
-      console.log(`Fetched output for line ${lineNumber}:`, response);
-      setLineContent(response.lineContent || "");
-    } catch (error) {
-      console.error(`Error fetching output for line ${lineNumber}:`, error);
-    }
-  };
-
-  useEffect(() => {
-    fetchOutputFileByLine(1);
-  }, []);
-
-  const handleChange = (event: SelectChangeEvent) => {
-    const selectedValue = Number(event.target.value);
-    setImagesPerPage(selectedValue);
-  };
-
-  useEffect(() => {
-    if (lineContent) {
-      // console.log("Line content fetched:", lineContent);
-      const elementsArray = lineContent.split(" ");
-      const images = elementsArray.slice(0, imagesPerPage).map(Number);
-      // console.log("images to show:", images);
-      setImagesToShow(images);
-      imagesFromListFile();
-      // console.log("Images to show:", images);
-    } else {
-      console.warn("No line content available.");
-    }
-  }, [lineContent, imagesPerPage]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(IMAGES_PER_PAGE_DEFAULT);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [imagesCurrentPage, setImagesCurrentPage] = useState<lineContent[]>([]);
+  const [aspectRatio, setAspectRatio] = useState<"original" | "square">("square");
+  const [inputImageNames, setInputImageNames] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchImageNames = async () => {
-      const newObject: { [key: number]: string } = {};
-
-      for (const number of imagesToShow) {
-        try {
-          const imageName = await getImageNameByLineNumber(number);
-          newObject[number] = imageName.lineContent;
-        } catch (error) {
-          console.error(`Error fetching image name for line ${number}:`, error);
-        }
+      try {
+        const imageName = await getPaginatedListFilenames(outputname, page, pageSize);
+        setTotalPages(imageName.totalPages);
+        setImagesCurrentPage(imageName.items);
+        console.log("Fetched image names:", imageName.items);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(`Error fetching image names for output ${outputname}:`, error);
+      } finally {
+        setIsLoading(false);
       }
-      console.log("Fetched image names:", newObject);
-      setObjectIndexNameFile(newObject);
     };
-
     fetchImageNames();
-  }, [imagesToShow]);
+  }, [outputname, page, pageSize]);
 
-  const filterBySelectedImage = async (selectedImageIndex: number) => {
-    // buscar na linha do output o nome do arquivo correspondente ao índice selecionado
-    const selectedImageName = objectIndexNameFile[selectedImageIndex];
-    if (selectedImageName) {
-      fetchOutputFileByLine(selectedImageIndex);
-      setFilterImages(true);
-      console.log(`Selected image name: ${selectedImageName}`);
-      // Aqui você pode fazer algo com o nome da imagem selecionada, como exibir ou processar
-    } else {
-      console.warn(`No image found for index ${selectedImageIndex}`);
-    }
+  useEffect(() => {
+    const fetchInputImageNames = async () => {
+      try {
+        const inputNames = await getAllFilenames(outputname);
+        setInputImageNames(inputNames);
+        console.log("Fetched input image names:", inputNames);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(`Error fetching input image names for output ${outputname}:`, error);
+      }
+    };
+    fetchInputImageNames();
+  }, [outputname]);
+
+  useEffect(() => {
+    const getAllClassesForOutput = async () => {
+      console.log("Fetching classes for output:", outputname);
+      try {
+        const classes = await getAllClasses(outputname);
+        console.log("Fetched classes for output:", classes);
+      } catch (error) {
+        console.error(`Error fetching classes for output ${outputname}:`, error);
+      }
+    };
+    getAllClassesForOutput();
+  }, [outputname]);
+
+  const handlePageSizeChange = (event: SelectChangeEvent) => {
+    const newPageSize = Number.parseInt(event.target.value, 10);
+    setPageSize(newPageSize);
+    setPage(1);
   };
 
-  const imagesFromListFile = () => {
-    const linesFromFileList: number[] = Array.from({ length: FILES_LENGTH + 1 }, (_, i) => i);
-    console.log("Lines from file list:", linesFromFileList);
-    setImagesToShow(linesFromFileList);
+  const handlePageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
+
+  const handleAspectRatioChange = (event: SelectChangeEvent) => {
+    setAspectRatio(event.target.value as "original" | "square");
   };
 
   return (
     <React.Fragment>
       <Appbar />
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          maxWidth: "100%",
-          p: 2,
-        }}
-      >
-        <FormControl>
-          <InputLabel id="demo-simple-select-label">Images</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={imagesPerPage.toString()}
-            label="images"
-            onChange={handleChange}
-          >
-            <MenuItem value={10}>10</MenuItem>
-            <MenuItem value={20}>20</MenuItem>
-            <MenuItem value={30}>30</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
-      <h1>Resultados</h1>
-      {objectIndexNameFile && Object.keys(objectIndexNameFile).length > 0 ? (
+      <Box sx={{ mb: 4, mx: 1 }}>
+        <Typography variant="h6">
+          Results for:
+          <Typography component="span" style={{ fontWeight: "bold" }} variant="h6">
+            {` ${outputname}`}
+          </Typography>
+          <Typography component="div" style={{ fontWeight: "normal" }} variant="h6">
+            Select or search an input image to view similar images.
+          </Typography>
+        </Typography>
+
+        <Box sx={{ my: 2, mx: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <Box sx={{ my: 2, display: "flex", alignItems: "center" }}>
+            <Autocomplete
+              options={inputImageNames}
+              renderInput={(params) => <TextField {...params} label="Search input file..." />}
+              onChange={(_event, value) => {
+                if (value) {
+                  router.push(`/result/${outputname}/${value}`);
+                }
+              }}
+              sx={{ width: 300, mr: 2 }}
+            />
+          </Box>
+
+          <Box sx={{ my: 2, mx: 2, display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+            <Typography variant="body1" sx={{ mr: 2 }}>
+              Aspect Ratio:
+            </Typography>
+            <Select
+              value={aspectRatio}
+              onChange={handleAspectRatioChange}
+              displayEmpty
+              inputProps={{ "aria-label": "Without label" }}
+              sx={{
+                width: 150,
+              }}
+            >
+              <MenuItem value="original">Original</MenuItem>
+              <MenuItem value="square">1:1</MenuItem>
+            </Select>
+          </Box>
+        </Box>
+
+        {isLoading && (
+          <Box sx={{ width: "100%" }}>
+            <LinearProgress />
+          </Box>
+        )}
         <Box
           sx={{
             display: "flex",
             flexDirection: "row",
             flexWrap: "wrap",
-            alignItems: "center",
-            gap: 1,
+            justifyContent: "center",
           }}
         >
-          {filterImages
-            ? imagesToShow.map((imageIndex) => {
-                const imageName = objectIndexNameFile[imageIndex];
-                return (
-                  <Card key={imageIndex} sx={{ p: 1, m: 1, width: 150, cursor: "pointer" }}>
-                    <CardHeader subheader={`${imageName}`} />
-                    <CardMedia
-                      onClick={() => filterBySelectedImage(imageIndex)}
-                      component="img"
-                      image={"http://localhost:8080/image-file/" + imageName}
-                      alt={`${imageName}`}
-                    />
-                  </Card>
-                );
-              })
-            : imagesToShow.map((imageIndex) => (
-                <Card key={imageIndex} sx={{ p: 1, m: 1, width: 150, cursor: "pointer" }}>
-                  <CardHeader subheader={`${objectIndexNameFile[imageIndex]}`} />
-                  <CardMedia
-                    onClick={() => filterBySelectedImage(imageIndex)}
-                    component="img"
-                    image={"http://localhost:8080/image-file/" + objectIndexNameFile[imageIndex]}
-                    alt={`${objectIndexNameFile[imageIndex]}`}
-                  />
-                </Card>
-              ))}
+          {imagesCurrentPage.map((image) => {
+            const imageName = image.fileInputNameLine;
+            return (
+              <Card
+                key={image.fileInputNameLine}
+                sx={{ p: 1, m: 2, width: 150, cursor: "pointer" }}
+                onClick={() => router.push(`/result/${outputname}/${imageName}`)}
+              >
+                <CardHeader subheader={`${imageName}`} />
+                <CardMedia
+                  alt={`${imageName}`}
+                  component="img"
+                  image={`http://localhost:8080/image-file/${imageName}`}
+                  sx={{
+                    ...(aspectRatio === "square" && {
+                      aspectRatio: "1 / 1",
+                      objectFit: "cover",
+                      height: 150,
+                    }),
+                  }}
+                />
+              </Card>
+            );
+          })}
         </Box>
-      ) : (
-        <LinearProgress />
-      )}
+
+        {/* Pagination and Page Size Selector */}
+        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", mt: 4, mb: 2, gap: 2 }}>
+          <Pagination color="primary" count={totalPages} onChange={handlePageChange} page={page} />
+          <FormControl size="small" sx={{ m: 1, minWidth: 120 }}>
+            <InputLabel id="page-size-select-label">Items per page</InputLabel>
+            <Select
+              id="page-size-select"
+              label="Items per page"
+              labelId="page-size-select-label"
+              onChange={(e) => handlePageSizeChange(e)}
+              value={pageSize.toString()}
+            >
+              <MenuItem value={25}>25</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
+              <MenuItem value={100}>100</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+      </Box>
     </React.Fragment>
   );
 }

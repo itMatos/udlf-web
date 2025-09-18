@@ -32,22 +32,22 @@ export const inputDatasetFilesConfig: ConfigTemplate = {
     },
     {
       key: "INPUT_FILE",
-      value: "/Users/italomatos/Documents/IC/UDLF/Datasets/mpeg7/ranked_lists/AIR.txt",
+      value: process.env.NEXT_PUBLIC_INPUT_FILES_DEFAULT || "",
       description: "#Path of the main input file (matrix/ranked lists) for UDL tasks",
     },
     {
       key: "INPUT_FILE_LIST",
-      value: "",
+      value: process.env.NEXT_PUBLIC_INPUT_FILE_LIST_DEFAULT || "",
       description: "#Path of the lists file",
     },
     {
       key: "INPUT_FILE_CLASSES",
-      value: "",
+      value: process.env.NEXT_PUBLIC_INPUT_FILE_CLASSES_DEFAULT || "",
       description: "#Path of the classes file (only used when EFFECTIVENESS_EVAL = TRUE)",
     },
     {
       key: "INPUT_IMAGES_PATH",
-      value: "",
+      value: process.env.NEXT_PUBLIC_DATASET_IMAGES_PATH_DEFAULT || "",
       description:
         "#Path of the directory with the dataset images (this string ends with /). It is used to build the html ranked lists for output.",
     },
