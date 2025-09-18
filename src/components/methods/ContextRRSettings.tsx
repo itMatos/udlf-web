@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
-import { ContextRR, ContextRRSettingsProps } from "@/ts/interfaces/methods/contextrr";
 import { Box, FormControl, FormControlLabel, FormHelperText, Switch, TextField } from "@mui/material";
+import type React from "react";
+import type { ContextRR, ContextRRSettingsProps } from "@/ts/interfaces/methods/contextrr";
 
 export default function ContextRRSettings({ settings, setSettings }: ContextRRSettingsProps) {
   const handleSettingChange = (field: keyof ContextRR) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -19,46 +19,18 @@ export default function ContextRRSettings({ settings, setSettings }: ContextRRSe
   };
 
   return (
-    <Box sx={{ minWidth: 200, maxWidth: 200, display: "flex", flexDirection: "column", gap: 2 }}>
-      <TextField
-        id="L"
-        label="L"
-        type="number"
-        value={settings.L}
-        onChange={handleSettingChange("L")}
-        variant="outlined"
-      />
-      <TextField
-        id="K"
-        label="K"
-        type="number"
-        value={settings.K}
-        onChange={handleSettingChange("K")}
-        variant="outlined"
-      />
-      <TextField
-        id="T"
-        label="T"
-        type="number"
-        value={settings.T}
-        onChange={handleSettingChange("T")}
-        variant="outlined"
-      />
-      <TextField
-        id="NBYK"
-        label="NBYK"
-        type="number"
-        value={settings.NBYK}
-        onChange={handleSettingChange("NBYK")}
-        variant="outlined"
-      />
+    <Box sx={{ width: "100%", maxWidth: "400px", display: "flex", flexDirection: "column", gap: 2 }}>
+      <TextField id="L" label="L" onChange={handleSettingChange("L")} type="number" value={settings.L} variant="outlined" />
+      <TextField id="K" label="K" onChange={handleSettingChange("K")} type="number" value={settings.K} variant="outlined" />
+      <TextField id="T" label="T" onChange={handleSettingChange("T")} type="number" value={settings.T} variant="outlined" />
+      <TextField id="NBYK" label="NBYK" onChange={handleSettingChange("NBYK")} type="number" value={settings.NBYK} variant="outlined" />
       <FormControl>
         <FormControlLabel
           control={
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, width: "100%" }}>
               <Switch
-                id="OPTIMIZATIONS"
                 checked={"OPTIMIZATIONS" in settings ? settings.OPTIMIZATIONS : false}
+                id="OPTIMIZATIONS"
                 onChange={(event) => handleSelectOptimizations(event.target.checked)}
               />
             </Box>
@@ -66,9 +38,7 @@ export default function ContextRRSettings({ settings, setSettings }: ContextRRSe
           label="OPTIMIZATIONS"
           labelPlacement="start"
         />
-        <FormHelperText sx={{ display: "flex", justifyContent: "flex-end" }}>
-          {settings.OPTIMIZATIONS ? "Enabled" : "Disabled"}
-        </FormHelperText>
+        <FormHelperText sx={{ display: "flex", justifyContent: "flex-end" }}>{settings.OPTIMIZATIONS ? "Enabled" : "Disabled"}</FormHelperText>
       </FormControl>
     </Box>
   );

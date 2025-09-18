@@ -1,5 +1,5 @@
-import { RKGraph, RkGraphSettingsProps } from "@/ts/interfaces/methods/rkgraph";
 import { Box, TextField } from "@mui/material";
+import type { RKGraph, RkGraphSettingsProps } from "@/ts/interfaces/methods/rkgraph";
 
 export default function RKGraphSettings({ settings, setSettings }: RkGraphSettingsProps) {
   const handleSettingChange = (field: keyof RKGraph) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -11,39 +11,11 @@ export default function RKGraphSettings({ settings, setSettings }: RkGraphSettin
   };
 
   return (
-    <Box sx={{ minWidth: 200, maxWidth: 200, display: "flex", flexDirection: "column", gap: 2 }}>
-      <TextField
-        id="K"
-        label="K"
-        type="number"
-        value={settings.K}
-        onChange={handleSettingChange("K")}
-        variant="outlined"
-      />
-      <TextField
-        id="T"
-        label="T"
-        type="number"
-        value={settings.T}
-        onChange={handleSettingChange("T")}
-        variant="outlined"
-      />
-      <TextField
-        id="P"
-        label="P"
-        type="number"
-        value={settings.P}
-        onChange={handleSettingChange("P")}
-        variant="outlined"
-      />
-      <TextField
-        id="L"
-        label="L"
-        type="number"
-        value={settings.L}
-        onChange={handleSettingChange("L")}
-        variant="outlined"
-      />
+    <Box sx={{ width: "100%", maxWidth: "400px", display: "flex", flexDirection: "column", gap: 2 }}>
+      <TextField id="K" label="K" onChange={handleSettingChange("K")} type="number" value={settings.K} variant="outlined" />
+      <TextField id="T" label="T" onChange={handleSettingChange("T")} type="number" value={settings.T} variant="outlined" />
+      <TextField id="P" label="P" onChange={handleSettingChange("P")} type="number" value={settings.P} variant="outlined" />
+      <TextField id="L" label="L" onChange={handleSettingChange("L")} type="number" value={settings.L} variant="outlined" />
     </Box>
   );
 }

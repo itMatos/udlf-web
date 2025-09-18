@@ -1,14 +1,14 @@
 "use client";
-import { useState } from "react";
-import { Box, Button, FormHelperText, IconButton, InputAdornment, MenuItem, TextField, Tooltip } from "@mui/material";
-import { InputSettingsProps } from "../ts/interfaces";
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import { DEFAULT_INPUT_SETTINGS, INPUT_TYPES } from "@/ts/constants/input";
-import { InputType } from "@/ts/types/input";
-import { InputSettingsData } from "@/ts/interfaces/input";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
+import { Box, Button, FormHelperText, IconButton, InputAdornment, MenuItem, TextField, Tooltip } from "@mui/material";
+import { useState } from "react";
+import { DEFAULT_INPUT_SETTINGS, INPUT_TYPES } from "@/ts/constants/input";
+import type { InputSettingsData } from "@/ts/interfaces/input";
+import type { InputType } from "@/ts/types/input";
+import type { InputSettingsProps } from "../ts/interfaces";
 
 const createNewFileField = (value = "") => ({ id: Date.now() + Math.random(), value });
 
@@ -55,31 +55,31 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
     handleChange("inputFiles", updatedFiles);
   };
 
-  // TODO botao de add deve estar desabilitado se algum campo de input estiver vazio
+  // TODO: botao de add deve estar desabilitado se algum campo de input estiver vazio
 
   return (
     <Box
       sx={{
-        minWidth: 500,
-        maxWidth: 500,
+        width: "100%",
+        maxWidth: "600px",
         gap: 1,
         display: "flex",
         flexDirection: "column",
       }}
     >
-      <Box component="form" noValidate autoComplete="off" sx={{ gap: 2, display: "flex", flexDirection: "column", width: "100%" }}>
+      <Box autoComplete="off" component="form" noValidate sx={{ gap: 2, display: "flex", flexDirection: "column", width: "100%" }}>
         <TextField
-          select
-          label="Input Type"
-          value={inputSettings.inputType as InputType}
-          onChange={(e) => handleChange("inputType", e.target.value)}
-          variant="outlined"
           fullWidth
           helperText="Select the input data format"
+          label="Input Type"
+          onChange={(e) => handleChange("inputType", e.target.value)}
+          select
+          value={inputSettings.inputType as InputType}
+          variant="outlined"
         >
           {INPUT_TYPES.map((option) => (
             <MenuItem key={option.value} value={option.value}>
-              <Tooltip title={option.description} placement="right">
+              <Tooltip placement="right" title={option.description}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   {option.label}
                   <HelpOutlineIcon fontSize="small" sx={{ ml: 1, fontSize: "16px", opacity: 0.7 }} />
@@ -91,13 +91,12 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
 
         {inputFiles.map((file, index) => (
           <Box key={file.id} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <Tooltip title={file.value} placement="top">
+            <Tooltip placement="top" title={file.value}>
               <TextField
+                fullWidth
                 label={`Input File ${index + 1}`}
-                value={file.value}
                 onChange={(e) => handleFileChange(file.id, e.target.value)}
                 required
-                fullWidth
                 slotProps={{
                   input: {
                     startAdornment: (
@@ -107,10 +106,11 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
                     ),
                   },
                 }}
+                value={file.value}
               />
             </Tooltip>
             {inputSettings.inputFiles.length > 1 && (
-              <IconButton onClick={() => handleRemoveFileField(file.id)} color="error">
+              <IconButton color="error" onClick={() => handleRemoveFileField(file.id)}>
                 <RemoveCircleOutlineIcon />
               </IconButton>
             )}
@@ -119,18 +119,18 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
         <FormHelperText>If you add multiple input files, they will be processed as FUSION task.</FormHelperText>
 
         {inputSettings.inputFiles.length < 5 && (
-          <Button size="small" onClick={handleAddFileField} startIcon={<AddCircleOutlineIcon />} variant="outlined">
+          <Button onClick={handleAddFileField} size="small" startIcon={<AddCircleOutlineIcon />} variant="outlined">
             Add Input File
           </Button>
         )}
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 2 }}>
-          <TextField label="Image List File" value={inputSettings.inputFileList} onChange={(e) => handleChange("inputFileList", e.target.value)} fullWidth />
+          <TextField fullWidth label="Image List File" onChange={(e) => handleChange("inputFileList", e.target.value)} value={inputSettings.inputFileList} />
         </Box>
 
-        <TextField label="Input Classes File" value={inputSettings.inputFileClasses} onChange={(e) => handleChange("inputFileClasses", e.target.value)} />
+        <TextField label="Input Classes File" onChange={(e) => handleChange("inputFileClasses", e.target.value)} value={inputSettings.inputFileClasses} />
 
-        <TextField label="Dataset Images Path" value={inputSettings.datasetImagesPath} onChange={(e) => handleChange("datasetImagesPath", e.target.value)} />
+        <TextField label="Dataset Images Path" onChange={(e) => handleChange("datasetImagesPath", e.target.value)} value={inputSettings.datasetImagesPath} />
       </Box>
     </Box>
   );

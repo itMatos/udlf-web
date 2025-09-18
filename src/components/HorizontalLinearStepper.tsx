@@ -1,58 +1,56 @@
-'use client';
-import { Box, Button, Step, StepLabel, Stepper, Typography } from '@mui/material';
-import React, { useState } from 'react';
-import { uploadUDLFConfig } from '@/services/api/UDLF-api';
-import { STEPS, UDLF_METHODS } from '@/ts/constants/common';
-import { DEFAULT_INPUT_SETTINGS } from '@/ts/constants/input';
-import { CONTEXTRR_DEFAULT_PARAMS } from '@/ts/constants/methods/contextrr';
-import { DEFAULT_OUTPUT_SETTINGS } from '@/ts/constants/output';
-import type { InputSettingsData } from '@/ts/interfaces/input';
-import type { BFSTree } from '@/ts/interfaces/methods/bfstree';
-import type { ContextRR } from '@/ts/interfaces/methods/contextrr';
-import type { CorGraph } from '@/ts/interfaces/methods/corgraph';
-import type { CPRR } from '@/ts/interfaces/methods/cprr';
-import type { LHRR } from '@/ts/interfaces/methods/lhrr';
-import type { RDPAC } from '@/ts/interfaces/methods/rdpac';
-import type { ReckNNGraph } from '@/ts/interfaces/methods/recknngraph';
-import type { RFE } from '@/ts/interfaces/methods/rfe';
-import type { RLSim } from '@/ts/interfaces/methods/rlsim';
-import type { OutputSettingsData } from '@/ts/interfaces/output';
-import type { Method } from '@/ts/types/methods';
-import type { EvaluationSettingsData, LabelProps, StepProps } from '../ts/interfaces';
-import EvaluationSettings from './EvaluationSettings';
-import InputSettings from './InputSettings';
-import MethodSettings from './MethodSettings';
-import OutputSettings from './OutputSettings';
-import Summary from './Summary';
+"use client";
+import { Box, Button, Step, StepLabel, Stepper, Typography } from "@mui/material";
+import { useState } from "react";
+import { uploadUDLFConfig } from "@/services/api/UDLF-api";
+import { STEPS, UDLF_METHODS } from "@/ts/constants/common";
+import { DEFAULT_INPUT_SETTINGS } from "@/ts/constants/input";
+import { CONTEXTRR_DEFAULT_PARAMS } from "@/ts/constants/methods/contextrr";
+import { DEFAULT_OUTPUT_SETTINGS } from "@/ts/constants/output";
+import type { InputSettingsData } from "@/ts/interfaces/input";
+import type { BFSTree } from "@/ts/interfaces/methods/bfstree";
+import type { ContextRR } from "@/ts/interfaces/methods/contextrr";
+import type { CorGraph } from "@/ts/interfaces/methods/corgraph";
+import type { CPRR } from "@/ts/interfaces/methods/cprr";
+import type { LHRR } from "@/ts/interfaces/methods/lhrr";
+import type { RDPAC } from "@/ts/interfaces/methods/rdpac";
+import type { ReckNNGraph } from "@/ts/interfaces/methods/recknngraph";
+import type { RFE } from "@/ts/interfaces/methods/rfe";
+import type { RLSim } from "@/ts/interfaces/methods/rlsim";
+import type { OutputSettingsData } from "@/ts/interfaces/output";
+import type { Method } from "@/ts/types/methods";
+import type { EvaluationSettingsData, LabelProps, StepProps } from "../ts/interfaces";
+import EvaluationSettings from "./EvaluationSettings";
+import InputSettings from "./InputSettings";
+import MethodSettings from "./MethodSettings";
+import OutputSettings from "./OutputSettings";
+import Summary from "./Summary";
 
 export default function HorizontalLinearStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set<number>());
   const [selectedMethod, setSelectedMethod] = useState<Method>(UDLF_METHODS.CONTEXTRR);
-  const [settings, setSettings] = useState<
-    ContextRR | CPRR | LHRR | BFSTree | CorGraph | RDPAC | ReckNNGraph | RFE | RLSim
-  >(CONTEXTRR_DEFAULT_PARAMS);
+  const [settings, setSettings] = useState<ContextRR | CPRR | LHRR | BFSTree | CorGraph | RDPAC | ReckNNGraph | RFE | RLSim>(CONTEXTRR_DEFAULT_PARAMS);
   const [inputSettings, setInputSettings] = useState<InputSettingsData | null>(DEFAULT_INPUT_SETTINGS);
   const [outputSettings, setOutputSettings] = useState<OutputSettingsData>(DEFAULT_OUTPUT_SETTINGS);
   const [evaluationSettings, setEvaluationSettings] = useState<EvaluationSettingsData | null>(null);
 
   const [configFileToExecute, setConfigFileToExecute] = useState<Blob | null>(null);
-  const [configFileName, setConfigFileName] = useState<string>('');
+  const [configFileName, setConfigFileName] = useState<string>("");
 
   const isStepOptional = (step: number) => step === -1;
   const isStepSkipped = (step: number) => skipped.has(step);
 
-  const redirectToExecuteConfig = (configFileToExecute: Blob, configFileName: string) => {
-    console.log('Redirecting to execute config with file:', configFileToExecute, 'and name:', configFileName);
+  const redirectToExecuteConfig = (file: Blob, fileName: string) => {
+    console.log("Redirecting to execute config with file:", file, "and name:", fileName);
     try {
-      uploadUDLFConfig(configFileToExecute, configFileName);
-      console.log('Config file uploaded successfully:', configFileName);
+      uploadUDLFConfig(file, fileName);
+      console.log("Config file uploaded successfully:", fileName);
 
       window.location.href = `/execute/${configFileName}`;
     } catch (error) {
-      console.error('Error uploading config file:', error);
+      console.error("Error uploading config file:", error);
     }
-    console.log('aqui vai ser redirecionado');
+    console.log("aqui vai ser redirecionado");
   };
 
   const isStepComplete = (step: number): boolean => {
@@ -72,11 +70,11 @@ export default function HorizontalLinearStepper() {
     }
   };
 
-  const stepTitle = ['Select method', 'Input settings', 'Output settings', 'Evaluation settings', 'Summary'];
+  const stepTitle = ["Select method", "Input settings", "Output settings", "Evaluation settings", "Summary"];
 
   const handleNext = () => {
     let newSkipped = skipped;
-    console.log('skipped', skipped);
+    console.log("skipped", skipped);
     if (isStepSkipped(activeStep)) {
       newSkipped = new Set(newSkipped.values());
       newSkipped.delete(activeStep);
@@ -86,8 +84,8 @@ export default function HorizontalLinearStepper() {
     setSkipped(newSkipped);
 
     if (activeStep === STEPS.length - 1) {
-      console.log('Final step reached, preparing configuration file for execution');
-      console.log('configFileToExecute', configFileToExecute);
+      console.log("Final step reached, preparing configuration file for execution");
+      console.log("configFileToExecute", configFileToExecute);
     }
   };
 
@@ -108,23 +106,10 @@ export default function HorizontalLinearStepper() {
     });
   };
 
-  // const handleReset = () => {
-  //   setActiveStep(0);
-  //   setSelectedMethod("");
-  //   setMethodSettings(CONTEXTRR_DEFAULT_SETTINGS);
-  // };
-
   const renderStepContent = () => {
     switch (activeStep) {
       case 0:
-        return (
-          <MethodSettings
-            selectedMethod={selectedMethod}
-            setSelectedMethod={setSelectedMethod}
-            setSettings={setSettings}
-            settings={settings}
-          />
-        );
+        return <MethodSettings selectedMethod={selectedMethod} setSelectedMethod={setSelectedMethod} setSettings={setSettings} settings={settings} />;
       case 1:
         return <InputSettings onSettingsChange={setInputSettings} settings={inputSettings} />;
       case 2:
@@ -150,19 +135,18 @@ export default function HorizontalLinearStepper() {
     }
   };
 
-  // Função para verificar se pode avançar
   const canProceed = () => {
     return isStepComplete(activeStep);
   };
 
   return (
     <Box
-      component={'div'}
+      component={"div"}
       sx={{
-        width: '100%',
-        margin: 'auto',
+        width: "100%",
+        margin: "auto",
         py: 4,
-        justifyItems: 'center',
+        justifyItems: "center",
       }}
     >
       <Stepper activeStep={activeStep}>
@@ -186,25 +170,41 @@ export default function HorizontalLinearStepper() {
         })}
       </Stepper>
 
-      <Box sx={{ mt: 4, mb: 2 }}>
+      <Box sx={{ mt: 4, mb: 2, width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
         {activeStep === STEPS.length ? (
-          <>{configFileToExecute && configFileName && redirectToExecuteConfig(configFileToExecute, configFileName)}</>
+          <>
+            <Typography sx={{ mb: 2 }}>{stepTitle[activeStep]}</Typography>
+            <Box sx={{ width: "100%", maxWidth: "600px", display: "flex", justifyContent: "center" }}>{renderStepContent() || null}</Box>
+            {configFileToExecute && configFileName && redirectToExecuteConfig(configFileToExecute, configFileName)}
+          </>
         ) : (
           <>
             <Typography sx={{ mb: 2 }}>{stepTitle[activeStep]}</Typography>
-            {renderStepContent()}
-            <Box sx={{ display: 'flex', pt: 2, width: '100%' }}>
+            <Box
+              sx={{
+                width: "100%",
+                maxWidth: "600px",
+                display: "flex",
+                justifyContent: "center",
+                minHeight: "500px",
+                alignItems: "flex-start",
+                pt: 2,
+              }}
+            >
+              {renderStepContent() || null}
+            </Box>
+            <Box sx={{ display: "flex", pt: 2, width: "100%", maxWidth: "600px", mt: "auto" }}>
               <Button color="inherit" disabled={activeStep === 0} onClick={handleBack} sx={{ mr: 1 }}>
                 Back
               </Button>
-              <Box sx={{ flex: '1 1 auto' }} />
+              <Box sx={{ flex: "1 1 auto" }} />
               {isStepOptional(activeStep) && (
                 <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
                   Skip
                 </Button>
               )}
               <Button disabled={!canProceed()} onClick={handleNext}>
-                {activeStep === STEPS.length - 1 ? 'Execute' : 'Next'}
+                {activeStep === STEPS.length - 1 ? "Execute" : "Next"}
               </Button>
             </Box>
           </>
