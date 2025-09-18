@@ -34,6 +34,8 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
     console.log("File change triggered for ID:", id, "with value:", value);
     const newFiles = inputFiles.map((file) => (file.id === id ? { ...file, value } : file));
     const updatedFiles = newFiles.map((file) => file.value);
+    console.log("newFiles:", newFiles);
+    console.log("updatedFiles:", updatedFiles);
     setInputFiles(newFiles);
     handleChange("inputFiles", updatedFiles);
   };
@@ -65,12 +67,7 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
         flexDirection: "column",
       }}
     >
-      <Box
-        component="form"
-        noValidate
-        autoComplete="off"
-        sx={{ gap: 2, display: "flex", flexDirection: "column", width: "100%" }}
-      >
+      <Box component="form" noValidate autoComplete="off" sx={{ gap: 2, display: "flex", flexDirection: "column", width: "100%" }}>
         <TextField
           select
           label="Input Type"
@@ -128,25 +125,12 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
         )}
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 2 }}>
-          <TextField
-            label="Image List File"
-            value={inputSettings.inputFileList}
-            onChange={(e) => handleChange("inputFileList", e.target.value)}
-            fullWidth
-          />
+          <TextField label="Image List File" value={inputSettings.inputFileList} onChange={(e) => handleChange("inputFileList", e.target.value)} fullWidth />
         </Box>
 
-        <TextField
-          label="Input Classes File"
-          value={inputSettings.inputFileClasses}
-          onChange={(e) => handleChange("inputFileClasses", e.target.value)}
-        />
+        <TextField label="Input Classes File" value={inputSettings.inputFileClasses} onChange={(e) => handleChange("inputFileClasses", e.target.value)} />
 
-        <TextField
-          label="Dataset Images Path"
-          value={inputSettings.datasetImagesPath}
-          onChange={(e) => handleChange("datasetImagesPath", e.target.value)}
-        />
+        <TextField label="Dataset Images Path" value={inputSettings.datasetImagesPath} onChange={(e) => handleChange("datasetImagesPath", e.target.value)} />
       </Box>
     </Box>
   );

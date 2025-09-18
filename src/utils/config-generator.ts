@@ -43,6 +43,7 @@ export const createInputSettings = (
   inputDatasetFilesConfig: ConfigSectionType
 ) => {
   const valueUpdates = {
+    INPUT_FILE: inputSettings?.inputFiles[0] || '',
     INPUT_FILE_FORMAT: inputSettings?.inputType,
     INPUT_FILE_LIST: inputSettings?.inputFileList,
     INPUT_FILE_CLASSES: inputSettings?.inputFileClasses,
