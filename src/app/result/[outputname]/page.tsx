@@ -72,6 +72,7 @@ export default function Result() {
 
   useEffect(() => {
     const getAllClassesForOutput = async () => {
+      console.log("Fetching classes for output:", outputname);
       try {
         const classes = await getAllClasses(outputname);
         console.log("Fetched classes for output:", classes);
@@ -110,7 +111,6 @@ export default function Result() {
           </Typography>
         </Typography>
 
-        {/* Actions menu */}
         <Box sx={{ my: 2, mx: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Box sx={{ my: 2, display: "flex", alignItems: "center" }}>
             <Autocomplete

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import config from './config';
 import type { lineContent, PaginatedResponse } from './models';
-import type { ImageNameLineMatch, LineContentResponse } from './types';
+import type { ImageNameLineMatch, InputFileDetail, LineContentResponse } from './types';
 
 const udlfApi = axios.create({
   baseURL: config.udlfApi,
@@ -122,11 +122,23 @@ export const getImageNamesByIndexesList = async (lineNumbers: number[]) => {
   }
 };
 
+export const getImageDetailsByLineNumbers = async (lineNumbers: number[]): Promise<InputFileDetail> => {
+  const indexesAsString = lineNumbers.join(',');
+  const endpointToGetImageDetails = `/file-input-details-by-line-numbers?lineNumbers=${indexesAsString}`;
+
+  try {
+    const response = await udlfApi.get(endpointToGetImageDetails);
+    return response.data as InputFileDetail;
+  } catch (error) {
+    console.error('Error fetching image details by line numbers:', error);
+    throw error;
+  }
+}
+
 export const getLineNumberByImageName = async (imageName: string): Promise<ImageNameLineMatch> => {
   const endpointToGetLineNumber = `/teste/get-line-by-image-name/${imageName}`;
   try {
     const response = await udlfApi.get(endpointToGetLineNumber);
-    console.log('Response from getLineNumberByImageName:', response.data);
     return response.data as ImageNameLineMatch;
   } catch (error) {
     console.error('Error fetching line number by image name:', error);
@@ -168,7 +180,19 @@ export const getAllFilenames = async (filename: string): Promise<string[]> => {
 }
 
 export const getAllClasses = async (filename: string): Promise<string[]> => {
-  const endpointToGetAllClasses = `/get-all-class-names`;
+  const endpointToGetAllClasses = `/grouped-input-class-names`;
   const response = await udlfApi.get(endpointToGetAllClasses);
   return response.data as string[];
 }
+
+export const getInputFileDetailsByName = async (filename: string): Promise<any> => {
+  const endpointToGetInputFileDetails = `/input-file-details-by-name`;
+  const response = await udlfApi.get(endpointToGetInputFileDetails);
+  return response.data;
+}
+
+export const getInputFileDetailsByIndexesList = async (): Promise<InputFileDetail> => {
+  const endpointToGetInputFilenamesDetails = `/file-input-details-by-line-numbers`;
+  const response = await udlfApi.get(endpointToGetInputFilenamesDetails);
+  return response.data as InputFileDetail;
+};

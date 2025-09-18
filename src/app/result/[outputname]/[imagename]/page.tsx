@@ -1,7 +1,14 @@
 "use client";
 import { lineContent } from "@/services/api/models";
-import { LineContentResponse } from "@/services/api/types";
-import { getImageNamesByIndexesList, getLineNumberByImageName, getUDLFOutputFileByLine } from "@/services/api/UDLF-api";
+import { InputFileDetail } from "@/services/api/types";
+import {
+  getAllClasses,
+  getImageDetailsByLineNumbers,
+  getImageNamesByIndexesList,
+  getInputFileDetailsByName,
+  getLineNumberByImageName,
+  getUDLFOutputFileByLine,
+} from "@/services/api/UDLF-api";
 import { Box, Card, CardHeader, CardMedia, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -13,8 +20,9 @@ export default function ImagePage() {
   const router = useRouter();
   const { imagename, outputname } = params as { imagename: string; outputname: string };
   const [indexesResultByCurrentInput, setIndexesResultByCurrentInput] = useState<string | null>(null);
-  const [similarImages, setSimilarImages] = useState<lineContent[]>([]);
+  const [similarImages, setSimilarImages] = useState<InputFileDetail | null>(null);
   const [aspectRatio, setAspectRatio] = useState<"original" | "square">("square");
+  const [currentImageClass, setCurrentImageClass] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchLineNumber = async () => {
@@ -45,23 +53,25 @@ export default function ImagePage() {
 
   useEffect(() => {
     if (indexesResultByCurrentInput !== null) {
-      const lineNumbers = indexesResultByCurrentInput
+      const lineIndexes = indexesResultByCurrentInput
         .split(" ")
         .map((num) => parseInt(num.trim(), 10))
         .filter((num) => !Number.isNaN(num));
-      console.log("Parsed line numbers:", lineNumbers);
-      if (lineNumbers.length > MAX_RESULT_IMAGES) {
-        lineNumbers.splice(MAX_RESULT_IMAGES);
+      if (lineIndexes.length > MAX_RESULT_IMAGES) {
+        lineIndexes.splice(MAX_RESULT_IMAGES);
       }
-      console.log("Line numbers to fetch images for:", lineNumbers);
+      console.log("Line numbers to fetch images for:", lineIndexes);
       // Fetch image names for these line numbers
       const fetchImageNames = async () => {
         try {
-          const imageNames = await getImageNamesByIndexesList(lineNumbers);
-          console.log("Fetched image names:", imageNames);
-          setSimilarImages(imageNames);
+          const imagesDetails = await getImageDetailsByLineNumbers(lineIndexes);
+          console.log("Fetched image details for line numbers:", imagesDetails);
+          setSimilarImages(imagesDetails);
+          console.log("Similar images set to:", imagesDetails);
+          setCurrentImageClass(imagesDetails[imagename].class);
+          console.log(`Image ${imagename} is of class ${imagesDetails[imagename].class} and index ${imagesDetails[imagename].lineIndexInInputFile}`);
         } catch (error) {
-          console.error(`Error fetching image names for line numbers ${lineNumbers}:`, error);
+          console.error(`Error fetching image names for line numbers ${lineIndexes}:`, error);
         }
       };
       fetchImageNames();
@@ -100,30 +110,42 @@ export default function ImagePage() {
           justifyContent: "flex-start",
         }}
       >
-        {similarImages.map((image) => {
-          const imageName = image.fileInputNameLine;
-          return (
-            <Card
-              key={image.fileInputNameLine}
-              sx={{ p: 1, m: 1, width: 150, cursor: "pointer" }}
-              onClick={() => router.replace(`/result/${outputname}/${imageName}`)}
-            >
-              <CardHeader subheader={`${imageName}`} />
-              <CardMedia
-                alt={`${imageName}`}
-                component="img"
-                image={`http://localhost:8080/image-file/${imageName}`}
+        {similarImages &&
+          currentImageClass &&
+          Object.keys(similarImages).map((imageKey) => {
+            return (
+              <Card
+                key={imageKey}
                 sx={{
-                  ...(aspectRatio === "square" && {
-                    aspectRatio: "1 / 1",
-                    objectFit: "cover",
-                    height: 150,
-                  }),
+                  p: 1,
+                  m: 1,
+                  width: 150,
+                  cursor: "pointer",
+                  border:
+                    imageKey === imagename
+                      ? (theme) => `2px solid ${theme.palette.success.main}`
+                      : similarImages[imageKey].class !== currentImageClass
+                      ? (theme) => `2px solid ${theme.palette.error.main}`
+                      : "none",
                 }}
-              />
-            </Card>
-          );
-        })}
+                onClick={() => router.replace(`/result/${outputname}/${imageKey}`)}
+              >
+                <CardHeader subheader={`${imageKey}`} />
+                <CardMedia
+                  alt={`${imageKey}`}
+                  component="img"
+                  image={`http://localhost:8080/image-file/${imageKey}`}
+                  sx={{
+                    ...(aspectRatio === "square" && {
+                      aspectRatio: "1 / 1",
+                      objectFit: "cover",
+                      height: 150,
+                    }),
+                  }}
+                />
+              </Card>
+            );
+          })}
       </Box>
     </div>
   );
