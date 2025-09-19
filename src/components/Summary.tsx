@@ -67,7 +67,8 @@ const Summary: React.FC<SummaryProps> = ({
   }, [selectedMethod]);
 
   const generateConfigFile = (fileName: string) => {
-    const baseConfig = createBaseConfig(baseConfigTemplate, selectedMethod);
+    const isFusion = Array.isArray(inputSettings?.inputFiles) && inputSettings.inputFiles.length > 1;
+    const baseConfig = createBaseConfig(baseConfigTemplate, selectedMethod, isFusion);
     const inputSettingsTemplate = createInputSettings(inputSettings, inputDatasetFilesConfig);
     const outputSettingsTemplate = createOutputSettings(outputSettings, outputFilesSettingsConfig, fileName);
     const evaluationSettingsTemplate = createEvaluationSettings(evaluationSettings, evaluationSettingsConfig);
@@ -123,14 +124,15 @@ const Summary: React.FC<SummaryProps> = ({
   const generatedConfigFile = generateConfigFile(configFileName);
 
   const generateConfigFileToDownload = () => {
-    const url = window.URL.createObjectURL(generatedConfigFile);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = configFileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
+    console.log("generatedConfigFile", generatedConfigFile);
+    // const url = window.URL.createObjectURL(generatedConfigFile);
+    // const link = document.createElement("a");
+    // link.href = url;
+    // link.download = configFileName;
+    // document.body.appendChild(link);
+    // link.click();
+    // document.body.removeChild(link);
+    // window.URL.revokeObjectURL(url);
   };
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: we need to set the config file to execute and the config file name

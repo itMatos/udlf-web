@@ -25,31 +25,65 @@ const createConfigSection = (configTemplate: any, valueUpdates: Record<string, a
  * Cria a configuração base.
  */
 
-export const createBaseConfig = (baseConfigTemplate: BaseConfigType, selectedMethod: string) => {
+export const createBaseConfig = (baseConfigTemplate: BaseConfigType, selectedMethod: string, isFusion: boolean) => {
+  const value = isFusion ? 'FUSION' : 'UDL';
   return {
     ...baseConfigTemplate,
     parameters: baseConfigTemplate.parameters.map((param: BaseConfigType['parameters'][number]) => ({
       ...param,
-      value: param.key === 'UDL_METHOD' ? selectedMethod.toUpperCase() : param.value,
+      value: param.key === 'UDL_METHOD' ? selectedMethod.toUpperCase() : value,
     })),
   };
 };
 
 /**
- * Cria a configuração de entrada (Input).
+ *
+ * Creating an input configuration (Input).
  */
 export const createInputSettings = (
   inputSettings: InputSettingsData | null,
   inputDatasetFilesConfig: ConfigSectionType
 ) => {
+  const inputFilesLength = inputSettings?.inputFiles.length || 0;
+  const inputFiles = inputSettings?.inputFiles.reduce(
+    (acc, file, index) => {
+      if (inputFilesLength > 1) {
+        acc[`INPUT_FILE_${index + 1}`] = file;
+      } else {
+        acc.INPUT_FILE = file;
+      }
+      return acc;
+    },
+    {} as Record<string, string>
+  );
+
+  const dynamicParameters =
+    inputFilesLength > 1
+      ? inputSettings?.inputFiles?.map((file, index) => ({
+          key: `INPUT_FILE_${index + 1}`,
+          value: file,
+          description: `#Path of input file ${index + 1} for FUSION tasks`,
+        })) || []
+      : [];
+
+  const enhancedConfigTemplate = {
+    ...inputDatasetFilesConfig,
+    parameters:
+      inputFilesLength > 1
+        ? [...inputDatasetFilesConfig.parameters.filter((param) => param.key !== 'INPUT_FILE'), ...dynamicParameters]
+        : [...inputDatasetFilesConfig.parameters, ...dynamicParameters],
+  };
+
   const valueUpdates = {
-    INPUT_FILE: inputSettings?.inputFiles[0] || '',
+    ...inputFiles,
     INPUT_FILE_FORMAT: inputSettings?.inputType,
     INPUT_FILE_LIST: inputSettings?.inputFileList,
     INPUT_FILE_CLASSES: inputSettings?.inputFileClasses,
     INPUT_IMAGES_PATH: inputSettings?.datasetImagesPath,
+    NUM_INPUT_FUSION_FILES: inputFilesLength,
   };
-  return createConfigSection(inputDatasetFilesConfig, valueUpdates);
+  const createdConfigSection = createConfigSection(enhancedConfigTemplate, valueUpdates);
+  return createdConfigSection;
 };
 
 /**
