@@ -15,7 +15,7 @@ export default function Homepage() {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          height: "80vh",
+          minHeight: "calc(100vh - 64px)",
           gap: 3,
           width: "100%",
           maxWidth: "24rem",
@@ -45,8 +45,16 @@ export default function Homepage() {
                 Start from scratch and create a new configuration file for your UDLF config
               </Typography>
             </CardContent>
-            <CardActions sx={{ justifyContent: "center", pb: 2 }}>
-              <Button endIcon={<ArrowForwardIosIcon />} size="large" sx={{ minWidth: 200 }} variant="contained">
+            <CardActions sx={{ justifyContent: "center", pb: 2, px: 2 }}>
+              <Button
+                endIcon={<ArrowForwardIosIcon />}
+                size="large"
+                sx={{
+                  minWidth: { xs: 150, sm: 200 },
+                  width: { xs: "100%", sm: "auto" },
+                }}
+                variant="contained"
+              >
                 Get Started
               </Button>
             </CardActions>
@@ -75,8 +83,17 @@ export default function Homepage() {
                 Load and execute a previously saved config file
               </Typography>
             </CardContent>
-            <CardActions sx={{ justifyContent: "center", pb: 2 }}>
-              <Button color="secondary" endIcon={<ArrowForwardIosIcon />} size="large" sx={{ minWidth: 200 }} variant="contained">
+            <CardActions sx={{ justifyContent: "center", pb: 2, px: 2 }}>
+              <Button
+                color="secondary"
+                endIcon={<ArrowForwardIosIcon />}
+                size="large"
+                sx={{
+                  minWidth: { xs: 150, sm: 200 },
+                  width: { xs: "100%", sm: "auto" },
+                }}
+                variant="contained"
+              >
                 Load Config
               </Button>
             </CardActions>
