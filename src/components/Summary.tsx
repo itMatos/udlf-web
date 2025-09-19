@@ -49,7 +49,7 @@ import type { RKGraph } from "@/ts/interfaces/methods/rkgraph";
 import type { SummaryProps } from "@/ts/interfaces/summary";
 import type { Method } from "@/ts/types/methods";
 import { createBaseConfig, createEvaluationSettings, createInputSettings, createOutputSettings } from "@/utils/config-generator";
-import { generateFileName, generateUniqueId } from "@/utils/helpers";
+import { generateFileName, generateUniqueId, getFriendlyTitleInput } from "@/utils/helpers";
 
 const Summary: React.FC<SummaryProps> = ({
   selectedMethod,
@@ -183,11 +183,35 @@ const Summary: React.FC<SummaryProps> = ({
         </Typography>
         {inputSettings && (
           <List dense>
-            {Object.entries(inputSettings).map(([key, value]) => (
-              <ListItem key={key}>
-                <ListItemText primary={key} secondary={value} />
-              </ListItem>
-            ))}
+            {Object.entries(inputSettings).map(([key, value]) => {
+              if (key === "inputFiles" && Array.isArray(value)) {
+                return (
+                  <ListItem key={key}>
+                    <ListItemText
+                      primary={getFriendlyTitleInput(key)}
+                      secondary={
+                        <Box>
+                          {value.map((file, index) => {
+                            const uniqueKey = `${file.replace(/[^a-zA-Z0-9]/g, "_")}_${index}`;
+                            return (
+                              <Typography key={uniqueKey} sx={{ display: "block", mb: 0.5 }} variant="body2">
+                                {file}
+                              </Typography>
+                            );
+                          })}
+                        </Box>
+                      }
+                    />
+                  </ListItem>
+                );
+              }
+
+              return (
+                <ListItem key={key}>
+                  <ListItemText primary={getFriendlyTitleInput(key)} secondary={value} />
+                </ListItem>
+              );
+            })}
           </List>
         )}
       </Box>

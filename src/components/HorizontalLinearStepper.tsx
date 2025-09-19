@@ -183,7 +183,7 @@ export default function HorizontalLinearStepper() {
             <Box
               sx={{
                 width: "100%",
-                maxWidth: "600px",
+                maxWidth: "500px",
                 display: "flex",
                 justifyContent: "center",
                 minHeight: "500px",
@@ -193,7 +193,7 @@ export default function HorizontalLinearStepper() {
             >
               {renderStepContent() || null}
             </Box>
-            <Box sx={{ display: "flex", pt: 2, width: "100%", maxWidth: "600px", mt: "auto" }}>
+            <Box sx={{ display: "flex", pt: 2, width: "100%", maxWidth: "500px", mt: "auto" }}>
               <Button color="inherit" disabled={activeStep === 0} onClick={handleBack} sx={{ mr: 1 }}>
                 Back
               </Button>

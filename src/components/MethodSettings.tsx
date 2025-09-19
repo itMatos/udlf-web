@@ -37,31 +37,26 @@ import RKGraphSettings from "./methods/RKGraphSettings";
 import RLRecomSettings from "./methods/RLRecom";
 import RLSimSettings from "./methods/RLSimSettings";
 
+const METHOD_CONFIGS = {
+  [UDLF_METHODS.CONTEXTRR]: CONTEXTRR_DEFAULT_PARAMS,
+  [UDLF_METHODS.CPRR]: CPRR_DEFAULT_PARAMS,
+  [UDLF_METHODS.LHRR]: LHRR_DEFAULT_PARAMS,
+  [UDLF_METHODS.BFSTREE]: BFSTREE_DEFAULT_PARAMS,
+  [UDLF_METHODS.CORGRAPH]: CORGRAPH_DEFAULT_PARAMS,
+  [UDLF_METHODS.RDPAC]: RDPAC_DEFAULT_PARAMS,
+  [UDLF_METHODS.RECKNNGRAPH]: RECKNNGRAPH_DEFAULT_PARAMS,
+  [UDLF_METHODS.RFE]: RFE_DEFAULT_PARAMS,
+  [UDLF_METHODS.RLSIM]: RLSIM_DEFAULT_PARAMS,
+  [UDLF_METHODS.RKGRAPH]: RKGRAPH_DEFAULT_PARAMS,
+  [UDLF_METHODS.RLRECOM]: RLRECOM_DEFAULT_PARAMS,
+} as const;
+
 export default function MethodSettings({ selectedMethod, setSelectedMethod, settings, setSettings }: MethodSettingsProps) {
   const handleMethodChange = (method: Method) => {
     setSelectedMethod(method);
-    if (method === UDLF_METHODS.CONTEXTRR) {
-      setSettings(CONTEXTRR_DEFAULT_PARAMS as ContextRR);
-    } else if (method === UDLF_METHODS.CPRR) {
-      setSettings(CPRR_DEFAULT_PARAMS as CPRR);
-    } else if (method === UDLF_METHODS.LHRR) {
-      setSettings(LHRR_DEFAULT_PARAMS as LHRR);
-    } else if (method === UDLF_METHODS.BFSTREE) {
-      setSettings(BFSTREE_DEFAULT_PARAMS as BFSTree);
-    } else if (method === UDLF_METHODS.CORGRAPH) {
-      setSettings(CORGRAPH_DEFAULT_PARAMS as CorGraph);
-    } else if (method === UDLF_METHODS.RDPAC) {
-      setSettings(RDPAC_DEFAULT_PARAMS as RDPAC);
-    } else if (method === UDLF_METHODS.RECKNNGRAPH) {
-      setSettings(RECKNNGRAPH_DEFAULT_PARAMS as ReckNNGraph);
-    } else if (method === UDLF_METHODS.RFE) {
-      setSettings(RFE_DEFAULT_PARAMS as RFE);
-    } else if (method === UDLF_METHODS.RLSIM) {
-      setSettings(RLSIM_DEFAULT_PARAMS as RLSim);
-    } else if (method === UDLF_METHODS.RKGRAPH) {
-      setSettings(RKGRAPH_DEFAULT_PARAMS as RKGraph);
-    } else if (method === UDLF_METHODS.RLRECOM) {
-      setSettings(RLRECOM_DEFAULT_PARAMS as RLRecom);
+    const defaultParams = METHOD_CONFIGS[method];
+    if (defaultParams) {
+      setSettings(defaultParams);
     }
   };
 
