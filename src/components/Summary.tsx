@@ -125,14 +125,14 @@ const Summary: React.FC<SummaryProps> = ({
 
   const generateConfigFileToDownload = () => {
     console.log("generatedConfigFile", generatedConfigFile);
-    // const url = window.URL.createObjectURL(generatedConfigFile);
-    // const link = document.createElement("a");
-    // link.href = url;
-    // link.download = configFileName;
-    // document.body.appendChild(link);
-    // link.click();
-    // document.body.removeChild(link);
-    // window.URL.revokeObjectURL(url);
+    const url = window.URL.createObjectURL(generatedConfigFile);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = configFileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   };
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: we need to set the config file to execute and the config file name
@@ -196,9 +196,9 @@ const Summary: React.FC<SummaryProps> = ({
                           {value.map((file, index) => {
                             const uniqueKey = `${file.replace(/[^a-zA-Z0-9]/g, "_")}_${index}`;
                             return (
-                              <Typography key={uniqueKey} sx={{ display: "block", mb: 0.5 }} variant="body2">
+                              <Box key={uniqueKey} sx={{ display: "block", mb: 0.5, fontSize: "0.875rem" }}>
                                 {file}
-                              </Typography>
+                              </Box>
                             );
                           })}
                         </Box>
@@ -227,14 +227,7 @@ const Summary: React.FC<SummaryProps> = ({
 
         {outputSettings.enabledOutput ? (
           <Box sx={{ mb: 2 }}>
-            <Typography variant="body1">
-              File name:{" "}
-              {outputSettings.outputFileName || (
-                <Typography component={"span"} fontStyle={"oblique"}>
-                  Default
-                </Typography>
-              )}
-            </Typography>
+            <Typography variant="body1">File name: {outputSettings.outputFileName || <span style={{ fontStyle: "oblique" }}>Default</span>}</Typography>
             <Typography variant="body1">Format Type: {OUTPUT_TYPES.find((type) => type.value === outputSettings.outputFileFormat)?.label}</Typography>
           </Box>
         ) : (

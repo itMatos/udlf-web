@@ -1,7 +1,7 @@
 "use client";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import ClearIcon from "@mui/icons-material/Clear";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 import { Box, Button, FormHelperText, IconButton, InputAdornment, MenuItem, TextField, Tooltip } from "@mui/material";
 import { useState } from "react";
@@ -110,18 +110,22 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
               />
             </Tooltip>
             {inputSettings.inputFiles.length > 1 && (
-              <IconButton color="error" onClick={() => handleRemoveFileField(file.id)}>
-                <RemoveCircleOutlineIcon />
-              </IconButton>
+              <Tooltip title="Remove input file">
+                <IconButton color="error" onClick={() => handleRemoveFileField(file.id)}>
+                  <ClearIcon />
+                </IconButton>
+              </Tooltip>
             )}
           </Box>
         ))}
         <FormHelperText>If you add multiple input files, they will be processed as FUSION task.</FormHelperText>
 
         {inputSettings.inputFiles.length < 5 && (
-          <Button onClick={handleAddFileField} size="small" startIcon={<AddCircleOutlineIcon />} variant="outlined">
-            Add Input File
-          </Button>
+          <Tooltip title="Add another input file">
+            <Button onClick={handleAddFileField} size="small" startIcon={<AddCircleOutlineIcon />} variant="outlined">
+              Add Input File
+            </Button>
+          </Tooltip>
         )}
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 2 }}>
