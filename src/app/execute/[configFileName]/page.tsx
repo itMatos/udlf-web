@@ -1,13 +1,13 @@
 "use client";
-import { Alert, Box, Button, Snackbar, Typography } from "@mui/material";
-import React, { useState } from "react";
-import { downloadLogFile, downloadOutputFile, executeUDLF } from "@/services/api/UDLF-api";
-import { ResponseApi } from "@/services/api/types";
-import TerminalIcon from "@mui/icons-material/Terminal";
-import Appbar from "@/components/Appbar";
-import { useParams, useRouter } from "next/navigation";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import TerminalIcon from "@mui/icons-material/Terminal";
+import { Alert, Box, Button, Snackbar, Typography } from "@mui/material";
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import Appbar from "@/components/Appbar";
+import type { ResponseApi } from "@/services/api/types";
+import { downloadLogFile, downloadOutputFile, executeUDLF } from "@/services/api/UDLF-api";
 
 export default function ExecuteConfig() {
   const params = useParams();
@@ -31,7 +31,7 @@ export default function ExecuteConfig() {
     setShowWarningMessage(true);
     setTimeout(() => {
       setShowWarningMessage(false);
-    }, 10000);
+    }, 10_000);
   };
 
   const initExecution = () => {
@@ -64,7 +64,7 @@ export default function ExecuteConfig() {
   };
 
   const onClickDownloadOutputFile = async () => {
-    if (!resultUdlf || !resultUdlf.output) {
+    if (!resultUdlf?.output) {
       console.error("No output available to download.");
       return;
     }
@@ -91,7 +91,7 @@ export default function ExecuteConfig() {
     }
   };
 
-  const resultFileName = "output_" + configFileName + ".txt";
+  const resultFileName = `output_${configFileName}.txt`;
 
   return (
     <Box>
@@ -110,18 +110,18 @@ export default function ExecuteConfig() {
                 gap: 2,
               }}
             >
-              <Button variant="outlined" onClick={onClickDownloadOutputFile} startIcon={<FileDownloadIcon />}>
+              <Button onClick={onClickDownloadOutputFile} startIcon={<FileDownloadIcon />} variant="outlined">
                 Output file
               </Button>
 
-              <Button variant="outlined" onClick={onClickDownloadLogFile} startIcon={<FileDownloadIcon />}>
+              <Button onClick={onClickDownloadLogFile} startIcon={<FileDownloadIcon />} variant="outlined">
                 Log File
               </Button>
               <Button
-                variant="contained"
                 endIcon={<ArrowForwardIosIcon />}
                 onClick={() => router.replace(`/result/${resultFileName}`)}
                 sx={{ width: "auto", my: 2 }}
+                variant="contained"
               >
                 View Execution Result
               </Button>
@@ -129,9 +129,9 @@ export default function ExecuteConfig() {
             <Typography variant="h5">Log: {configFileName}</Typography>
             <Snackbar
               anchorOrigin={{ vertical: "top", horizontal: "right" }}
-              open={showSuccessMessage}
               autoHideDuration={3000}
               message={resultUdlf.message || "Execution completed successfully!"}
+              open={showSuccessMessage}
             >
               <Alert severity="success" sx={{ width: "100%" }} variant="filled">
                 {resultUdlf.message || "Execution completed successfully!"}
@@ -140,8 +140,8 @@ export default function ExecuteConfig() {
 
             <Snackbar
               anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-              open={showWarningMessage}
               message={resultUdlf.error || "Execution completed with warnings!"}
+              open={showWarningMessage}
             >
               <Alert severity="warning" sx={{ width: "100%" }}>
                 <pre>{resultUdlf.error || "Execution completed successfully!"}</pre>
@@ -161,17 +161,17 @@ export default function ExecuteConfig() {
               padding: "20px",
             }}
           >
-            <Typography variant="h5" gutterBottom>
+            <Typography gutterBottom variant="h5">
               Execute File: {configFileName}
             </Typography>
             <Button
-              variant="contained"
-              startIcon={<TerminalIcon />}
-              onClick={initExecution}
+              disabled={isLoading || !configFileName}
               loading={isLoading}
               loadingPosition="start"
-              disabled={isLoading || !configFileName}
+              onClick={initExecution}
+              startIcon={<TerminalIcon />}
               sx={{ width: "200px", marginTop: "20px" }}
+              variant="contained"
             >
               {isLoading ? "Executing..." : "Run"}
             </Button>

@@ -10,5 +10,8 @@ services:
       - .:/app
       - /app/node_modules
     environment:
-      - REACT_APP_API_URL=http://localhost:8080
+      - NEXT_PUBLIC_URL_API_LOCAL=http://localhost:8080
+      - HOST_UDLF_PATH=${HOST_UDLF_PATH}
+    env_file:
+      - .env
     restart: on-failure
