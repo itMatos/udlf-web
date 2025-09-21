@@ -9,6 +9,7 @@ import { DEFAULT_INPUT_SETTINGS, INPUT_TYPES } from "@/ts/constants/input";
 import type { InputSettingsData } from "@/ts/interfaces/input";
 import type { InputType } from "@/ts/types/input";
 import type { InputSettingsProps } from "../ts/interfaces";
+import FileExplorer from "./FileExplorer";
 
 const createNewFileField = (value = "") => ({ id: Date.now() + Math.random(), value });
 
@@ -53,6 +54,16 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
     setInputFiles(newFiles);
     const updatedFiles = newFiles.map((file) => file.value);
     handleChange("inputFiles", updatedFiles);
+  };
+
+  const handleFileExplorerSelect = (filePath: string, fieldId?: number) => {
+    if (fieldId !== undefined) {
+      // Update specific file field
+      handleFileChange(fieldId, filePath);
+    } else {
+      // This will be used for other file fields like inputFileList, inputFileClasses, etc.
+      console.log("File selected from explorer:", filePath);
+    }
   };
 
   // TODO: botao de add deve estar desabilitado se algum campo de input estiver vazio
@@ -109,6 +120,10 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
                 value={file.value}
               />
             </Tooltip>
+            <FileExplorer
+              fileExtensions={["txt", "csv", "json", "xml", "ini", "cfg"]}
+              onFileSelect={(filePath) => handleFileExplorerSelect(filePath, file.id)}
+            />
             {inputSettings.inputFiles.length > 1 && (
               <Tooltip title="Remove input file">
                 <IconButton color="error" onClick={() => handleRemoveFileField(file.id)}>
@@ -129,12 +144,77 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
         )}
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 2 }}>
-          <TextField fullWidth label="Image List File" onChange={(e) => handleChange("inputFileList", e.target.value)} value={inputSettings.inputFileList} />
+          <TextField
+            fullWidth
+            label="Image List File"
+            onChange={(e) => handleChange("inputFileList", e.target.value)}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <TextSnippetIcon />
+                  </InputAdornment>
+                ),
+              },
+            }}
+            value={inputSettings.inputFileList}
+          />
+          <FileExplorer
+            fileExtensions={["txt", "csv", "list"]}
+            onFileSelect={(filePath) => {
+              handleChange("inputFileList", filePath);
+            }}
+          />
         </Box>
 
-        <TextField label="Input Classes File" onChange={(e) => handleChange("inputFileClasses", e.target.value)} value={inputSettings.inputFileClasses} />
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <TextField
+            fullWidth
+            label="Input Classes File"
+            onChange={(e) => handleChange("inputFileClasses", e.target.value)}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <TextSnippetIcon />
+                  </InputAdornment>
+                ),
+              },
+            }}
+            value={inputSettings.inputFileClasses}
+          />
+          <FileExplorer
+            fileExtensions={["txt", "csv", "classes"]}
+            onFileSelect={(filePath) => {
+              handleChange("inputFileClasses", filePath);
+            }}
+          />
+        </Box>
 
-        <TextField label="Dataset Images Path" onChange={(e) => handleChange("datasetImagesPath", e.target.value)} value={inputSettings.datasetImagesPath} />
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <TextField
+            fullWidth
+            label="Dataset Images Path"
+            onChange={(e) => handleChange("datasetImagesPath", e.target.value)}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <TextSnippetIcon />
+                  </InputAdornment>
+                ),
+              },
+            }}
+            value={inputSettings.datasetImagesPath}
+          />
+          <FileExplorer
+            allowDirectorySelection={true}
+            fileExtensions={[]}
+            onFileSelect={(filePath) => {
+              handleChange("datasetImagesPath", filePath);
+            }}
+          />
+        </Box>
       </Box>
     </Box>
   );

@@ -192,11 +192,11 @@ const Summary: React.FC<SummaryProps> = ({
                     <ListItemText
                       primary={getFriendlyTitleInput(key)}
                       secondary={
-                        <Box>
+                        <Box component={"span"}>
                           {value.map((file, index) => {
                             const uniqueKey = `${file.replace(/[^a-zA-Z0-9]/g, "_")}_${index}`;
                             return (
-                              <Box key={uniqueKey} sx={{ display: "block", mb: 0.5, fontSize: "0.875rem" }}>
+                              <Box component={"span"} key={uniqueKey} sx={{ display: "block", mb: 0.5, fontSize: "0.875rem" }}>
                                 {file}
                               </Box>
                             );
