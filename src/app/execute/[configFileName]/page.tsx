@@ -2,7 +2,7 @@
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import TerminalIcon from "@mui/icons-material/Terminal";
-import { Alert, Box, Button, Snackbar, Typography } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, Fade, Snackbar, Typography } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import Appbar from "@/components/Appbar";
@@ -17,6 +17,7 @@ export default function ExecuteConfig() {
   console.log("Config file name from search params:", configFileName);
   const [resultUdlf, setResultUdlf] = useState<ResponseApi | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isNavigating, setIsNavigating] = useState<boolean>(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
   const [showWarningMessage, setShowWarningMessage] = useState<boolean>(false);
 
@@ -32,6 +33,18 @@ export default function ExecuteConfig() {
     setTimeout(() => {
       setShowWarningMessage(false);
     }, 10_000);
+  };
+
+  const handleNavigateToResult = async () => {
+    setIsNavigating(true);
+    try {
+      // Add a small delay to show the loading state
+      await new Promise(resolve => setTimeout(resolve, 500));
+      router.replace(`/result/${resultFileName}`);
+    } catch (error) {
+      console.error("Error navigating to result page:", error);
+      setIsNavigating(false);
+    }
   };
 
   const initExecution = () => {
@@ -98,18 +111,21 @@ export default function ExecuteConfig() {
       <Appbar />
       <Box sx={{ p: 2 }}>
         {resultUdlf ? (
-          <Box>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                height: "100%",
-                padding: 2,
-                gap: 2,
-              }}
-            >
+          <Fade in={true} timeout={500}>
+            <Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: "100%",
+                  padding: 2,
+                  gap: 2,
+                  opacity: isNavigating ? 0.7 : 1,
+                  transition: "opacity 0.3s ease-in-out",
+                }}
+              >
               <Button onClick={onClickDownloadOutputFile} startIcon={<FileDownloadIcon />} variant="outlined">
                 Output file
               </Button>
@@ -118,15 +134,65 @@ export default function ExecuteConfig() {
                 Log File
               </Button>
               <Button
-                endIcon={<ArrowForwardIosIcon />}
-                onClick={() => router.replace(`/result/${resultFileName}`)}
-                sx={{ width: "auto", my: 2 }}
+                disabled={isNavigating}
+                endIcon={isNavigating ? <CircularProgress size={20} color="inherit" /> : <ArrowForwardIosIcon />}
+                onClick={handleNavigateToResult}
+                sx={{ 
+                  width: "auto", 
+                  my: 2,
+                  minWidth: 200,
+                  transition: "all 0.3s ease-in-out",
+                  "&:hover": {
+                    transform: "translateY(-2px)",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.15)"
+                  }
+                }}
                 variant="contained"
               >
-                View Execution Result
+                {isNavigating ? "Loading Results..." : "View Execution Result"}
               </Button>
             </Box>
             <Typography variant="h5">Log: {configFileName}</Typography>
+            
+            {/* Global loading overlay when navigating */}
+            {isNavigating && (
+              <Box
+                sx={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  zIndex: 9999,
+                }}
+              >
+                <Box
+                  sx={{
+                    backgroundColor: "white",
+                    padding: 4,
+                    borderRadius: 2,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: 2,
+                  }}
+                >
+                  <CircularProgress size={40} />
+                  <Typography variant="h6" color="primary">
+                    Loading Results...
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Please wait while we prepare your results
+                  </Typography>
+                </Box>
+              </Box>
+            )}
+
             <Snackbar
               anchorOrigin={{ vertical: "top", horizontal: "right" }}
               autoHideDuration={3000}
@@ -149,7 +215,8 @@ export default function ExecuteConfig() {
             </Snackbar>
 
             <pre>{resultUdlf.output}</pre>
-          </Box>
+            </Box>
+          </Fade>
         ) : (
           <Box
             sx={{

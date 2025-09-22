@@ -27,7 +27,7 @@ export default function UploadPage() {
 
   const handleExecuteFile = () => {
     if (!selectedFile) {
-      alert("Por favor, selecione um arquivo primeiro para executar.");
+      alert("Please select a file to execute.");
       return;
     }
 
@@ -35,12 +35,12 @@ export default function UploadPage() {
 
     reader.onload = (e: ProgressEvent<FileReader>) => {
       const fileContent = e.target?.result as string;
-      console.log("Conteúdo do arquivo:", fileContent);
+      console.log("File content:", fileContent);
     };
 
     reader.onerror = (e: ProgressEvent<FileReader>) => {
-      console.error("Erro ao ler o arquivo:", e);
-      alert("Erro ao ler o arquivo.");
+      console.error("Error reading file:", e);
+      alert("Error reading file.");
     };
 
     reader.readAsText(selectedFile);
@@ -97,12 +97,12 @@ export default function UploadPage() {
 
           {selectedFile && (
             <Typography color="text.secondary" variant="body2">
-              Tamanho: {(selectedFile.size / 1024).toFixed(2)} KB
+              Size: {(selectedFile.size / 1024).toFixed(2)} KB
             </Typography>
           )}
 
           <Button color="success" disabled={!selectedFile} fullWidth onClick={handleExecuteFile} size="large" startIcon={<PlayArrowIcon />} variant="contained">
-            Executar Arquivo
+            Execute File
           </Button>
         </Paper>
       </Box>

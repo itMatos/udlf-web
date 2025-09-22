@@ -10,9 +10,9 @@ import { RKGraph, RKGraphConfigParams } from "@/ts/interfaces/methods/rkgraph";
 import { RLRecom, RLRecomConfigParams } from "@/ts/interfaces/methods/rlrecom";
 import { RLSim, RLSimConfigParams } from "@/ts/interfaces/methods/rlsim";
 
-export const generateContextRRSettings = (methodSettings: ContextRR) => {
+export const generateContextRRSettings = (methodSettings: ContextRR, datasetSize: number = 1400) => {
   const ContextRRValueUpdates = {
-    PARAM_NONE_L: "1400",
+    PARAM_NONE_L: datasetSize.toString(),
     PARAM_CONTEXTRR_L: methodSettings?.L,
     PARAM_CONTEXTRR_K: methodSettings?.K,
     PARAM_CONTEXTRR_T: methodSettings?.T,
@@ -22,9 +22,9 @@ export const generateContextRRSettings = (methodSettings: ContextRR) => {
   return ContextRRValueUpdates;
 };
 
-export const generateCPRRSettings = (methodSettings: CPRR) => {
+export const generateCPRRSettings = (methodSettings: CPRR, datasetSize: number = 1400) => {
   const CPRRValueUpdates = {
-    PARAM_NONE_L: "1400",
+    PARAM_NONE_L: datasetSize.toString(),
     PARAM_CPRR_L: methodSettings?.L,
     PARAM_CPRR_K: methodSettings?.K,
     PARAM_CPRR_T: methodSettings?.T,
@@ -32,9 +32,9 @@ export const generateCPRRSettings = (methodSettings: CPRR) => {
   return CPRRValueUpdates;
 };
 
-export const generateLHRRSettings = (methodSettings: LHRR) => {
+export const generateLHRRSettings = (methodSettings: LHRR, datasetSize: number = 1400) => {
   const LHRRValueUpdates = {
-    PARAM_NONE_L: "1400",
+    PARAM_NONE_L: datasetSize.toString(),
     PARAM_LHRR_L: methodSettings?.L,
     PARAM_LHRR_K: methodSettings?.K,
     PARAM_LHRR_T: methodSettings?.T,
@@ -42,9 +42,9 @@ export const generateLHRRSettings = (methodSettings: LHRR) => {
   return LHRRValueUpdates;
 };
 
-export const generateBFSTreeSettings = (methodSettings: BFSTree) => {
+export const generateBFSTreeSettings = (methodSettings: BFSTree, datasetSize: number = 1400) => {
   const BFSTreeValueUpdates = {
-    PARAM_BFSTREE_L: methodSettings?.L,
+    PARAM_BFSTREE_L: methodSettings?.L || datasetSize.toString(),
     PARAM_BFSTREE_K: methodSettings?.K,
     PARAM_BFSTREE_CORRELATION_METRIC: methodSettings?.Correlation,
   };
@@ -52,9 +52,9 @@ export const generateBFSTreeSettings = (methodSettings: BFSTree) => {
   return BFSTreeValueUpdates;
 };
 
-export const generateCorGraphSettings = (methodSettings: CorGraph) => {
+export const generateCorGraphSettings = (methodSettings: CorGraph, datasetSize: number = 1400) => {
   const CorGraphValueUpdates = {
-    PARAM_CORGRAPH_L: methodSettings?.L,
+    PARAM_CORGRAPH_L: methodSettings?.L || datasetSize.toString(),
     PARAM_CORGRAPH_K: methodSettings?.K,
     PARAM_CORGRAPH_THRESHOLD_START: methodSettings?.ThresholdStart,
     PARAM_CORGRAPH_THRESHOLD_END: methodSettings?.ThresholdEnd,
@@ -65,9 +65,9 @@ export const generateCorGraphSettings = (methodSettings: CorGraph) => {
   return CorGraphValueUpdates;
 };
 
-export const generateRDPACSettings = (methodSettings: RDPAC) => {
+export const generateRDPACSettings = (methodSettings: RDPAC, datasetSize: number = 1400) => {
   const RDPACValueUpdates = {
-    PARAM_RDPAC_L: methodSettings?.L,
+    PARAM_RDPAC_L: methodSettings?.L || datasetSize,
     PARAM_RDPAC_P: methodSettings?.P,
     PARAM_RDPAC_PL: methodSettings?.PL,
     PARAM_RDPAC_K_START: methodSettings?.K_START,
@@ -79,19 +79,19 @@ export const generateRDPACSettings = (methodSettings: RDPAC) => {
   return RDPACValueUpdates;
 };
 
-export const generateReckNNGraphSettings = (methodSettings: ReckNNGraph) => {
+export const generateReckNNGraphSettings = (methodSettings: ReckNNGraph, datasetSize: number = 1400) => {
   const ReckNNGraphValueUpdates = {
-    PARAM_RECKNNGRAPH_L: methodSettings?.L,
+    PARAM_RECKNNGRAPH_L: methodSettings?.L || datasetSize.toString(),
     PARAM_RECKNNGRAPH_K: methodSettings?.K,
     PARAM_RECKNNGRAPH_EPSILON: methodSettings?.EPSILON,
   };
   return ReckNNGraphValueUpdates;
 };
 
-export const generateRFESettings = (methodSettings: RFE): RFEConfigParams => {
+export const generateRFESettings = (methodSettings: RFE, datasetSize: number = 1400): RFEConfigParams => {
   const RFEValueUpdates: RFEConfigParams = {
     PARAM_RFE_K: methodSettings?.K,
-    PARAM_RFE_T: methodSettings?.L,
+    PARAM_RFE_T: methodSettings?.L || datasetSize,
     PARAM_RFE_L: methodSettings?.T,
     PARAM_RFE_PA: methodSettings?.PA,
     PARAM_RFE_TH_CC: methodSettings?.TH_CC,
@@ -104,19 +104,19 @@ export const generateRFESettings = (methodSettings: RFE): RFEConfigParams => {
   return RFEValueUpdates;
 };
 
-export const generateRKGraphSettings = (methodSettings: RKGraph): RKGraphConfigParams => {
+export const generateRKGraphSettings = (methodSettings: RKGraph, datasetSize: number = 1400): RKGraphConfigParams => {
   const RKGraphValueUpdates: RKGraphConfigParams = {
     PARAM_RKGRAPH_K: methodSettings?.K,
     PARAM_RKGRAPH_T: methodSettings?.T,
     PARAM_RKGRAPH_P: methodSettings?.P,
-    PARAM_RKGRAPH_L: methodSettings?.L,
+    PARAM_RKGRAPH_L: methodSettings?.L || datasetSize,
   };
   return RKGraphValueUpdates;
 };
 
-export const generateRLSimSettings = (methodSettings: RLSim) => {
+export const generateRLSimSettings = (methodSettings: RLSim, datasetSize: number = 1400) => {
   const RLSimValueUpdates: RLSimConfigParams = {
-    PARAM_RLSIM_TOPK: methodSettings?.TOPK,
+    PARAM_RLSIM_TOPK: methodSettings?.TOPK || datasetSize,
     PARAM_RLSIM_CK: methodSettings?.CK,
     PARAM_RLSIM_T: methodSettings?.T,
     PARAM_RLSIM_METRIC: methodSettings?.METRIC,
@@ -124,10 +124,10 @@ export const generateRLSimSettings = (methodSettings: RLSim) => {
   return RLSimValueUpdates;
 };
 
-export const generateRLRecomSettings = (methodSettings: RLRecom): RLRecomConfigParams => {
+export const generateRLRecomSettings = (methodSettings: RLRecom, datasetSize: number = 1400): RLRecomConfigParams => {
   const RLRecomValueUpdates: RLRecomConfigParams = {
     PARAM_RLRECOM_K: methodSettings?.K,
-    PARAM_RLRECOM_L: methodSettings?.L,
+    PARAM_RLRECOM_L: methodSettings?.L || datasetSize,
     PARAM_RLRECOM_LAMBDA: methodSettings?.LAMBDA,
     PARAM_RLRECOM_EPSILON: methodSettings?.EPSILON,
   };

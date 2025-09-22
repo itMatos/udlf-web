@@ -2,6 +2,7 @@ import type { EvaluationSettingsData } from '@/ts/interfaces';
 import type { InputSettingsData } from '@/ts/interfaces/input';
 import type { OutputSettingsData } from '@/ts/interfaces/output';
 import type { BaseConfigType, ConfigSectionType } from '@/ts/types/config-generator';
+import { calculateDatasetSize } from './datasetSizeCalculator';
 
 /**
  * Função genérica para criar uma seção de configuração.
@@ -40,7 +41,7 @@ export const createBaseConfig = (baseConfigTemplate: BaseConfigType, selectedMet
  *
  * Creating an input configuration (Input).
  */
-export const createInputSettings = (
+export const createInputSettings = async (
   inputSettings: InputSettingsData | null,
   inputDatasetFilesConfig: ConfigSectionType
 ) => {
@@ -74,6 +75,22 @@ export const createInputSettings = (
         : [...inputDatasetFilesConfig.parameters, ...dynamicParameters],
   };
 
+  // Calculate dataset size dynamically based on INPUT_FILE_LIST
+  let datasetSize = 1400; // Default fallback
+  if (inputSettings?.inputFileList) {
+    try {
+      const sizeResult = await calculateDatasetSize(inputSettings.inputFileList);
+      if (sizeResult.success) {
+        datasetSize = sizeResult.size;
+        console.log(`Dataset size calculated: ${datasetSize} lines`);
+      } else {
+        console.warn(`Failed to calculate dataset size: ${sizeResult.error}, using default: ${datasetSize}`);
+      }
+    } catch (error) {
+      console.error('Error calculating dataset size:', error);
+    }
+  }
+
   const valueUpdates = {
     ...inputFiles,
     INPUT_FILE_FORMAT: inputSettings?.inputType,
@@ -81,9 +98,10 @@ export const createInputSettings = (
     INPUT_FILE_CLASSES: inputSettings?.inputFileClasses,
     INPUT_IMAGES_PATH: inputSettings?.datasetImagesPath,
     NUM_INPUT_FUSION_FILES: inputFilesLength,
+    SIZE_DATASET: datasetSize,
   };
   const createdConfigSection = createConfigSection(enhancedConfigTemplate, valueUpdates);
-  return createdConfigSection;
+  return { createdConfigSection, datasetSize };
 };
 
 /**

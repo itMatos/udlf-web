@@ -18,7 +18,7 @@ import {
   Typography,
 } from "@mui/material";
 import type React from "react";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ConfigGenerator } from "@/services/configGenerator";
 import {
   generateBFSTreeSettings,
@@ -30,6 +30,8 @@ import {
   generateReckNNGraphSettings,
   generateRFESettings,
   generateRKGraphSettings,
+  generateRLRecomSettings,
+  generateRLSimSettings,
 } from "@/services/configs-generator/ConfigMethodSettings";
 import { evaluationSettingsConfig } from "@/services/templates/evaluationSettings";
 import { baseConfigTemplate } from "@/services/templates/generalConfig";
@@ -50,6 +52,8 @@ import type { SummaryProps } from "@/ts/interfaces/summary";
 import type { Method } from "@/ts/types/methods";
 import { createBaseConfig, createEvaluationSettings, createInputSettings, createOutputSettings } from "@/utils/config-generator";
 import { generateFileName, generateUniqueId, getFriendlyTitleInput } from "@/utils/helpers";
+import { RLSim } from "@/ts/interfaces/methods/rlsim";
+import { RLRecom } from "@/ts/interfaces/methods/rlrecom";
 
 const Summary: React.FC<SummaryProps> = ({
   selectedMethod,
@@ -66,14 +70,14 @@ const Summary: React.FC<SummaryProps> = ({
     return { configFileId: id, configFileName: name };
   }, [selectedMethod]);
 
-  const generateConfigFile = (fileName: string) => {
+  const generateConfigFile = async (fileName: string) => {
     const isFusion = Array.isArray(inputSettings?.inputFiles) && inputSettings.inputFiles.length > 1;
     const baseConfig = createBaseConfig(baseConfigTemplate, selectedMethod, isFusion);
-    const inputSettingsTemplate = createInputSettings(inputSettings, inputDatasetFilesConfig);
+    const { createdConfigSection: inputSettingsTemplate, datasetSize } = await createInputSettings(inputSettings, inputDatasetFilesConfig);
     const outputSettingsTemplate = createOutputSettings(outputSettings, outputFilesSettingsConfig, fileName);
     const evaluationSettingsTemplate = createEvaluationSettings(evaluationSettings, evaluationSettingsConfig);
 
-    const settingsTemplate = generateMethodSettings(selectedMethod);
+    const settingsTemplate = generateMethodSettings(selectedMethod, datasetSize);
 
     const methodSettingsTemplate = {
       section: `${selectedMethod.toUpperCase()} SETTINGS`,
@@ -94,51 +98,68 @@ const Summary: React.FC<SummaryProps> = ({
     return blob;
   };
 
-  const generateMethodSettings = (method: Method) => {
+  const generateMethodSettings = (method: Method, datasetSize: number = 1400) => {
     switch (method) {
       case UDLF_METHODS.CONTEXTRR:
-        return generateContextRRSettings(methodSettings as ContextRR);
+        return generateContextRRSettings(methodSettings as ContextRR, datasetSize);
       case UDLF_METHODS.CPRR:
-        return generateCPRRSettings(methodSettings as CPRR);
+        return generateCPRRSettings(methodSettings as CPRR, datasetSize);
       case UDLF_METHODS.LHRR:
-        return generateLHRRSettings(methodSettings as LHRR);
+        return generateLHRRSettings(methodSettings as LHRR, datasetSize);
       case UDLF_METHODS.BFSTREE:
-        return generateBFSTreeSettings(methodSettings as BFSTree);
+        return generateBFSTreeSettings(methodSettings as BFSTree, datasetSize);
       case UDLF_METHODS.CORGRAPH:
-        return generateCorGraphSettings(methodSettings as CorGraph);
+        return generateCorGraphSettings(methodSettings as CorGraph, datasetSize);
       case UDLF_METHODS.RDPAC:
-        return generateRDPACSettings(methodSettings as RDPAC);
+        return generateRDPACSettings(methodSettings as RDPAC, datasetSize);
       case UDLF_METHODS.RECKNNGRAPH:
-        return generateReckNNGraphSettings(methodSettings as ReckNNGraph);
+        return generateReckNNGraphSettings(methodSettings as ReckNNGraph, datasetSize);
       case UDLF_METHODS.RFE:
-        return generateRFESettings(methodSettings as RFE);
+        return generateRFESettings(methodSettings as RFE, datasetSize);
       case UDLF_METHODS.RKGRAPH:
-        return generateRKGraphSettings(methodSettings as RKGraph);
+        return generateRKGraphSettings(methodSettings as RKGraph, datasetSize);
       case UDLF_METHODS.RLSIM:
-        return;
+        return generateRLSimSettings(methodSettings as RLSim, datasetSize);
+      case UDLF_METHODS.RLRECOM:
+        return generateRLRecomSettings(methodSettings as RLRecom, datasetSize);
       default:
-        return generateContextRRSettings(methodSettings as ContextRR);
+        return generateContextRRSettings(methodSettings as ContextRR, datasetSize);
     }
   };
 
-  const generatedConfigFile = generateConfigFile(configFileName);
+  const [generatedConfigFile, setGeneratedConfigFile] = useState<Blob | null>(null);
 
-  const generateConfigFileToDownload = () => {
-    console.log("generatedConfigFile", generatedConfigFile);
-    const url = window.URL.createObjectURL(generatedConfigFile);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = configFileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
+  const generateConfigFileToDownload = async () => {
+    try {
+      const configFile = await generateConfigFile(configFileName);
+      console.log("generatedConfigFile", configFile);
+      const url = window.URL.createObjectURL(configFile);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = configFileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error generating config file:", error);
+    }
   };
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: we need to set the config file to execute and the config file name
   useEffect(() => {
-    setConfigFileToExecute(generatedConfigFile);
-    setConfigFileName(configFileName);
+    const generateConfig = async () => {
+      try {
+        const configFile = await generateConfigFile(configFileName);
+        setGeneratedConfigFile(configFile);
+        setConfigFileToExecute(configFile);
+        setConfigFileName(configFileName);
+      } catch (error) {
+        console.error("Error generating config file:", error);
+      }
+    };
+    
+    generateConfig();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

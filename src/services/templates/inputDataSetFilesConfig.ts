@@ -5,8 +5,8 @@ export const inputDatasetFilesConfig: ConfigTemplate = {
   parameters: [
     {
       key: 'SIZE_DATASET',
-      value: 1400,
-      description: '#(TUint): Number of images in the dataset',
+      value: 1400, // Default value, will be dynamically calculated
+      description: '#(TUint): Number of images in the dataset (automatically calculated from INPUT_FILE_LIST)',
     },
     {
       key: 'INPUT_FILE_FORMAT',

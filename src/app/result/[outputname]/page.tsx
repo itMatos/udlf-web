@@ -6,6 +6,7 @@ import {
   Card,
   CardHeader,
   CardMedia,
+  CircularProgress,
   FormControl,
   InputLabel,
   LinearProgress,
@@ -43,6 +44,8 @@ export default function Result() {
 
   const configFileName = getConfigFileName(outputname);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isError, setIsError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(IMAGES_PER_PAGE_DEFAULT);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -53,6 +56,10 @@ export default function Result() {
   useEffect(() => {
     const fetchImageNames = async () => {
       try {
+        setIsLoading(true);
+        setIsError(false);
+        setErrorMessage("");
+        
         // Use the config-specific route for better performance
         const imageName = await getPaginatedListFilenamesByConfig(configFileName, page, pageSize);
         setTotalPages(imageName.totalPages);
@@ -61,6 +68,8 @@ export default function Result() {
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error(`Error fetching image names for output ${outputname}:`, error);
+        setIsError(true);
+        setErrorMessage(error instanceof Error ? error.message : "Failed to load results");
       } finally {
         setIsLoading(false);
       }
@@ -157,19 +166,68 @@ export default function Result() {
         </Box>
 
         {isLoading && (
-          <Box sx={{ width: "100%" }}>
-            <LinearProgress />
+          <Box 
+            sx={{ 
+              width: "100%", 
+              display: "flex", 
+              flexDirection: "column", 
+              alignItems: "center", 
+              justifyContent: "center", 
+              py: 4,
+              gap: 2
+            }}
+          >
+            <CircularProgress size={40} />
+            <Typography variant="h6" color="primary">
+              Loading Results...
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Please wait while we fetch your results
+            </Typography>
+            <LinearProgress sx={{ width: "100%", mt: 2 }} />
           </Box>
         )}
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            justifyContent: "center",
-          }}
-        >
-          {imagesCurrentPage.map((image) => {
+
+        {isError && (
+          <Box 
+            sx={{ 
+              display: "flex", 
+              flexDirection: "column", 
+              alignItems: "center", 
+              justifyContent: "center", 
+              py: 4,
+              gap: 2,
+              backgroundColor: "error.light",
+              borderRadius: 2,
+              mx: 2
+            }}
+          >
+            <Typography variant="h6" color="error">
+              Error Loading Results
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {errorMessage}
+            </Typography>
+            <Button 
+              variant="contained" 
+              color="primary" 
+              onClick={() => window.location.reload()}
+            >
+              Try Again
+            </Button>
+          </Box>
+        )}
+
+        {!isLoading && !isError && (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              flexWrap: "wrap",
+              justifyContent: "center",
+            }}
+          >
+            {imagesCurrentPage.map((image) => {
             const imageName = image.fileInputNameLine;
             return (
               <Card
@@ -193,10 +251,12 @@ export default function Result() {
               </Card>
             );
           })}
-        </Box>
+          </Box>
+        )}
 
         {/* Pagination and Page Size Selector */}
-        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", mt: 4, mb: 2, gap: 2 }}>
+        {!isLoading && !isError && (
+          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", mt: 4, mb: 2, gap: 2 }}>
           <Pagination color="primary" count={totalPages} onChange={handlePageChange} page={page} />
           <FormControl size="small" sx={{ m: 1, minWidth: 120 }}>
             <InputLabel id="page-size-select-label">Items per page</InputLabel>
@@ -212,7 +272,8 @@ export default function Result() {
               <MenuItem value={100}>100</MenuItem>
             </Select>
           </FormControl>
-        </Box>
+          </Box>
+        )}
       </Box>
     </React.Fragment>
   );
