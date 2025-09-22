@@ -12,6 +12,9 @@ RUN npm install
 # Copy source code
 COPY . .
 
+# Create necessary directories
+RUN mkdir -p /app/.next
+
 # Expose port
 EXPOSE 3000
 

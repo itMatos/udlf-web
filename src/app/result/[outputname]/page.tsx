@@ -21,7 +21,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import Appbar from "@/components/Appbar";
 import type { lineContent } from "@/services/api/models";
-import { getAllClasses, getAllFilenames, getPaginatedListFilenames } from "@/services/api/UDLF-api";
+import { getAllClasses, getAllFilenames, getPaginatedListFilenames, getPaginatedListFilenamesByConfig } from "@/services/api/UDLF-api";
 import { IMAGES_PER_PAGE_DEFAULT } from "@/ts/constants/common";
 
 export default function Result() {
@@ -31,6 +31,17 @@ export default function Result() {
   if (Array.isArray(outputname)) {
     outputname = outputname[0] || "";
   }
+
+  // Extract config file name from output name
+  // e.g., "output_ContextRR_3m172i0.ini.txt" -> "ContextRR_3m172i0.ini"
+  const getConfigFileName = (outputName: string): string => {
+    // Remove "output_" prefix and ".txt" suffix
+    const withoutPrefix = outputName.replace(/^output_/, '');
+    const withoutSuffix = withoutPrefix.replace(/\.txt$/, '');
+    return withoutSuffix;
+  };
+
+  const configFileName = getConfigFileName(outputname);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(IMAGES_PER_PAGE_DEFAULT);
@@ -42,7 +53,8 @@ export default function Result() {
   useEffect(() => {
     const fetchImageNames = async () => {
       try {
-        const imageName = await getPaginatedListFilenames(outputname, page, pageSize);
+        // Use the config-specific route for better performance
+        const imageName = await getPaginatedListFilenamesByConfig(configFileName, page, pageSize);
         setTotalPages(imageName.totalPages);
         setImagesCurrentPage(imageName.items);
         console.log("Fetched image names:", imageName.items);
@@ -54,12 +66,12 @@ export default function Result() {
       }
     };
     fetchImageNames();
-  }, [outputname, page, pageSize]);
+  }, [outputname, page, pageSize, configFileName]);
 
   useEffect(() => {
     const fetchInputImageNames = async () => {
       try {
-        const inputNames = await getAllFilenames(outputname);
+        const inputNames = await getAllFilenames(outputname, configFileName);
         setInputImageNames(inputNames);
         console.log("Fetched input image names:", inputNames);
       } catch (error) {
@@ -68,20 +80,20 @@ export default function Result() {
       }
     };
     fetchInputImageNames();
-  }, [outputname]);
+  }, [outputname, configFileName]);
 
   useEffect(() => {
     const getAllClassesForOutput = async () => {
       console.log("Fetching classes for output:", outputname);
       try {
-        const classes = await getAllClasses(outputname);
+        const classes = await getAllClasses(outputname, configFileName);
         console.log("Fetched classes for output:", classes);
       } catch (error) {
         console.error(`Error fetching classes for output ${outputname}:`, error);
       }
     };
     getAllClassesForOutput();
-  }, [outputname]);
+  }, [outputname, configFileName]);
 
   const handlePageSizeChange = (event: SelectChangeEvent) => {
     const newPageSize = Number.parseInt(event.target.value, 10);
@@ -169,7 +181,7 @@ export default function Result() {
                 <CardMedia
                   alt={`${imageName}`}
                   component="img"
-                  image={`http://localhost:8080/image-file/${imageName}`}
+                  image={`http://localhost:8080/image-file/${imageName}?configFile=${configFileName}`}
                   sx={{
                     ...(aspectRatio === "square" && {
                       aspectRatio: "1 / 1",

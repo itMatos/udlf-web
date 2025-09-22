@@ -108,9 +108,14 @@ export const getUDLFOutputFileByLine = async (outputFileName: string, lineNumber
   }
 };
 
-export const getImageNamesByIndexesList = async (lineNumbers: number[]) => {
+export const getImageNamesByIndexesList = async (lineNumbers: number[], configFileName?: string) => {
   const indexesAsString = lineNumbers.join(',');
-  const endpointToGetImageName = `/file-input-name-by-index?indexList=${indexesAsString}`;
+  let endpointToGetImageName = `/file-input-name-by-index?indexList=${indexesAsString}`;
+  
+  if (configFileName) {
+    endpointToGetImageName += `&configFile=${configFileName}`;
+  }
+  
   console.log("Fetching image names from:", endpointToGetImageName);
 
   try {
@@ -122,9 +127,13 @@ export const getImageNamesByIndexesList = async (lineNumbers: number[]) => {
   }
 };
 
-export const getImageDetailsByLineNumbers = async (lineNumbers: number[]): Promise<InputFileDetail> => {
+export const getImageDetailsByLineNumbers = async (lineNumbers: number[], configFileName?: string): Promise<InputFileDetail> => {
   const indexesAsString = lineNumbers.join(',');
-  const endpointToGetImageDetails = `/file-input-details-by-line-numbers?lineNumbers=${indexesAsString}`;
+  let endpointToGetImageDetails = `/file-input-details-by-line-numbers?lineNumbers=${indexesAsString}`;
+  
+  if (configFileName) {
+    endpointToGetImageDetails += `&configFile=${configFileName}`;
+  }
 
   try {
     const response = await udlfApi.get(endpointToGetImageDetails);
@@ -146,8 +155,13 @@ export const getLineNumberByImageName = async (imageName: string): Promise<Image
   }
 };
 
-export const getImageFileByName = async (imageFileName: string) => {
-  const endpointToGetImageFile = `/image-file/${imageFileName}`;
+export const getImageFileByName = async (imageFileName: string, configFileName?: string) => {
+  let endpointToGetImageFile = `/image-file/${imageFileName}`;
+  
+  if (configFileName) {
+    endpointToGetImageFile += `?configFile=${configFileName}`;
+  }
+  
   try {
     const response = await udlfApi.get(endpointToGetImageFile, {
       responseType: 'blob',
@@ -161,38 +175,79 @@ export const getImageFileByName = async (imageFileName: string) => {
 export const getPaginatedListFilenames = async (
   filename: string,
   page: number,
-  pageSize: number
+  pageSize: number,
+  configFileName?: string
 ): Promise<PaginatedResponse> => {
   const endpointToGetPaginatedList = `/paginated-file-list/${filename}/page/${page}`;
-  const params = {
+  const params: any = {
     filename,
     page,
     pageSize,
   };
+  
+  if (configFileName) {
+    params.configFile = configFileName;
+  }
+  
   const response = await udlfApi.get(endpointToGetPaginatedList, { params });
   return response.data as PaginatedResponse;
 };
 
-export const getAllFilenames = async (filename: string): Promise<string[]> => {
-  const endpointToGetAllFilenames = `/get-all-input-file-names`;
+export const getAllFilenames = async (filename: string, configFileName?: string): Promise<string[]> => {
+  let endpointToGetAllFilenames = `/get-all-input-file-names`;
+  
+  if (configFileName) {
+    endpointToGetAllFilenames += `?configFile=${configFileName}`;
+  }
+  
   const response = await udlfApi.get(endpointToGetAllFilenames);
   return response.data as string[];
 }
 
-export const getAllClasses = async (filename: string): Promise<string[]> => {
-  const endpointToGetAllClasses = `/grouped-input-class-names`;
+export const getAllClasses = async (filename: string, configFileName?: string): Promise<string[]> => {
+  let endpointToGetAllClasses = `/grouped-input-class-names`;
+  
+  if (configFileName) {
+    endpointToGetAllClasses += `?configFile=${configFileName}`;
+  }
+  
   const response = await udlfApi.get(endpointToGetAllClasses);
   return response.data as string[];
 }
 
-export const getInputFileDetailsByName = async (filename: string): Promise<any> => {
-  const endpointToGetInputFileDetails = `/input-file-details-by-name`;
+export const getInputFileDetailsByName = async (filename: string, configFileName?: string): Promise<any> => {
+  let endpointToGetInputFileDetails = `/input-file-details-by-name`;
+  
+  if (configFileName) {
+    endpointToGetInputFileDetails += `?configFile=${configFileName}`;
+  }
+  
   const response = await udlfApi.get(endpointToGetInputFileDetails);
   return response.data;
 }
 
-export const getInputFileDetailsByIndexesList = async (): Promise<InputFileDetail> => {
-  const endpointToGetInputFilenamesDetails = `/file-input-details-by-line-numbers`;
+export const getInputFileDetailsByIndexesList = async (configFileName?: string): Promise<InputFileDetail> => {
+  let endpointToGetInputFilenamesDetails = `/file-input-details-by-line-numbers`;
+  
+  if (configFileName) {
+    endpointToGetInputFilenamesDetails += `?configFile=${configFileName}`;
+  }
+  
   const response = await udlfApi.get(endpointToGetInputFilenamesDetails);
   return response.data as InputFileDetail;
+};
+
+// New function that uses the config-specific route (recommended)
+export const getPaginatedListFilenamesByConfig = async (
+  configFileName: string,
+  page: number,
+  pageSize: number
+): Promise<PaginatedResponse> => {
+  const endpointToGetPaginatedList = `/paginated-file-list-by-config/${configFileName}/page/${page}`;
+  const params = {
+    pageSize,
+  };
+  
+  const response = await udlfApi.get(endpointToGetPaginatedList, { params });
+  return response.data as PaginatedResponse;
 };

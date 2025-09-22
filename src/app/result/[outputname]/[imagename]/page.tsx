@@ -19,6 +19,17 @@ export default function ImagePage() {
   const params = useParams();
   const router = useRouter();
   const { imagename, outputname } = params as { imagename: string; outputname: string };
+  
+  // Extract config file name from output name
+  // e.g., "output_ContextRR_3m172i0.ini.txt" -> "ContextRR_3m172i0.ini"
+  const getConfigFileName = (outputName: string): string => {
+    // Remove "output_" prefix and ".txt" suffix
+    const withoutPrefix = outputName.replace(/^output_/, '');
+    const withoutSuffix = withoutPrefix.replace(/\.txt$/, '');
+    return withoutSuffix;
+  };
+
+  const configFileName = getConfigFileName(outputname);
   const [indexesResultByCurrentInput, setIndexesResultByCurrentInput] = useState<string | null>(null);
   const [similarImages, setSimilarImages] = useState<InputFileDetail | null>(null);
   const [aspectRatio, setAspectRatio] = useState<"original" | "square">("square");
@@ -64,7 +75,7 @@ export default function ImagePage() {
       // Fetch image names for these line numbers
       const fetchImageNames = async () => {
         try {
-          const imagesDetails = await getImageDetailsByLineNumbers(lineIndexes);
+          const imagesDetails = await getImageDetailsByLineNumbers(lineIndexes, configFileName);
           console.log("Fetched image details for line numbers:", imagesDetails);
           setSimilarImages(imagesDetails);
           console.log("Similar images set to:", imagesDetails);
@@ -134,7 +145,7 @@ export default function ImagePage() {
                 <CardMedia
                   alt={`${imageKey}`}
                   component="img"
-                  image={`http://localhost:8080/image-file/${imageKey}`}
+                  image={`http://localhost:8080/image-file/${imageKey}?configFile=${configFileName}`}
                   sx={{
                     ...(aspectRatio === "square" && {
                       aspectRatio: "1 / 1",

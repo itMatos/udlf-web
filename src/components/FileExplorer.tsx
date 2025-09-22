@@ -42,7 +42,7 @@ export default function FileExplorer({
   allowDirectorySelection = false,
 }: FileExplorerProps) {
   const [open, setOpen] = useState(false);
-  const [currentPath, setCurrentPath] = useState("/app");
+  const [currentPath, setCurrentPath] = useState("/app/Datasets");
   const [items, setItems] = useState<FileItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -54,7 +54,13 @@ export default function FileExplorer({
 
   const updateBreadcrumbs = useCallback((path: string) => {
     const pathParts = path.split("/").filter((part) => part !== "");
-    const breadcrumbParts = pathParts.length > 1 && pathParts[0] === "app" ? pathParts.slice(1) : pathParts;
+    // Always show breadcrumbs relative to Datasets, not app
+    const breadcrumbParts = pathParts.length > 2 && pathParts[0] === "app" && pathParts[1] === "Datasets" 
+      ? pathParts.slice(2) 
+      : pathParts.length > 1 && pathParts[0] === "Datasets" 
+        ? pathParts.slice(1)
+        : [];
+    console.log("breadcrumbParts", breadcrumbParts);
     setBreadcrumbs(breadcrumbParts);
   }, []);
 
@@ -128,21 +134,23 @@ export default function FileExplorer({
   };
 
   const handleBreadcrumbClick = (index: number) => {
-    const path = `/app/${breadcrumbs.slice(0, index + 1).join("/")}`;
+    const path = `/app/Datasets/${breadcrumbs.slice(0, index + 1).join("/")}`;
     loadDirectory(path);
   };
 
   const handleBackClick = () => {
     if (breadcrumbs.length > 1) {
-      const parentPath = `/app/${breadcrumbs.slice(0, -1).join("/")}`;
+      const parentPath = `/app/Datasets/${breadcrumbs.slice(0, -1).join("/")}`;
       loadDirectory(parentPath);
     } else if (breadcrumbs.length === 1) {
-      loadDirectory("/app");
+      // Go back to Datasets root
+      loadDirectory("/app/Datasets");
     }
+    // Remove navigation to /app root - always stay within Datasets
   };
 
   const handleHomeClick = () => {
-    loadDirectory("/app");
+    loadDirectory("/app/Datasets");
   };
 
   const handleSearch = async () => {
@@ -188,7 +196,7 @@ export default function FileExplorer({
 
   useEffect(() => {
     if (open) {
-      loadDirectory("/app");
+      loadDirectory("/app/Datasets");
       setSelectedDirectory(null); // Clear selection when opening
     }
   }, [open, loadDirectory]);
@@ -231,7 +239,7 @@ export default function FileExplorer({
           <Breadcrumbs sx={{ mb: 2 }}>
             <Link component="button" onClick={handleHomeClick} sx={{ display: "flex", alignItems: "center", gap: 0.5 }} variant="body2">
               <HomeIcon fontSize="small" />
-              app
+              Datasets
             </Link>
             {breadcrumbs.map((crumb, index) => {
               const path = breadcrumbs.slice(0, index + 1).join("/");
