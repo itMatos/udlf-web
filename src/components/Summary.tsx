@@ -91,6 +91,18 @@ const Summary: React.FC<SummaryProps> = ({
       );
       setLAdjustmentMessage(adjustmentMessages.join('; '));
       setShowLAdjustmentSnackbar(true);
+
+      // Apply adjustments to method settings for UI display
+      const updatedMethodSettings = { ...methodSettings };
+      adjustments.forEach(adj => {
+        if (adj.originalValue !== undefined && 'L' in updatedMethodSettings) {
+          (updatedMethodSettings as any).L = adj.value;
+        }
+      });
+      setAdjustedMethodSettings(updatedMethodSettings);
+    } else {
+      // Reset adjusted settings if no adjustments were made
+      setAdjustedMethodSettings(null);
     }
 
     const methodSettingsTemplate = {
@@ -142,6 +154,7 @@ const Summary: React.FC<SummaryProps> = ({
   const [generatedConfigFile, setGeneratedConfigFile] = useState<Blob | null>(null);
   const [showLAdjustmentSnackbar, setShowLAdjustmentSnackbar] = useState<boolean>(false);
   const [lAdjustmentMessage, setLAdjustmentMessage] = useState<string>("");
+  const [adjustedMethodSettings, setAdjustedMethodSettings] = useState<any>(null);
 
   const generateConfigFileToDownload = async () => {
     try {
@@ -188,7 +201,7 @@ const Summary: React.FC<SummaryProps> = ({
         <Typography color="primary" gutterBottom variant="h6">
           Selected Method: {selectedMethod}
         </Typography>
-        {methodSettings && (
+        {(adjustedMethodSettings || methodSettings) && (
           <TableContainer component={Paper} sx={{ mt: 2 }}>
             <Table aria-label="simple table" sx={{ minWidth: 300 }}>
               <TableHead>
@@ -198,14 +211,33 @@ const Summary: React.FC<SummaryProps> = ({
                 </TableRow>
               </TableHead>
               <TableBody>
-                {Object.entries(methodSettings).map(([key, value]) => (
-                  <TableRow key={key}>
-                    <TableCell component="th" scope="row">
-                      {key}
-                    </TableCell>
-                    <TableCell align="right">{typeof value === "boolean" ? (value ? "Yes" : "No") : value}</TableCell>
-                  </TableRow>
-                ))}
+                {Object.entries(adjustedMethodSettings || methodSettings).map(([key, value]) => {
+                  const isAdjusted = adjustedMethodSettings && key === 'L' && 
+                    'L' in adjustedMethodSettings && 'L' in methodSettings &&
+                    (adjustedMethodSettings as any).L !== (methodSettings as any).L;
+                  return (
+                    <TableRow key={key}>
+                      <TableCell component="th" scope="row">
+                        {key}
+                        {isAdjusted && (
+                          <Typography 
+                            variant="caption" 
+                            sx={{ 
+                              ml: 1, 
+                              color: 'warning.main',
+                              fontWeight: 'bold'
+                            }}
+                          >
+                            (adjusted)
+                          </Typography>
+                        )}
+                      </TableCell>
+                      <TableCell align="right">
+                        {typeof value === "boolean" ? (value ? "Yes" : "No") : String(value)}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>
