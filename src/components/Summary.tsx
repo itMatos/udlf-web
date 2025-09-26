@@ -1,5 +1,6 @@
 import DownloadIcon from "@mui/icons-material/Download";
 import {
+  Alert,
   Box,
   Button,
   Chip,
@@ -8,6 +9,7 @@ import {
   ListItem,
   ListItemText,
   Paper,
+  Snackbar,
   Stack,
   Table,
   TableBody,
@@ -32,6 +34,8 @@ import {
   generateRKGraphSettings,
   generateRLRecomSettings,
   generateRLSimSettings,
+  type MethodSettingsResult,
+  type LValidationResult,
 } from "@/services/configs-generator/ConfigMethodSettings";
 import { evaluationSettingsConfig } from "@/services/templates/evaluationSettings";
 import { baseConfigTemplate } from "@/services/templates/generalConfig";
@@ -77,16 +81,36 @@ const Summary: React.FC<SummaryProps> = ({
     const outputSettingsTemplate = createOutputSettings(outputSettings, outputFilesSettingsConfig, fileName);
     const evaluationSettingsTemplate = createEvaluationSettings(evaluationSettings, evaluationSettingsConfig);
 
-    const settingsTemplate = generateMethodSettings(selectedMethod, datasetSize);
+    const methodSettingsResult = generateMethodSettings(selectedMethod, datasetSize);
+
+    // Check for L parameter adjustments and show snackbar if needed
+    const adjustments = methodSettingsResult.lAdjustments.filter(adj => adj.wasAdjusted);
+    if (adjustments.length > 0) {
+      const adjustmentMessages = adjustments.map(adj => 
+        `Parameter L adjusted from ${adj.originalValue} to ${adj.value} (dataset size: ${adj.datasetSize})`
+      );
+      setLAdjustmentMessage(adjustmentMessages.join('; '));
+      setShowLAdjustmentSnackbar(true);
+
+      // Apply adjustments to method settings for UI display
+      const updatedMethodSettings = { ...methodSettings };
+      adjustments.forEach(adj => {
+        if (adj.originalValue !== undefined && 'L' in updatedMethodSettings) {
+          (updatedMethodSettings as any).L = adj.value;
+        }
+      });
+      setAdjustedMethodSettings(updatedMethodSettings);
+    } else {
+      // Reset adjusted settings if no adjustments were made
+      setAdjustedMethodSettings(null);
+    }
 
     const methodSettingsTemplate = {
       section: `${selectedMethod.toUpperCase()} SETTINGS`,
-      parameters: settingsTemplate
-        ? Object.entries(settingsTemplate).map(([key, value]) => ({
-            key,
-            value,
-          }))
-        : [],
+      parameters: Object.entries(methodSettingsResult.settings).map(([key, value]) => ({
+        key,
+        value,
+      })),
     };
 
     const allTemplates = [baseConfig, inputSettingsTemplate, outputSettingsTemplate, evaluationSettingsTemplate, methodSettingsTemplate];
@@ -98,7 +122,7 @@ const Summary: React.FC<SummaryProps> = ({
     return blob;
   };
 
-  const generateMethodSettings = (method: Method, datasetSize: number = 1400) => {
+  const generateMethodSettings = (method: Method, datasetSize: number = 1400): MethodSettingsResult => {
     switch (method) {
       case UDLF_METHODS.CONTEXTRR:
         return generateContextRRSettings(methodSettings as ContextRR, datasetSize);
@@ -128,6 +152,9 @@ const Summary: React.FC<SummaryProps> = ({
   };
 
   const [generatedConfigFile, setGeneratedConfigFile] = useState<Blob | null>(null);
+  const [showLAdjustmentSnackbar, setShowLAdjustmentSnackbar] = useState<boolean>(false);
+  const [lAdjustmentMessage, setLAdjustmentMessage] = useState<string>("");
+  const [adjustedMethodSettings, setAdjustedMethodSettings] = useState<any>(null);
 
   const generateConfigFileToDownload = async () => {
     try {
@@ -174,7 +201,7 @@ const Summary: React.FC<SummaryProps> = ({
         <Typography color="primary" gutterBottom variant="h6">
           Selected Method: {selectedMethod}
         </Typography>
-        {methodSettings && (
+        {(adjustedMethodSettings || methodSettings) && (
           <TableContainer component={Paper} sx={{ mt: 2 }}>
             <Table aria-label="simple table" sx={{ minWidth: 300 }}>
               <TableHead>
@@ -184,14 +211,33 @@ const Summary: React.FC<SummaryProps> = ({
                 </TableRow>
               </TableHead>
               <TableBody>
-                {Object.entries(methodSettings).map(([key, value]) => (
-                  <TableRow key={key}>
-                    <TableCell component="th" scope="row">
-                      {key}
-                    </TableCell>
-                    <TableCell align="right">{typeof value === "boolean" ? (value ? "Yes" : "No") : value}</TableCell>
-                  </TableRow>
-                ))}
+                {Object.entries(adjustedMethodSettings || methodSettings).map(([key, value]) => {
+                  const isAdjusted = adjustedMethodSettings && key === 'L' && 
+                    'L' in adjustedMethodSettings && 'L' in methodSettings &&
+                    (adjustedMethodSettings as any).L !== (methodSettings as any).L;
+                  return (
+                    <TableRow key={key}>
+                      <TableCell component="th" scope="row">
+                        {key}
+                        {isAdjusted && (
+                          <Typography 
+                            variant="caption" 
+                            sx={{ 
+                              ml: 1, 
+                              color: 'warning.main',
+                              fontWeight: 'bold'
+                            }}
+                          >
+                            (adjusted)
+                          </Typography>
+                        )}
+                      </TableCell>
+                      <TableCell align="right">
+                        {typeof value === "boolean" ? (value ? "Yes" : "No") : String(value)}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>
@@ -309,6 +355,23 @@ const Summary: React.FC<SummaryProps> = ({
           </Button>
         </Box>
       </Box>
+
+      {/* Snackbar for L parameter adjustments */}
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        autoHideDuration={6000}
+        open={showLAdjustmentSnackbar}
+        onClose={() => setShowLAdjustmentSnackbar(false)}
+      >
+        <Alert 
+          onClose={() => setShowLAdjustmentSnackbar(false)} 
+          severity="warning" 
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {lAdjustmentMessage}
+        </Alert>
+      </Snackbar>
     </Paper>
   );
 };

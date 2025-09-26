@@ -10,51 +10,119 @@ import { RKGraph, RKGraphConfigParams } from "@/ts/interfaces/methods/rkgraph";
 import { RLRecom, RLRecomConfigParams } from "@/ts/interfaces/methods/rlrecom";
 import { RLSim, RLSimConfigParams } from "@/ts/interfaces/methods/rlsim";
 
-export const generateContextRRSettings = (methodSettings: ContextRR, datasetSize: number = 1400) => {
+/**
+ * Result of L parameter validation
+ */
+export interface LValidationResult {
+  value: number;
+  wasAdjusted: boolean;
+  originalValue?: number;
+  datasetSize: number;
+}
+
+/**
+ * Result of method settings generation with validation info
+ */
+export interface MethodSettingsResult {
+  settings: Record<string, any>;
+  lAdjustments: LValidationResult[];
+}
+
+/**
+ * Validates and adjusts the L parameter to ensure it doesn't exceed the dataset size.
+ * If L is greater than datasetSize, it will be set to datasetSize.
+ * @param lValue - The original L value from method settings
+ * @param datasetSize - The actual dataset size
+ * @returns The validation result with the adjusted L value and adjustment info
+ */
+export const validateAndAdjustL = (lValue: number | undefined, datasetSize: number): LValidationResult => {
+  if (!lValue) {
+    return {
+      value: datasetSize,
+      wasAdjusted: false,
+      datasetSize
+    };
+  }
+  
+  if (lValue > datasetSize) {
+    console.warn(`Parameter L (${lValue}) is greater than dataset size (${datasetSize}). Adjusting L to ${datasetSize}.`);
+    return {
+      value: datasetSize,
+      wasAdjusted: true,
+      originalValue: lValue,
+      datasetSize
+    };
+  }
+  
+  return {
+    value: lValue,
+    wasAdjusted: false,
+    datasetSize
+  };
+};
+
+export const generateContextRRSettings = (methodSettings: ContextRR, datasetSize: number = 1400): MethodSettingsResult => {
+  const validatedL = validateAndAdjustL(methodSettings?.L, datasetSize);
   const ContextRRValueUpdates = {
     PARAM_NONE_L: datasetSize.toString(),
-    PARAM_CONTEXTRR_L: methodSettings?.L,
+    PARAM_CONTEXTRR_L: validatedL.value,
     PARAM_CONTEXTRR_K: methodSettings?.K,
     PARAM_CONTEXTRR_T: methodSettings?.T,
     PARAM_CONTEXTRR_NBYK: methodSettings?.NBYK,
     PARAM_CONTEXTRR_OPTIMIZATIONS: methodSettings?.OPTIMIZATIONS ? "TRUE" : "FALSE",
   };
-  return ContextRRValueUpdates;
+  return {
+    settings: ContextRRValueUpdates,
+    lAdjustments: [validatedL]
+  };
 };
 
-export const generateCPRRSettings = (methodSettings: CPRR, datasetSize: number = 1400) => {
+export const generateCPRRSettings = (methodSettings: CPRR, datasetSize: number = 1400): MethodSettingsResult => {
+  const validatedL = validateAndAdjustL(methodSettings?.L, datasetSize);
   const CPRRValueUpdates = {
     PARAM_NONE_L: datasetSize.toString(),
-    PARAM_CPRR_L: methodSettings?.L,
+    PARAM_CPRR_L: validatedL.value,
     PARAM_CPRR_K: methodSettings?.K,
     PARAM_CPRR_T: methodSettings?.T,
   };
-  return CPRRValueUpdates;
+  return {
+    settings: CPRRValueUpdates,
+    lAdjustments: [validatedL]
+  };
 };
 
-export const generateLHRRSettings = (methodSettings: LHRR, datasetSize: number = 1400) => {
+export const generateLHRRSettings = (methodSettings: LHRR, datasetSize: number = 1400): MethodSettingsResult => {
+  const validatedL = validateAndAdjustL(methodSettings?.L, datasetSize);
   const LHRRValueUpdates = {
     PARAM_NONE_L: datasetSize.toString(),
-    PARAM_LHRR_L: methodSettings?.L,
+    PARAM_LHRR_L: validatedL.value,
     PARAM_LHRR_K: methodSettings?.K,
     PARAM_LHRR_T: methodSettings?.T,
   };
-  return LHRRValueUpdates;
+  return {
+    settings: LHRRValueUpdates,
+    lAdjustments: [validatedL]
+  };
 };
 
-export const generateBFSTreeSettings = (methodSettings: BFSTree, datasetSize: number = 1400) => {
+export const generateBFSTreeSettings = (methodSettings: BFSTree, datasetSize: number = 1400): MethodSettingsResult => {
+  const validatedL = validateAndAdjustL(methodSettings?.L, datasetSize);
   const BFSTreeValueUpdates = {
-    PARAM_BFSTREE_L: methodSettings?.L || datasetSize.toString(),
+    PARAM_BFSTREE_L: validatedL.value,
     PARAM_BFSTREE_K: methodSettings?.K,
     PARAM_BFSTREE_CORRELATION_METRIC: methodSettings?.Correlation,
   };
 
-  return BFSTreeValueUpdates;
+  return {
+    settings: BFSTreeValueUpdates,
+    lAdjustments: [validatedL]
+  };
 };
 
-export const generateCorGraphSettings = (methodSettings: CorGraph, datasetSize: number = 1400) => {
+export const generateCorGraphSettings = (methodSettings: CorGraph, datasetSize: number = 1400): MethodSettingsResult => {
+  const validatedL = validateAndAdjustL(methodSettings?.L, datasetSize);
   const CorGraphValueUpdates = {
-    PARAM_CORGRAPH_L: methodSettings?.L || datasetSize.toString(),
+    PARAM_CORGRAPH_L: validatedL.value,
     PARAM_CORGRAPH_K: methodSettings?.K,
     PARAM_CORGRAPH_THRESHOLD_START: methodSettings?.ThresholdStart,
     PARAM_CORGRAPH_THRESHOLD_END: methodSettings?.ThresholdEnd,
@@ -62,12 +130,16 @@ export const generateCorGraphSettings = (methodSettings: CorGraph, datasetSize: 
     PARAM_CORGRAPH_CORRELATION: methodSettings?.Correlation,
   };
 
-  return CorGraphValueUpdates;
+  return {
+    settings: CorGraphValueUpdates,
+    lAdjustments: [validatedL]
+  };
 };
 
-export const generateRDPACSettings = (methodSettings: RDPAC, datasetSize: number = 1400) => {
+export const generateRDPACSettings = (methodSettings: RDPAC, datasetSize: number = 1400): MethodSettingsResult => {
+  const validatedL = validateAndAdjustL(methodSettings?.L, datasetSize);
   const RDPACValueUpdates = {
-    PARAM_RDPAC_L: methodSettings?.L || datasetSize,
+    PARAM_RDPAC_L: validatedL.value,
     PARAM_RDPAC_P: methodSettings?.P,
     PARAM_RDPAC_PL: methodSettings?.PL,
     PARAM_RDPAC_K_START: methodSettings?.K_START,
@@ -76,22 +148,30 @@ export const generateRDPACSettings = (methodSettings: RDPAC, datasetSize: number
     PARAM_RDPAC_L_MULT: methodSettings?.L_MULT,
   };
 
-  return RDPACValueUpdates;
+  return {
+    settings: RDPACValueUpdates,
+    lAdjustments: [validatedL]
+  };
 };
 
-export const generateReckNNGraphSettings = (methodSettings: ReckNNGraph, datasetSize: number = 1400) => {
+export const generateReckNNGraphSettings = (methodSettings: ReckNNGraph, datasetSize: number = 1400): MethodSettingsResult => {
+  const validatedL = validateAndAdjustL(methodSettings?.L, datasetSize);
   const ReckNNGraphValueUpdates = {
-    PARAM_RECKNNGRAPH_L: methodSettings?.L || datasetSize.toString(),
+    PARAM_RECKNNGRAPH_L: validatedL.value,
     PARAM_RECKNNGRAPH_K: methodSettings?.K,
     PARAM_RECKNNGRAPH_EPSILON: methodSettings?.EPSILON,
   };
-  return ReckNNGraphValueUpdates;
+  return {
+    settings: ReckNNGraphValueUpdates,
+    lAdjustments: [validatedL]
+  };
 };
 
-export const generateRFESettings = (methodSettings: RFE, datasetSize: number = 1400): RFEConfigParams => {
+export const generateRFESettings = (methodSettings: RFE, datasetSize: number = 1400): MethodSettingsResult => {
+  const validatedL = validateAndAdjustL(methodSettings?.L, datasetSize);
   const RFEValueUpdates: RFEConfigParams = {
     PARAM_RFE_K: methodSettings?.K,
-    PARAM_RFE_T: methodSettings?.L || datasetSize,
+    PARAM_RFE_T: validatedL.value,
     PARAM_RFE_L: methodSettings?.T,
     PARAM_RFE_PA: methodSettings?.PA,
     PARAM_RFE_TH_CC: methodSettings?.TH_CC,
@@ -101,35 +181,50 @@ export const generateRFESettings = (methodSettings: RFE, datasetSize: number = 1
     PARAM_RFE_EMBEDDINGS_PATH: methodSettings?.EMBEDDINGS_PATH,
     PARAM_RFE_CCS_PATH: methodSettings?.CCS_PATH,
   };
-  return RFEValueUpdates;
+  return {
+    settings: RFEValueUpdates,
+    lAdjustments: [validatedL]
+  };
 };
 
-export const generateRKGraphSettings = (methodSettings: RKGraph, datasetSize: number = 1400): RKGraphConfigParams => {
+export const generateRKGraphSettings = (methodSettings: RKGraph, datasetSize: number = 1400): MethodSettingsResult => {
+  const validatedL = validateAndAdjustL(methodSettings?.L, datasetSize);
   const RKGraphValueUpdates: RKGraphConfigParams = {
     PARAM_RKGRAPH_K: methodSettings?.K,
     PARAM_RKGRAPH_T: methodSettings?.T,
     PARAM_RKGRAPH_P: methodSettings?.P,
-    PARAM_RKGRAPH_L: methodSettings?.L || datasetSize,
+    PARAM_RKGRAPH_L: validatedL.value,
   };
-  return RKGraphValueUpdates;
+  return {
+    settings: RKGraphValueUpdates,
+    lAdjustments: [validatedL]
+  };
 };
 
-export const generateRLSimSettings = (methodSettings: RLSim, datasetSize: number = 1400) => {
+export const generateRLSimSettings = (methodSettings: RLSim, datasetSize: number = 1400): MethodSettingsResult => {
+  const validatedTOPK = validateAndAdjustL(methodSettings?.TOPK, datasetSize);
   const RLSimValueUpdates: RLSimConfigParams = {
-    PARAM_RLSIM_TOPK: methodSettings?.TOPK || datasetSize,
+    PARAM_RLSIM_TOPK: validatedTOPK.value,
     PARAM_RLSIM_CK: methodSettings?.CK,
     PARAM_RLSIM_T: methodSettings?.T,
     PARAM_RLSIM_METRIC: methodSettings?.METRIC,
   };
-  return RLSimValueUpdates;
+  return {
+    settings: RLSimValueUpdates,
+    lAdjustments: [validatedTOPK]
+  };
 };
 
-export const generateRLRecomSettings = (methodSettings: RLRecom, datasetSize: number = 1400): RLRecomConfigParams => {
+export const generateRLRecomSettings = (methodSettings: RLRecom, datasetSize: number = 1400): MethodSettingsResult => {
+  const validatedL = validateAndAdjustL(methodSettings?.L, datasetSize);
   const RLRecomValueUpdates: RLRecomConfigParams = {
     PARAM_RLRECOM_K: methodSettings?.K,
-    PARAM_RLRECOM_L: methodSettings?.L || datasetSize,
+    PARAM_RLRECOM_L: validatedL.value,
     PARAM_RLRECOM_LAMBDA: methodSettings?.LAMBDA,
     PARAM_RLRECOM_EPSILON: methodSettings?.EPSILON,
   };
-  return RLRecomValueUpdates;
+  return {
+    settings: RLRecomValueUpdates,
+    lAdjustments: [validatedL]
+  };
 };
