@@ -144,8 +144,8 @@ export const getImageDetailsByLineNumbers = async (lineNumbers: number[], config
   }
 }
 
-export const getLineNumberByImageName = async (imageName: string): Promise<ImageNameLineMatch> => {
-  const endpointToGetLineNumber = `/teste/get-line-by-image-name/${imageName}`;
+export const getLineNumberByImageName = async (imageName: string, configFileName: string): Promise<ImageNameLineMatch> => {
+  let endpointToGetLineNumber = `/teste/get-line-by-image-name/${imageName}?configFile=${configFileName}`;
   try {
     const response = await udlfApi.get(endpointToGetLineNumber);
     return response.data as ImageNameLineMatch;

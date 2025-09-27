@@ -5,9 +5,9 @@ const isClient = typeof window !== 'undefined';
 // For server-side (SSR), use the Docker service name
 const getApiUrl = () => {
   if (isClient) {
-    // Running in browser - use localhost
+    // Running in browser - use environment variable or fallback to localhost
     console.log('process.env.NEXT_PUBLIC_URL_API_LOCAL', process.env.NEXT_PUBLIC_URL_API_LOCAL);
-    return 'http://localhost:8080';
+    return process.env.NEXT_PUBLIC_URL_API_LOCAL || 'http://localhost:8080';
   } else {
     console.log('process.env.NEXT_PUBLIC_URL_API_LOCAL', process.env.NEXT_PUBLIC_URL_API_LOCAL);
     // Running on server - use Docker service name

@@ -9,6 +9,7 @@ import {
   getLineNumberByImageName,
   getUDLFOutputFileByLine,
 } from "@/services/api/UDLF-api";
+import config from "@/services/api/config";
 import { Box, Card, CardHeader, CardMedia, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -19,13 +20,13 @@ export default function ImagePage() {
   const params = useParams();
   const router = useRouter();
   const { imagename, outputname } = params as { imagename: string; outputname: string };
-  
+
   // Extract config file name from output name
   // e.g., "output_ContextRR_3m172i0.ini.txt" -> "ContextRR_3m172i0.ini"
   const getConfigFileName = (outputName: string): string => {
     // Remove "output_" prefix and ".txt" suffix
-    const withoutPrefix = outputName.replace(/^output_/, '');
-    const withoutSuffix = withoutPrefix.replace(/\.txt$/, '');
+    const withoutPrefix = outputName.replace(/^output_/, "");
+    const withoutSuffix = withoutPrefix.replace(/\.txt$/, "");
     return withoutSuffix;
   };
 
@@ -39,7 +40,7 @@ export default function ImagePage() {
     const fetchLineNumber = async () => {
       try {
         console.log("Fetching line number for image:", imagename);
-        const lineInfo = await getLineNumberByImageName(imagename);
+        const lineInfo = await getLineNumberByImageName(imagename, configFileName);
         console.log("Fetched line info:", lineInfo);
         getListIndexesResultByLine(lineInfo.lineNumber);
       } catch (error) {
@@ -145,7 +146,7 @@ export default function ImagePage() {
                 <CardMedia
                   alt={`${imageKey}`}
                   component="img"
-                  image={`http://localhost:8080/image-file/${imageKey}?configFile=${configFileName}`}
+                  image={`${config.udlfApi}/image-file/${imageKey}?configFile=${configFileName}`}
                   sx={{
                     ...(aspectRatio === "square" && {
                       aspectRatio: "1 / 1",

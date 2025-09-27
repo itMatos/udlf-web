@@ -24,6 +24,7 @@ import Appbar from "@/components/Appbar";
 import type { lineContent } from "@/services/api/models";
 import { getAllClasses, getAllFilenames, getPaginatedListFilenames, getPaginatedListFilenamesByConfig } from "@/services/api/UDLF-api";
 import { IMAGES_PER_PAGE_DEFAULT } from "@/ts/constants/common";
+import config from "@/services/api/config";
 
 export default function Result() {
   const params = useParams();
@@ -239,7 +240,7 @@ export default function Result() {
                 <CardMedia
                   alt={`${imageName}`}
                   component="img"
-                  image={`http://localhost:8080/image-file/${imageName}?configFile=${configFileName}`}
+                  image={`${config.udlfApi}/image-file/${imageName}?configFile=${configFileName}`}
                   sx={{
                     ...(aspectRatio === "square" && {
                       aspectRatio: "1 / 1",
