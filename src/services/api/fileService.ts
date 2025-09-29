@@ -1,3 +1,4 @@
+import axios from 'axios';
 import config from './config';
 
 export interface FileLineCountResponse {
@@ -7,9 +8,14 @@ export interface FileLineCountResponse {
   error?: string;
 }
 
-export class FileService {
-  private static baseUrl = config.udlfApi;
+const api = axios.create({
+  baseURL: config.udlfApi,
+  headers: {
+    'ngrok-skip-browser-warning': 'true'
+  }
+});
 
+export class FileService {
   /**
    * Counts the number of lines in a file
    * @param filePath - The path to the file to count lines from
@@ -17,15 +23,9 @@ export class FileService {
    */
   static async countFileLines(filePath: string): Promise<FileLineCountResponse> {
     try {
-      const response = await fetch(`${this.baseUrl}/count-file-lines?filePath=${encodeURIComponent(filePath)}`);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      return data;
-    } catch (error) {
+      const response = await api.get<FileLineCountResponse>(`/count-file-lines?filePath=${encodeURIComponent(filePath)}`);
+      return response.data;
+    } catch (error: any) {
       console.error('Error counting file lines:', error);
       return {
         success: false,

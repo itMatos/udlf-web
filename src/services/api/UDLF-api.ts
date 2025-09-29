@@ -5,6 +5,9 @@ import type { ImageNameLineMatch, InputFileDetail, LineContentResponse } from '.
 
 const udlfApi = axios.create({
   baseURL: config.udlfApi,
+  headers: {
+    'ngrok-skip-browser-warning': 'true'
+  }
 });
 
 /**

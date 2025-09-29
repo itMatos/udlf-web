@@ -196,6 +196,9 @@ export default function FileExplorer({
 
   useEffect(() => {
     if (open) {
+      // Testar a conexão primeiro para debug
+      FileExplorerService.testConnection().catch(console.error);
+      
       loadDirectory("/app/Datasets");
       setSelectedDirectory(null); // Clear selection when opening
     }
