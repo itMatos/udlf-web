@@ -4,15 +4,18 @@ const isClient = typeof window !== 'undefined';
 // For client-side (browser), use localhost since the browser can't resolve Docker service names
 // For server-side (SSR), use the Docker service name
 const getApiUrl = () => {
+  let baseUrl;
+  
   if (isClient) {
     // Running in browser - use environment variable or fallback to localhost
-    console.log('process.env.NEXT_PUBLIC_URL_API_LOCAL', process.env.NEXT_PUBLIC_URL_API_LOCAL);
-    return process.env.NEXT_PUBLIC_URL_API_LOCAL || 'http://localhost:8080';
+    baseUrl = process.env.NEXT_PUBLIC_URL_API_LOCAL || 'http://localhost:8080';
   } else {
-    console.log('process.env.NEXT_PUBLIC_URL_API_LOCAL', process.env.NEXT_PUBLIC_URL_API_LOCAL);
     // Running on server - use Docker service name
-    return process.env.NEXT_PUBLIC_URL_API_LOCAL || 'http://api:8080';
+    baseUrl = process.env.NEXT_PUBLIC_URL_API_LOCAL || 'http://api:8080';
   }
+  
+  // Remove trailing slash to prevent double slashes when concatenating
+  return baseUrl.replace(/\/$/, '');
 };
 
 const config = {
