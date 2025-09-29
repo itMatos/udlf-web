@@ -7,8 +7,10 @@ const getApiUrl = () => {
   let baseUrl;
   
   if (isClient) {
-    // Running in browser - use environment variable or fallback to localhost
-    baseUrl = process.env.NEXT_PUBLIC_URL_API_LOCAL || 'http://localhost:8080';
+    // Running in browser - check for production ngrok URL first, then fallback to localhost
+    baseUrl = process.env.NEXT_PUBLIC_URL_API_PRODUCTION || 
+              process.env.NEXT_PUBLIC_URL_API_LOCAL || 
+              'http://localhost:8080';
   } else {
     // Running on server - use Docker service name
     baseUrl = process.env.NEXT_PUBLIC_URL_API_LOCAL || 'http://api:8080';
