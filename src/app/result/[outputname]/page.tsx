@@ -38,8 +38,8 @@ export default function Result() {
   // e.g., "output_ContextRR_3m172i0.ini.txt" -> "ContextRR_3m172i0.ini"
   const getConfigFileName = (outputName: string): string => {
     // Remove "output_" prefix and ".txt" suffix
-    const withoutPrefix = outputName.replace(/^output_/, '');
-    const withoutSuffix = withoutPrefix.replace(/\.txt$/, '');
+    const withoutPrefix = outputName.replace(/^output_/, "");
+    const withoutSuffix = withoutPrefix.replace(/\.txt$/, "");
     return withoutSuffix;
   };
 
@@ -60,9 +60,12 @@ export default function Result() {
         setIsLoading(true);
         setIsError(false);
         setErrorMessage("");
-        
+        console.log("Fetching image names for output:", outputname);
+
         // Use the config-specific route for better performance
+        console.log("configFileName:", configFileName);
         const imageName = await getPaginatedListFilenamesByConfig(configFileName, page, pageSize);
+
         setTotalPages(imageName.totalPages);
         setImagesCurrentPage(imageName.items);
         console.log("Fetched image names:", imageName.items);
@@ -167,15 +170,15 @@ export default function Result() {
         </Box>
 
         {isLoading && (
-          <Box 
-            sx={{ 
-              width: "100%", 
-              display: "flex", 
-              flexDirection: "column", 
-              alignItems: "center", 
-              justifyContent: "center", 
+          <Box
+            sx={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
               py: 4,
-              gap: 2
+              gap: 2,
             }}
           >
             <CircularProgress size={40} />
@@ -190,17 +193,17 @@ export default function Result() {
         )}
 
         {isError && (
-          <Box 
-            sx={{ 
-              display: "flex", 
-              flexDirection: "column", 
-              alignItems: "center", 
-              justifyContent: "center", 
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
               py: 4,
               gap: 2,
               backgroundColor: "error.light",
               borderRadius: 2,
-              mx: 2
+              mx: 2,
             }}
           >
             <Typography variant="h6" color="error">
@@ -209,11 +212,7 @@ export default function Result() {
             <Typography variant="body2" color="text.secondary">
               {errorMessage}
             </Typography>
-            <Button 
-              variant="contained" 
-              color="primary" 
-              onClick={() => window.location.reload()}
-            >
+            <Button variant="contained" color="primary" onClick={() => window.location.reload()}>
               Try Again
             </Button>
           </Box>
@@ -229,50 +228,50 @@ export default function Result() {
             }}
           >
             {imagesCurrentPage.map((image) => {
-            const imageName = image.fileInputNameLine;
-            return (
-              <Card
-                key={image.fileInputNameLine}
-                sx={{ p: 1, m: 2, width: 150, cursor: "pointer" }}
-                onClick={() => router.push(`/result/${outputname}/${imageName}`)}
-              >
-                <CardHeader subheader={`${imageName}`} />
-                <CardMedia
-                  alt={`${imageName}`}
-                  component="img"
-                  image={`${config.udlfApi}/image-file/${imageName}?configFile=${configFileName}`}
-                  sx={{
-                    ...(aspectRatio === "square" && {
-                      aspectRatio: "1 / 1",
-                      objectFit: "cover",
-                      height: 150,
-                    }),
-                  }}
-                />
-              </Card>
-            );
-          })}
+              const imageName = image.fileInputNameLine;
+              return (
+                <Card
+                  key={image.fileInputNameLine}
+                  sx={{ p: 1, m: 2, width: 150, cursor: "pointer" }}
+                  onClick={() => router.push(`/result/${outputname}/${imageName}`)}
+                >
+                  <CardHeader subheader={`${imageName}`} />
+                  <CardMedia
+                    alt={`${imageName}`}
+                    component="img"
+                    image={`${config.udlfApi}/image-file/${imageName}?configFile=${configFileName}`}
+                    sx={{
+                      ...(aspectRatio === "square" && {
+                        aspectRatio: "1 / 1",
+                        objectFit: "cover",
+                        height: 150,
+                      }),
+                    }}
+                  />
+                </Card>
+              );
+            })}
           </Box>
         )}
 
         {/* Pagination and Page Size Selector */}
         {!isLoading && !isError && (
           <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", mt: 4, mb: 2, gap: 2 }}>
-          <Pagination color="primary" count={totalPages} onChange={handlePageChange} page={page} />
-          <FormControl size="small" sx={{ m: 1, minWidth: 120 }}>
-            <InputLabel id="page-size-select-label">Items per page</InputLabel>
-            <Select
-              id="page-size-select"
-              label="Items per page"
-              labelId="page-size-select-label"
-              onChange={(e) => handlePageSizeChange(e)}
-              value={pageSize.toString()}
-            >
-              <MenuItem value={25}>25</MenuItem>
-              <MenuItem value={50}>50</MenuItem>
-              <MenuItem value={100}>100</MenuItem>
-            </Select>
-          </FormControl>
+            <Pagination color="primary" count={totalPages} onChange={handlePageChange} page={page} />
+            <FormControl size="small" sx={{ m: 1, minWidth: 120 }}>
+              <InputLabel id="page-size-select-label">Items per page</InputLabel>
+              <Select
+                id="page-size-select"
+                label="Items per page"
+                labelId="page-size-select-label"
+                onChange={(e) => handlePageSizeChange(e)}
+                value={pageSize.toString()}
+              >
+                <MenuItem value={25}>25</MenuItem>
+                <MenuItem value={50}>50</MenuItem>
+                <MenuItem value={100}>100</MenuItem>
+              </Select>
+            </FormControl>
           </Box>
         )}
       </Box>
