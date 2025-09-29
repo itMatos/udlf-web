@@ -18,7 +18,9 @@ const makeRequest = async <T>(endpoint: string): Promise<T> => {
 
 export const FileExplorerService = {
   listDirectory: (path?: string): Promise<DirectoryListResponse> => {
+    console.log('listDirectory', path);
     const queryParam = path ? `?path=${encodeURIComponent(path)}` : '';
+    console.log('queryParam', queryParam);
     return makeRequest<DirectoryListResponse>(`/api/directory/list${queryParam}`);
   },
 
