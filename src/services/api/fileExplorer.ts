@@ -1,18 +1,15 @@
+import axios from 'axios';
 import type { AvailablePathsResponse, DirectoryListResponse, SearchResponse } from '@/ts/types/fileExplorer';
 import config from './config';
 
-const API_BASE_URL = config.udlfApi;
+const udlfApi = axios.create({
+  baseURL: config.udlfApi,
+});
 
 const makeRequest = async <T>(endpoint: string): Promise<T> => {
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`);
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
+    const response = await udlfApi.get<T>(endpoint);
+    return response.data;
   } catch (error) {
     console.error('API request failed:', error);
     throw error;
