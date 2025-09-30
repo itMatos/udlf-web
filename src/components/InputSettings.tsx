@@ -56,6 +56,28 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
     handleChange("inputFiles", updatedFiles);
   };
 
+  // Function to automatically map dataset directories to their image subdirectories
+  const mapDatasetToImagePath = (selectedPath: string): string => {
+    // Extract the last directory name from the path
+    const pathParts = selectedPath.split('/');
+    const datasetName = pathParts[pathParts.length - 1];
+    
+    // Mapping for known datasets
+    const datasetMapping: Record<string, string> = {
+      'mpeg7': '/original',
+      'corel5k': '/corel5k_images',
+      'oxford17flowers': '/jpg',
+    };
+    
+    // If it's a known dataset, append the appropriate image subdirectory
+    if (datasetMapping[datasetName]) {
+      return selectedPath + datasetMapping[datasetName];
+    }
+    
+    // If no mapping found, return the original path
+    return selectedPath;
+  };
+
   const handleFileExplorerSelect = (filePath: string, fieldId?: number) => {
     if (fieldId !== undefined) {
       // Update specific file field
@@ -64,6 +86,13 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
       // This will be used for other file fields like inputFileList, inputFileClasses, etc.
       console.log("File selected from explorer:", filePath);
     }
+  };
+
+  const handleDatasetImagesPathSelect = (filePath: string) => {
+    // Apply automatic mapping for dataset images path
+    const mappedPath = mapDatasetToImagePath(filePath);
+    console.log(`Dataset path mapped: ${filePath} -> ${mappedPath}`);
+    handleChange("datasetImagesPath", mappedPath);
   };
 
   // TODO: botao de add deve estar desabilitado se algum campo de input estiver vazio
@@ -210,9 +239,7 @@ export default function InputSettings({ onSettingsChange }: InputSettingsProps) 
           <FileExplorer
             allowDirectorySelection={true}
             fileExtensions={[]}
-            onFileSelect={(filePath) => {
-              handleChange("datasetImagesPath", filePath);
-            }}
+            onFileSelect={handleDatasetImagesPathSelect}
           />
         </Box>
       </Box>
