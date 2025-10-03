@@ -1,7 +1,7 @@
 import { OutputFormatType } from "../types/output";
 
 export const DEFAULT_OUTPUT_SETTINGS = {
-  enabledOutput: false,
+  enabledOutput: true,
   outputFileFormat: "RANKEDLIST_NUMERIC" as OutputFormatType,
   outputFileName: "",
 } as const;
