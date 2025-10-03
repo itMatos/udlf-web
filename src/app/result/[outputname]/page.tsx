@@ -7,7 +7,12 @@ import {
   CardHeader,
   CardMedia,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
+  IconButton,
   InputLabel,
   LinearProgress,
   MenuItem,
@@ -17,12 +22,14 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import TerminalIcon from "@mui/icons-material/Terminal";
 import { useParams, useRouter } from "next/navigation";
 import React from "react";
 import { useEffect, useState } from "react";
 import Appbar from "@/components/Appbar";
 import type { lineContent } from "@/services/api/models";
-import { getAllClasses, getAllFilenames, getPaginatedListFilenames, getPaginatedListFilenamesByConfig } from "@/services/api/UDLF-api";
+import { getAllClasses, getAllFilenames, getPaginatedListFilenames, getPaginatedListFilenamesByConfig, getLogFileContent } from "@/services/api/UDLF-api";
 import { IMAGES_PER_PAGE_DEFAULT } from "@/ts/constants/common";
 import config from "@/services/api/config";
 
@@ -53,6 +60,11 @@ export default function Result() {
   const [imagesCurrentPage, setImagesCurrentPage] = useState<lineContent[]>([]);
   const [aspectRatio, setAspectRatio] = useState<"original" | "square">("square");
   const [inputImageNames, setInputImageNames] = useState<string[]>([]);
+
+  // Log dialog states
+  const [logDialogOpen, setLogDialogOpen] = useState<boolean>(false);
+  const [logContent, setLogContent] = useState<string>("");
+  const [logLoading, setLogLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchImageNames = async () => {
@@ -122,19 +134,44 @@ export default function Result() {
     setAspectRatio(event.target.value as "original" | "square");
   };
 
+  const handleOpenLogDialog = async () => {
+    setLogDialogOpen(true);
+    setLogLoading(true);
+    try {
+      const content = await getLogFileContent(configFileName);
+      setLogContent(content);
+    } catch (error) {
+      console.error("Error fetching log content:", error);
+      setLogContent("Error loading log file. Please try again later.");
+    } finally {
+      setLogLoading(false);
+    }
+  };
+
+  const handleCloseLogDialog = () => {
+    setLogDialogOpen(false);
+    setLogContent("");
+  };
+
   return (
     <React.Fragment>
       <Appbar />
       <Box sx={{ mb: 4, mx: 1 }}>
-        <Typography variant="h6">
-          Results for:
-          <Typography component="span" style={{ fontWeight: "bold" }} variant="h6">
-            {` ${outputname}`}
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 2 }}>
+          <Typography variant="h6">
+            Results for:
+            <Typography component="span" style={{ fontWeight: "bold" }} variant="h6">
+              {` ${outputname}`}
+            </Typography>
+            <Typography component="div" style={{ fontWeight: "normal" }} variant="h6">
+              Select or search an input image to view similar images.
+            </Typography>
           </Typography>
-          <Typography component="div" style={{ fontWeight: "normal" }} variant="h6">
-            Select or search an input image to view similar images.
-          </Typography>
-        </Typography>
+
+          <Button startIcon={<TerminalIcon />} variant="outlined" onClick={handleOpenLogDialog} sx={{ minWidth: "auto", flexShrink: 0 }}>
+            View Log
+          </Button>
+        </Box>
 
         <Box sx={{ my: 2, mx: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Box sx={{ my: 2, display: "flex", alignItems: "center" }}>
@@ -275,6 +312,60 @@ export default function Result() {
           </Box>
         )}
       </Box>
+
+      {/* Log Dialog */}
+      <Dialog
+        open={logDialogOpen}
+        onClose={handleCloseLogDialog}
+        maxWidth="lg"
+        fullWidth
+        PaperProps={{
+          sx: {
+            height: "80vh",
+            maxHeight: "80vh",
+          },
+        }}
+      >
+        <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <Typography variant="h6" component="div">
+            Execution Log - {configFileName}
+          </Typography>
+          <IconButton aria-label="close" onClick={handleCloseLogDialog} sx={{ color: (theme) => theme.palette.grey[500] }}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+
+        <DialogContent dividers sx={{ padding: 0 }}>
+          {logLoading ? (
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: 200 }}>
+              <CircularProgress />
+            </Box>
+          ) : (
+            <Box
+              component="pre"
+              sx={{
+                fontFamily: "monospace",
+                fontSize: "0.875rem",
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
+                padding: 2,
+                margin: 0,
+                backgroundColor: "#f5f5f5",
+                height: "100%",
+                overflow: "auto",
+              }}
+            >
+              {logContent}
+            </Box>
+          )}
+        </DialogContent>
+
+        <DialogActions sx={{ padding: 2 }}>
+          <Button onClick={handleCloseLogDialog} variant="outlined">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </React.Fragment>
   );
 }
