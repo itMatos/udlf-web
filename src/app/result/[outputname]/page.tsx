@@ -19,11 +19,15 @@ import {
   Pagination,
   Select,
   SelectChangeEvent,
+  Tab,
+  Tabs,
   TextField,
   Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import TerminalIcon from "@mui/icons-material/Terminal";
+import AssessmentIcon from "@mui/icons-material/Assessment";
+import { BarChart } from "@mui/x-charts/BarChart";
 import { useParams, useRouter } from "next/navigation";
 import React from "react";
 import { useEffect, useState } from "react";
@@ -65,6 +69,14 @@ export default function Result() {
   const [logDialogOpen, setLogDialogOpen] = useState<boolean>(false);
   const [logContent, setLogContent] = useState<string>("");
   const [logLoading, setLogLoading] = useState<boolean>(false);
+  const [tabValue, setTabValue] = useState<number>(0);
+
+  // Evaluation data states
+  const [evaluationData, setEvaluationData] = useState<{
+    before: { [key: string]: number };
+    after: { [key: string]: number };
+    relativeGains: { [key: string]: number };
+  } | null>(null);
 
   useEffect(() => {
     const fetchImageNames = async () => {
@@ -140,6 +152,7 @@ export default function Result() {
     try {
       const content = await getLogFileContent(configFileName);
       setLogContent(content);
+      parseEvaluationData(content);
     } catch (error) {
       console.error("Error fetching log content:", error);
       setLogContent("Error loading log file. Please try again later.");
@@ -151,10 +164,166 @@ export default function Result() {
   const handleCloseLogDialog = () => {
     setLogDialogOpen(false);
     setLogContent("");
+    setEvaluationData(null);
+    setTabValue(0);
+  };
+
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
+
+  const parseEvaluationData = (logContent: string) => {
+    try {
+      const lines = logContent.split("\n");
+      let beforeSection = false;
+      let afterSection = false;
+      let relativeGainsSection = false;
+
+      const before: { [key: string]: number } = {};
+      const after: { [key: string]: number } = {};
+      const relativeGains: { [key: string]: number } = {};
+
+      for (const line of lines) {
+        const trimmedLine = line.trim();
+
+        // Identify sections
+        if (trimmedLine === "Before:") {
+          beforeSection = true;
+          afterSection = false;
+          relativeGainsSection = false;
+          continue;
+        } else if (trimmedLine === "After:") {
+          beforeSection = false;
+          afterSection = true;
+          relativeGainsSection = false;
+          continue;
+        } else if (trimmedLine === "Relative Gains:") {
+          beforeSection = false;
+          afterSection = false;
+          relativeGainsSection = true;
+          continue;
+        }
+
+        // Parse data lines
+        const match = trimmedLine.match(/^(P@\d+|Recall@\d+|MAP)\s+(-?\d+\.\d+)(%?)$/);
+        if (match) {
+          const [, metric, value, isPercent] = match;
+          const numValue = parseFloat(value);
+
+          if (beforeSection) {
+            before[metric] = numValue;
+          } else if (afterSection) {
+            after[metric] = numValue;
+          } else if (relativeGainsSection) {
+            relativeGains[metric] = numValue;
+          }
+        }
+      }
+
+      if (Object.keys(before).length > 0 || Object.keys(after).length > 0 || Object.keys(relativeGains).length > 0) {
+        setEvaluationData({ before, after, relativeGains });
+      }
+    } catch (error) {
+      console.error("Error parsing evaluation data:", error);
+    }
+  };
+
+  const renderEffectivenessChart = () => {
+    if (!evaluationData || (!Object.keys(evaluationData.before).length && !Object.keys(evaluationData.after).length)) {
+      return (
+        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: 300 }}>
+          <Typography variant="body1">No effectiveness data available for visualization</Typography>
+        </Box>
+      );
+    }
+
+    const allMetrics = Object.keys(evaluationData.before);
+
+    // Separate P@N and Recall@N metrics
+    const pMetrics = allMetrics.filter((metric) => metric.startsWith("P@"));
+    const recallMetrics = allMetrics.filter((metric) => metric.startsWith("Recall@"));
+    const mapMetrics = allMetrics.filter((metric) => metric === "MAP");
+
+    const renderChart = (metrics: string[], title: string, containerHeight: number = 400) => {
+      if (metrics.length === 0) return null;
+
+      const beforeData = metrics.map((metric) => evaluationData.before[metric] || 0);
+      const afterData = metrics.map((metric) => evaluationData.after[metric] || 0);
+
+      return (
+        <Box sx={{ height: containerHeight, p: 2, mb: 3 }}>
+          <Typography variant="h6" sx={{ mb: 2, textAlign: "center" }}>
+            {title}
+          </Typography>
+          <BarChart
+            width={800}
+            height={containerHeight - 80}
+            series={[
+              { data: beforeData, label: "Before", id: `before-${title}`, color: "#1976d2" },
+              { data: afterData, label: "After", id: `after-${title}`, color: "#42a5f5" },
+            ]}
+            xAxis={[{ data: metrics, scaleType: "band" }]}
+            margin={{ top: 20, bottom: 80, left: 60, right: 20 }}
+          />
+        </Box>
+      );
+    };
+
+    return (
+      <Box sx={{ p: 2, overflow: "auto" }}>
+        <Typography variant="h5" sx={{ mb: 3, textAlign: "center", fontWeight: "bold" }}>
+          Effectiveness: Before vs After
+        </Typography>
+
+        {/* Precision Charts */}
+        {renderChart(pMetrics, "Precision Metrics (P@N)", 400)}
+
+        {/* Recall Charts */}
+        {renderChart(recallMetrics, "Recall Metrics (Recall@N)", 400)}
+
+        {/* MAP Chart */}
+        {renderChart(mapMetrics, "Mean Average Precision (MAP)", 300)}
+      </Box>
+    );
+  };
+
+  const renderRelativeGainsChart = () => {
+    if (!evaluationData || !Object.keys(evaluationData.relativeGains).length) {
+      return (
+        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: 300 }}>
+          <Typography variant="body1">No relative gains data available for visualization</Typography>
+        </Box>
+      );
+    }
+
+    const metrics = Object.keys(evaluationData.relativeGains);
+    const gainsData = metrics.map((metric) => evaluationData.relativeGains[metric]);
+
+    return (
+      <Box sx={{ height: 400, p: 2 }}>
+        <Typography variant="h6" sx={{ mb: 2, textAlign: "center" }}>
+          Relative Gains (%)
+        </Typography>
+        <BarChart
+          width={800}
+          height={350}
+          series={[
+            {
+              data: gainsData,
+              label: "Relative Gains (%)",
+              id: "gains",
+              color: "#4caf50",
+            },
+          ]}
+          xAxis={[{ data: metrics, scaleType: "band" }]}
+          margin={{ top: 20, bottom: 100, left: 60, right: 20 }}
+        />
+      </Box>
+    );
   };
 
   return (
-    <React.Fragment>
+    <Box>
       <Appbar />
       <Box sx={{ mb: 4, mx: 1 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 2 }}>
@@ -317,12 +486,12 @@ export default function Result() {
       <Dialog
         open={logDialogOpen}
         onClose={handleCloseLogDialog}
-        maxWidth="lg"
+        maxWidth="xl"
         fullWidth
         PaperProps={{
           sx: {
-            height: "80vh",
-            maxHeight: "80vh",
+            height: "90vh",
+            maxHeight: "90vh",
           },
         }}
       >
@@ -341,21 +510,61 @@ export default function Result() {
               <CircularProgress />
             </Box>
           ) : (
-            <Box
-              component="pre"
-              sx={{
-                fontFamily: "monospace",
-                fontSize: "0.875rem",
-                whiteSpace: "pre-wrap",
-                wordBreak: "break-word",
-                padding: 2,
-                margin: 0,
-                backgroundColor: "#f5f5f5",
-                height: "100%",
-                overflow: "auto",
-              }}
-            >
-              {logContent}
+            <Box sx={{ height: "100%" }}>
+              <Tabs value={tabValue} onChange={handleTabChange} sx={{ borderBottom: 1, borderColor: "divider" }}>
+                {[
+                  <Tab key="raw-log" icon={<TerminalIcon />} iconPosition="start" label="Raw Log" id="tab-0" aria-controls="tabpanel-0" />,
+                  ...(evaluationData
+                    ? [
+                        <Tab
+                          key="effectiveness"
+                          icon={<AssessmentIcon />}
+                          iconPosition="start"
+                          label="Effectiveness Chart"
+                          id="tab-1"
+                          aria-controls="tabpanel-1"
+                        />,
+                        <Tab key="gains" icon={<AssessmentIcon />} iconPosition="start" label="Relative Gains Chart" id="tab-2" aria-controls="tabpanel-2" />,
+                      ]
+                    : []),
+                ]}
+              </Tabs>
+
+              {/* Raw Log Tab */}
+              <Box role="tabpanel" hidden={tabValue !== 0} id="tabpanel-0" aria-labelledby="tab-0" sx={{ height: "calc(100% - 48px)" }}>
+                {tabValue === 0 && (
+                  <Box
+                    component="pre"
+                    sx={{
+                      fontFamily: "monospace",
+                      fontSize: "0.875rem",
+                      whiteSpace: "pre-wrap",
+                      wordBreak: "break-word",
+                      padding: 2,
+                      margin: 0,
+                      backgroundColor: "#f5f5f5",
+                      height: "100%",
+                      overflow: "auto",
+                    }}
+                  >
+                    {logContent}
+                  </Box>
+                )}
+              </Box>
+
+              {/* Effectiveness Chart Tab */}
+              {evaluationData && (
+                <Box role="tabpanel" hidden={tabValue !== 1} id="tabpanel-1" aria-labelledby="tab-1" sx={{ height: "calc(100% - 48px)", overflow: "auto" }}>
+                  {tabValue === 1 && renderEffectivenessChart()}
+                </Box>
+              )}
+
+              {/* Relative Gains Chart Tab */}
+              {evaluationData && (
+                <Box role="tabpanel" hidden={tabValue !== 2} id="tabpanel-2" aria-labelledby="tab-2" sx={{ height: "calc(100% - 48px)", overflow: "auto" }}>
+                  {tabValue === 2 && renderRelativeGainsChart()}
+                </Box>
+              )}
             </Box>
           )}
         </DialogContent>
@@ -366,6 +575,6 @@ export default function Result() {
           </Button>
         </DialogActions>
       </Dialog>
-    </React.Fragment>
+    </Box>
   );
 }
