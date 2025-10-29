@@ -1,19 +1,18 @@
 import { UDLF_METHODS } from '../constants/common';
-import { BFSTREE_DEFAULT_PARAMS } from '../constants/methods/bfstree';
-import { CONTEXTRR_DEFAULT_PARAMS } from '../constants/methods/contextrr';
-import { CORGRAPH_DEFAULT_PARAMS } from '../constants/methods/corgraph';
-import { CPRR_DEFAULT_PARAMS } from '../constants/methods/cprr';
-import { LHRR_DEFAULT_PARAMS } from '../constants/methods/lhrr';
-import { RDPAC_DEFAULT_PARAMS } from '../constants/methods/rdpac';
-import { RECKNNGRAPH_DEFAULT_PARAMS } from '../constants/methods/recknngraph';
-import { RFE_DEFAULT_PARAMS } from '../constants/methods/rfe';
-import { RKGRAPH_DEFAULT_PARAMS } from '../constants/methods/rkgraph';
-import { RLRECOM_DEFAULT_PARAMS } from '../constants/methods/rkrecom';
-import { RLSIM_DEFAULT_PARAMS } from '../constants/methods/rlsim';
-import type { CorGraph } from '../interfaces/methods/corgraph';
-import type { RLSim } from '../interfaces/methods/rlsim';
+import { BFSTREE_DEFAULT_PARAMS } from '../constants/methods-default-params/bfstree';
+import { CONTEXTRR_DEFAULT_PARAMS } from '../constants/methods-default-params/contextrr';
+import { CORGRAPH_DEFAULT_PARAMS } from '../constants/methods-default-params/corgraph';
+import { CPRR_DEFAULT_PARAMS } from '../constants/methods-default-params/cprr';
+import { LHRR_DEFAULT_PARAMS } from '../constants/methods-default-params/lhrr';
+import { RDPAC_DEFAULT_PARAMS } from '../constants/methods-default-params/rdpac';
+import { RECKNNGRAPH_DEFAULT_PARAMS } from '../constants/methods-default-params/recknngraph';
+import { RFE_DEFAULT_PARAMS } from '../constants/methods-default-params/rfe';
+import { RKGRAPH_DEFAULT_PARAMS } from '../constants/methods-default-params/rkgraph';
+import { RLRECOM_DEFAULT_PARAMS } from '../constants/methods-default-params/rkrecom';
+import { RLSIM_DEFAULT_PARAMS } from '../constants/methods-default-params/rlsim';
 import type { BFSTree } from './methods/bfstree';
 import type { ContextRR } from './methods/contextrr';
+import type { CorGraph } from './methods/corgraph';
 import type { CPRR } from './methods/cprr';
 import type { LHRR } from './methods/lhrr';
 import type { RDPAC } from './methods/rdpac';
@@ -21,6 +20,7 @@ import type { ReckNNGraph } from './methods/recknngraph';
 import type { RFE } from './methods/rfe';
 import type { RKGraph } from './methods/rkgraph';
 import type { RLRecom } from './methods/rlrecom';
+import type { RLSim } from './methods/rlsim';
 
 export type Method =
   | 'ContextRR'

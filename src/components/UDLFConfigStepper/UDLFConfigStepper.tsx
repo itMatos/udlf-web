@@ -5,7 +5,7 @@ import { useCallback, useMemo, useState } from "react";
 import { uploadUDLFConfig } from "@/services/api/UDLF-api";
 import { STEPS, StepIndex, UDLF_METHODS } from "@/ts/constants/common";
 import { DEFAULT_INPUT_SETTINGS } from "@/ts/constants/input";
-import { CONTEXTRR_DEFAULT_PARAMS } from "@/ts/constants/methods/contextrr";
+import { CONTEXTRR_DEFAULT_PARAMS } from "@/ts/constants/methods-default-params/contextrr";
 import { DEFAULT_OUTPUT_SETTINGS } from "@/ts/constants/output";
 import type { InputSettingsData } from "@/ts/types/input";
 import type { Method } from "@/ts/types/methods";

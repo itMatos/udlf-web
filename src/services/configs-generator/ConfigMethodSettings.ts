@@ -1,7 +1,6 @@
-import type { BFSTree } from '@/ts/interfaces/methods/bfstree';
-import type { CorGraph } from '@/ts/interfaces/methods/corgraph';
-import type { RLSim, RLSimConfigParams } from '@/ts/interfaces/methods/rlsim';
+import type { BFSTree } from '@/ts/types/methods/bfstree';
 import type { ContextRR } from '@/ts/types/methods/contextrr';
+import type { CorGraph } from '@/ts/types/methods/corgraph';
 import type { CPRR } from '@/ts/types/methods/cprr';
 import type { LHRR } from '@/ts/types/methods/lhrr';
 import type { RDPAC } from '@/ts/types/methods/rdpac';
@@ -9,6 +8,7 @@ import type { ReckNNGraph } from '@/ts/types/methods/recknngraph';
 import type { RFE, RFEConfigParams } from '@/ts/types/methods/rfe';
 import type { RKGraph, RKGraphConfigParams } from '@/ts/types/methods/rkgraph';
 import type { RLRecom, RLRecomConfigParams } from '@/ts/types/methods/rlrecom';
+import type { RLSim, RLSimConfigParams } from '@/ts/types/methods/rlsim';
 
 /**
  * Result of L parameter validation

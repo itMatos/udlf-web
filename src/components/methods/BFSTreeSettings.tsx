@@ -1,5 +1,5 @@
 import { Box, MenuItem, TextField } from "@mui/material";
-import type { BFSTree, BFSTreeSettingsProps } from "@/ts/interfaces/methods/bfstree";
+import type { BFSTree, BFSTreeSettingsProps } from "@/ts/types/methods/bfstree";
 
 export default function BFSTreeSettings({ settings, setSettings }: BFSTreeSettingsProps) {
   const handleSettingChange = (field: keyof BFSTree) => (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,7 +1,7 @@
 import type { EvaluationSettingsData } from '@/ts/interfaces';
-import type { InputSettingsData } from '@/ts/types/input';
-import type { OutputSettingsData } from '@/ts/interfaces/output';
 import type { BaseConfigType, ConfigSectionType } from '@/ts/types/config-generator';
+import type { InputSettingsData } from '@/ts/types/input';
+import type { OutputSettingsData } from '@/ts/types/output';
 import { calculateDatasetSize } from './datasetSizeCalculator';
 
 /**
