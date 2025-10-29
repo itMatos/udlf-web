@@ -76,8 +76,6 @@ export default function UDLFConfigStepper() {
     [inputSettings, outputSettings, evaluationSettings, isInputSettingsComplete]
   );
 
-  const stepTitle = useMemo(() => ["Select method", "Input settings", "Output settings", "Evaluation settings", "Summary"], []);
-
   const uploadAndRedirect = useCallback(
     async (file: Blob, fileName: string) => {
       try {
@@ -181,7 +179,6 @@ export default function UDLFConfigStepper() {
       </Stepper>
 
       <Box sx={{ mt: 4, mb: 2, width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <Typography sx={{ mb: 2 }}>{stepTitle[activeStep]}</Typography>
         <Box
           sx={{
             width: "100%",
@@ -197,9 +194,11 @@ export default function UDLFConfigStepper() {
         </Box>
 
         <Box sx={{ display: "flex", pt: 2, width: "100%", maxWidth: "500px", mt: "auto" }}>
-          <Button color="inherit" disabled={activeStep === 0} onClick={prevStep} sx={{ mr: 1 }}>
-            Back
-          </Button>
+          {activeStep !== 0 && (
+            <Button color="inherit" disabled={activeStep === 0} onClick={prevStep} sx={{ mr: 1 }}>
+              Back
+            </Button>
+          )}
           <Box sx={{ flex: "1 1 auto" }} />
           {isStepOptional(activeStep) && (
             <Button color="inherit" onClick={skipStep} sx={{ mr: 1 }}>

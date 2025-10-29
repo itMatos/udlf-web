@@ -2,12 +2,22 @@
 import AddIcon from "@mui/icons-material/Add";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import { Box, Button, Card, CardActionArea, CardActions, CardContent, Typography } from "@mui/material";
+import { Box, Button, Card, CardActionArea, CardActions, CardContent, Container, Typography } from "@mui/material";
 import Appbar from "@/components/Appbar";
+import { useRouter } from "next/navigation";
 
 export default function Homepage() {
+  const router = useRouter();
+  const goToCreateConfig = () => {
+    router.push("/create-config");
+  };
+
+  const goToLoadConfig = () => {
+    router.push("/load-config");
+  };
+
   return (
-    <>
+    <Container maxWidth="xl" disableGutters>
       <Appbar />
       <Box
         sx={{
@@ -35,7 +45,7 @@ export default function Homepage() {
             },
           }}
         >
-          <CardActionArea component="a" href="/get-started">
+          <CardActionArea component="a" onClick={() => goToCreateConfig()}>
             <CardContent sx={{ textAlign: "center", py: 3 }}>
               <AddIcon sx={{ fontSize: 48, color: "primary.main", mb: 2 }} />
               <Typography component="h2" gutterBottom variant="h5">
@@ -73,7 +83,7 @@ export default function Homepage() {
             },
           }}
         >
-          <CardActionArea component="a" href="/load-config">
+          <CardActionArea component="a" onClick={() => goToLoadConfig()}>
             <CardContent sx={{ textAlign: "center", py: 3 }}>
               <PlayArrowIcon sx={{ fontSize: 48, color: "secondary.main", mb: 2 }} />
               <Typography component="h2" gutterBottom variant="h5">
@@ -100,6 +110,6 @@ export default function Homepage() {
           </CardActionArea>
         </Card>
       </Box>
-    </>
+    </Container>
   );
 }
