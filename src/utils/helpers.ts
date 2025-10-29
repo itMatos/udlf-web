@@ -1,3 +1,5 @@
+import { InputFileField } from "@/ts/types/input";
+
 export const generateUniqueId = () => {
   const id = Math.random().toString(36).substring(2, 9);
   return id;
@@ -64,3 +66,9 @@ export const countFileLinesFromUrl = async (fileUrl: string): Promise<number> =>
     throw error;
   }
 };
+
+/** Creates a new InputFileField object
+ * @param value - The value of the input file field
+ * @returns InputFileField - The created InputFileField object
+ */
+export const createNewFileField = (value = ""): InputFileField => ({ id: Date.now() + Math.random(), value });

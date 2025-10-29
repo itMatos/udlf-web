@@ -6,7 +6,7 @@ import { STEPS, UDLF_METHODS } from "@/ts/constants/common";
 import { DEFAULT_INPUT_SETTINGS } from "@/ts/constants/input";
 import { CONTEXTRR_DEFAULT_PARAMS } from "@/ts/constants/methods/contextrr";
 import { DEFAULT_OUTPUT_SETTINGS } from "@/ts/constants/output";
-import type { InputSettingsData } from "@/ts/interfaces/input";
+import type { InputSettingsData } from "@/ts/types/input";
 import type { BFSTree } from "@/ts/interfaces/methods/bfstree";
 import type { ContextRR } from "@/ts/interfaces/methods/contextrr";
 import type { CorGraph } from "@/ts/interfaces/methods/corgraph";
@@ -54,7 +54,7 @@ export default function UDLFConfigStepper() {
       case 0:
         return true;
       case 1:
-        return true;
+        return isInputSettingsComplete();
       case 2:
         return !!outputSettings;
       case 3:
@@ -99,6 +99,20 @@ export default function UDLFConfigStepper() {
       newSkipped.add(activeStep);
       return newSkipped;
     });
+  };
+
+  const isInputSettingsComplete = (): boolean => {
+    if (!inputSettings) return false;
+    if (inputSettings.inputFiles.length === 0) return false;
+    if (inputSettings.inputFileList.trim() === "") return false;
+    if (inputSettings.inputFileClasses.trim() === "") return false;
+    if (inputSettings.datasetImagesPath.trim() === "") return false;
+    for (const file of inputSettings.inputFiles) {
+      if (!file || file.trim() === "") {
+        return false;
+      }
+    }
+    return true;
   };
 
   const renderStepContent = () => {
