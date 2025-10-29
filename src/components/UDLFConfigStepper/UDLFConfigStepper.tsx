@@ -22,7 +22,7 @@ import type { Method } from "@/ts/types/methods";
 import type { EvaluationSettingsData, LabelProps, StepProps } from "../../ts/interfaces";
 import EvaluationSettings from "../EvaluationSettings";
 import InputSettings from "../InputSettings";
-import MethodSettings from "../MethodSettings";
+import MethodSettings from "../MethodSettings/MethodSettings";
 import OutputSettings from "../OutputSettings";
 import Summary from "../Summary";
 
@@ -89,11 +89,9 @@ export default function UDLFConfigStepper() {
     },
     [router]
   );
-
-  // Action handlers with descriptive names
   const nextStep = useCallback(() => {
     setActiveStep((prev) => prev + 1);
-    // If it was skipped, unskip it
+
     setSkipped((prev) => {
       if (!prev.has(activeStep)) return prev;
       const ns = new Set(prev.values());

@@ -1,17 +1,6 @@
 "use client";
 import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { UDLF_METHODS } from "@/ts/constants/common";
-import { BFSTREE_DEFAULT_PARAMS } from "@/ts/constants/methods/bfstree";
-import { CONTEXTRR_DEFAULT_PARAMS } from "@/ts/constants/methods/contextrr";
-import { CORGRAPH_DEFAULT_PARAMS } from "@/ts/constants/methods/corgraph";
-import { CPRR_DEFAULT_PARAMS } from "@/ts/constants/methods/cprr";
-import { LHRR_DEFAULT_PARAMS } from "@/ts/constants/methods/lhrr";
-import { RDPAC_DEFAULT_PARAMS } from "@/ts/constants/methods/rdpac";
-import { RECKNNGRAPH_DEFAULT_PARAMS } from "@/ts/constants/methods/recknngraph";
-import { RFE_DEFAULT_PARAMS } from "@/ts/constants/methods/rfe";
-import { RKGRAPH_DEFAULT_PARAMS } from "@/ts/constants/methods/rkgraph";
-import { RLRECOM_DEFAULT_PARAMS } from "@/ts/constants/methods/rkrecom";
-import { RLSIM_DEFAULT_PARAMS } from "@/ts/constants/methods/rlsim";
 import type { MethodSettingsProps } from "@/ts/interfaces/methods";
 import type { BFSTree } from "@/ts/interfaces/methods/bfstree";
 import type { ContextRR } from "@/ts/interfaces/methods/contextrr";
@@ -24,32 +13,18 @@ import type { RFE } from "@/ts/interfaces/methods/rfe";
 import type { RKGraph } from "@/ts/interfaces/methods/rkgraph";
 import type { RLRecom } from "@/ts/interfaces/methods/rlrecom";
 import type { RLSim } from "@/ts/interfaces/methods/rlsim";
-import type { Method } from "@/ts/types/methods";
-import BFSTreeSettings from "./methods/BFSTreeSettings";
-import ContextRRSettings from "./methods/ContextRRSettings";
-import CorGraphSettings from "./methods/CorGraphSettings";
-import CPRRSettings from "./methods/CPRRSettings";
-import LHRRSettings from "./methods/LHRRSettings";
-import RDPACSettings from "./methods/RDPACSettings";
-import ReckNNGraphSettings from "./methods/ReckNNGraph";
-import RFESettings from "./methods/RFESettings";
-import RKGraphSettings from "./methods/RKGraphSettings";
-import RLRecomSettings from "./methods/RLRecom";
-import RLSimSettings from "./methods/RLSimSettings";
-
-const METHOD_CONFIGS = {
-  [UDLF_METHODS.CONTEXTRR]: CONTEXTRR_DEFAULT_PARAMS,
-  [UDLF_METHODS.CPRR]: CPRR_DEFAULT_PARAMS,
-  [UDLF_METHODS.LHRR]: LHRR_DEFAULT_PARAMS,
-  [UDLF_METHODS.BFSTREE]: BFSTREE_DEFAULT_PARAMS,
-  [UDLF_METHODS.CORGRAPH]: CORGRAPH_DEFAULT_PARAMS,
-  [UDLF_METHODS.RDPAC]: RDPAC_DEFAULT_PARAMS,
-  [UDLF_METHODS.RECKNNGRAPH]: RECKNNGRAPH_DEFAULT_PARAMS,
-  [UDLF_METHODS.RFE]: RFE_DEFAULT_PARAMS,
-  [UDLF_METHODS.RLSIM]: RLSIM_DEFAULT_PARAMS,
-  [UDLF_METHODS.RKGRAPH]: RKGRAPH_DEFAULT_PARAMS,
-  [UDLF_METHODS.RLRECOM]: RLRECOM_DEFAULT_PARAMS,
-} as const;
+import { METHOD_CONFIGS, type Method } from "@/ts/types/methods";
+import BFSTreeSettings from "../methods/BFSTreeSettings";
+import ContextRRSettings from "../methods/ContextRRSettings";
+import CorGraphSettings from "../methods/CorGraphSettings";
+import CPRRSettings from "../methods/CPRRSettings";
+import LHRRSettings from "../methods/LHRRSettings";
+import RDPACSettings from "../methods/RDPACSettings";
+import ReckNNGraphSettings from "../methods/ReckNNGraph";
+import RFESettings from "../methods/RFESettings";
+import RKGraphSettings from "../methods/RKGraphSettings";
+import RLRecomSettings from "../methods/RLRecom";
+import RLSimSettings from "../methods/RLSimSettings";
 
 export default function MethodSettings({ selectedMethod, setSelectedMethod, settings, setSettings }: MethodSettingsProps) {
   const handleMethodChange = (method: Method) => {
