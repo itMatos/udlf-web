@@ -18,14 +18,14 @@ import type { RFE } from "@/ts/interfaces/methods/rfe";
 import type { RLSim } from "@/ts/interfaces/methods/rlsim";
 import type { OutputSettingsData } from "@/ts/interfaces/output";
 import type { Method } from "@/ts/types/methods";
-import type { EvaluationSettingsData, LabelProps, StepProps } from "../ts/interfaces";
-import EvaluationSettings from "./EvaluationSettings";
-import InputSettings from "./InputSettings";
-import MethodSettings from "./MethodSettings";
-import OutputSettings from "./OutputSettings";
-import Summary from "./Summary";
+import type { EvaluationSettingsData, LabelProps, StepProps } from "../../ts/interfaces";
+import EvaluationSettings from "../EvaluationSettings";
+import InputSettings from "../InputSettings";
+import MethodSettings from "../MethodSettings";
+import OutputSettings from "../OutputSettings";
+import Summary from "../Summary";
 
-export default function HorizontalLinearStepper() {
+export default function UDLFConfigStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set<number>());
   const [selectedMethod, setSelectedMethod] = useState<Method>(UDLF_METHODS.CONTEXTRR);
@@ -41,16 +41,12 @@ export default function HorizontalLinearStepper() {
   const isStepSkipped = (step: number) => skipped.has(step);
 
   const redirectToExecuteConfig = (file: Blob, fileName: string) => {
-    console.log("Redirecting to execute config with file:", file, "and name:", fileName);
     try {
       uploadUDLFConfig(file, fileName);
-      console.log("Config file uploaded successfully:", fileName);
-
       window.location.href = `/execute/${configFileName}`;
     } catch (error) {
       console.error("Error uploading config file:", error);
     }
-    console.log("aqui vai ser redirecionado");
   };
 
   const isStepComplete = (step: number): boolean => {
@@ -74,7 +70,6 @@ export default function HorizontalLinearStepper() {
 
   const handleNext = () => {
     let newSkipped = skipped;
-    console.log("skipped", skipped);
     if (isStepSkipped(activeStep)) {
       newSkipped = new Set(newSkipped.values());
       newSkipped.delete(activeStep);

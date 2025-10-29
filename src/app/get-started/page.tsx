@@ -1,6 +1,6 @@
 import React from "react";
 import Appbar from "@/components/Appbar";
-import HorizontalLinearStepper from "@/components/HorizontalLinearStepper";
+import HorizontalLinearStepper from "@/components/UDLFConfigStepper/UDLFConfigStepper";
 import { Grid } from "@mui/material";
 
 export default function GetStarted() {

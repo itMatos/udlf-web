@@ -49,7 +49,7 @@ export const createInputSettings = async (
   const inputFiles = inputSettings?.inputFiles.reduce(
     (acc, file, index) => {
       if (inputFilesLength > 1) {
-        acc[`INPUT_FILE_${index + 1}`] = file;
+        acc[`INPUT_FILES_FUSION_${index + 1}`] = file;
       } else {
         acc.INPUT_FILE = file;
       }
@@ -61,7 +61,7 @@ export const createInputSettings = async (
   const dynamicParameters =
     inputFilesLength > 1
       ? inputSettings?.inputFiles?.map((file, index) => ({
-          key: `INPUT_FILE_${index + 1}`,
+          key: `INPUT_FILES_FUSION_${index + 1}`,
           value: file,
           description: `#Path of input file ${index + 1} for FUSION tasks`,
         })) || []
