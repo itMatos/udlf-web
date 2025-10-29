@@ -1,5 +1,5 @@
 "use client";
-import { Box, Button, Divider, Step, StepLabel, Stepper, Typography } from "@mui/material";
+import { Box, Button, Step, StepLabel, Stepper, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { uploadUDLFConfig } from "@/services/api/UDLF-api";
@@ -7,23 +7,23 @@ import { STEPS, StepIndex, UDLF_METHODS } from "@/ts/constants/common";
 import { DEFAULT_INPUT_SETTINGS } from "@/ts/constants/input";
 import { CONTEXTRR_DEFAULT_PARAMS } from "@/ts/constants/methods/contextrr";
 import { DEFAULT_OUTPUT_SETTINGS } from "@/ts/constants/output";
-import type { BFSTree } from "@/ts/interfaces/methods/bfstree";
-import type { CorGraph } from "@/ts/interfaces/methods/corgraph";
-import type { RLSim } from "@/ts/interfaces/methods/rlsim";
-import type { OutputSettingsData } from "@/ts/interfaces/output";
 import type { InputSettingsData } from "@/ts/types/input";
 import type { Method } from "@/ts/types/methods";
+import type { BFSTree } from "@/ts/types/methods/bfstree";
 import type { ContextRR } from "@/ts/types/methods/contextrr";
+import type { CorGraph } from "@/ts/types/methods/corgraph";
 import type { CPRR } from "@/ts/types/methods/cprr";
 import type { LHRR } from "@/ts/types/methods/lhrr";
 import type { RDPAC } from "@/ts/types/methods/rdpac";
 import type { ReckNNGraph } from "@/ts/types/methods/recknngraph";
 import type { RFE } from "@/ts/types/methods/rfe";
+import type { RLSim } from "@/ts/types/methods/rlsim";
+import type { OutputSettingsData } from "@/ts/types/output";
 import type { EvaluationSettingsData, LabelProps, StepProps } from "../../ts/interfaces";
 import EvaluationSettings from "../EvaluationSettings";
-import InputSettings from "../InputSettings";
+import InputSettings from "../InputSettings/InputSettings";
 import MethodSettings from "../MethodSettings/MethodSettings";
-import OutputSettings from "../OutputSettings";
+import OutputSettings from "../OutputSettings/OutputSettings";
 import Summary from "../Summary";
 
 export default function UDLFConfigStepper() {
@@ -43,17 +43,22 @@ export default function UDLFConfigStepper() {
   const isStepSkipped = useCallback((step: number) => skipped.has(step), [skipped]);
 
   const isInputSettingsComplete = useCallback((s?: InputSettingsData | null): boolean => {
-    if (!s) return false;
-    if (!Array.isArray(s.inputFiles) || s.inputFiles.length === 0) return false;
-    if (s.inputFileList.trim() === "") return false;
-    if (s.inputFileClasses.trim() === "") return false;
-    if (s.datasetImagesPath.trim() === "") return false;
-    for (const file of s.inputFiles) {
-      if (!file || file.trim() === "") {
-        return false;
-      }
+    if (!s) {
+      return false;
     }
-    return true;
+    if (!Array.isArray(s.inputFiles) || s.inputFiles.length === 0) {
+      return false;
+    }
+    if (s.inputFileList.trim() === "") {
+      return false;
+    }
+    if (s.inputFileClasses.trim() === "") {
+      return false;
+    }
+    if (s.datasetImagesPath.trim() === "") {
+      return false;
+    }
+    return s.inputFiles.every((file) => file && file.trim() !== "");
   }, []);
 
   const isStepComplete = useCallback(
@@ -91,7 +96,9 @@ export default function UDLFConfigStepper() {
     setActiveStep((prev) => prev + 1);
 
     setSkipped((prev) => {
-      if (!prev.has(activeStep)) return prev;
+      if (!prev.has(activeStep)) {
+        return prev;
+      }
       const ns = new Set(prev.values());
       ns.delete(activeStep);
       return ns;
@@ -144,7 +151,7 @@ export default function UDLFConfigStepper() {
   const canProceed = useMemo(() => isStepComplete(activeStep), [activeStep, isStepComplete]);
 
   if (configFileToExecute && configFileName && activeStep === StepIndex.DONE) {
-    void uploadAndRedirect(configFileToExecute, configFileName);
+    uploadAndRedirect(configFileToExecute, configFileName);
   }
 
   return (

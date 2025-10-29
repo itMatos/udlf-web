@@ -1,24 +1,22 @@
 import { Box, FormControlLabel, FormGroup, MenuItem, Switch, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { OUTPUT_TYPES } from "@/ts/constants/output";
-import type { OutputSettingsProps } from "@/ts/interfaces/output";
-import type { OutputFormatType } from "@/ts/types/output";
+import type { OutputFormatType, OutputSettingsProps } from "@/ts/types/output";
 
 export default function OutputSettings({ onSettingsChange, settings }: OutputSettingsProps) {
-  const [enabledOutput] = useState<boolean>(true); // Fixo em true
+  // fixing output enabled to generate output file
+  const [enabledOutput] = useState<boolean>(true);
   const [selectedOutputType, setSelectedOutputType] = useState<OutputFormatType>(settings?.outputFileFormat ?? "RANKEDLIST_NUMERIC");
 
-  // Sincronizar selectedOutputType com as props quando elas mudarem
   useEffect(() => {
     if (settings) {
       setSelectedOutputType(settings.outputFileFormat);
     }
   }, [settings]);
 
-  // Atualizar o estado do componente pai quando houver mudanças
   useEffect(() => {
     onSettingsChange({
-      enabledOutput: true, // Sempre true
+      enabledOutput: true,
       outputFileFormat: selectedOutputType,
       outputFileName: settings?.outputFileName ?? "",
     });
@@ -45,14 +43,14 @@ export default function OutputSettings({ onSettingsChange, settings }: OutputSet
 
         <Box sx={{ mb: 2 }}>
           <TextField
+            disabled
             fullWidth
             id="inputType"
             label="Output format"
+            onChange={handleOutputTypeChange}
             select
             value={selectedOutputType}
             variant="outlined"
-            onChange={handleOutputTypeChange}
-            disabled
           >
             {OUTPUT_TYPES.map((option) => (
               <MenuItem key={option.value} value={option.value}>

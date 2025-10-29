@@ -11,6 +11,9 @@
     "enabled": true,
     "rules": {
       "correctness": {},
+      "style": {
+        "useAtIndex": "off"
+      },
       "suspicious": {
         "noConsole": "off"
       }
