@@ -17,3 +17,12 @@ export const UDLF_METHODS = {
 } as const;
 
 export const IMAGES_PER_PAGE_DEFAULT = 50 as const;
+
+export enum StepIndex {
+  METHOD_SETTINGS = 0,
+  INPUT_SETTINGS = 1,
+  OUTPUT_SETTINGS = 2,
+  EVALUATION_SETTINGS = 3,
+  SUMMARY = 4,
+  DONE = 5,
+};

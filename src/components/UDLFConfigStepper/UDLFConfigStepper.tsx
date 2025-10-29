@@ -3,7 +3,7 @@ import { Box, Button, Divider, Step, StepLabel, Stepper, Typography } from "@mui
 import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { uploadUDLFConfig } from "@/services/api/UDLF-api";
-import { STEPS, UDLF_METHODS } from "@/ts/constants/common";
+import { StepIndex, STEPS, UDLF_METHODS } from "@/ts/constants/common";
 import { DEFAULT_INPUT_SETTINGS } from "@/ts/constants/input";
 import { CONTEXTRR_DEFAULT_PARAMS } from "@/ts/constants/methods/contextrr";
 import { DEFAULT_OUTPUT_SETTINGS } from "@/ts/constants/output";
@@ -59,15 +59,15 @@ export default function UDLFConfigStepper() {
   const isStepComplete = useCallback(
     (step: number): boolean => {
       switch (step) {
-        case 0:
+        case StepIndex.METHOD_SETTINGS:
           return true;
-        case 1:
+        case StepIndex.INPUT_SETTINGS:
           return isInputSettingsComplete(inputSettings);
-        case 2:
+        case StepIndex.OUTPUT_SETTINGS:
           return !!outputSettings;
-        case 3:
+        case StepIndex.EVALUATION_SETTINGS:
           return !!evaluationSettings;
-        case 4:
+        case StepIndex.SUMMARY:
           return true;
         default:
           return false;
@@ -114,15 +114,15 @@ export default function UDLFConfigStepper() {
 
   const renderStepContent = useCallback(() => {
     switch (activeStep) {
-      case 0:
+      case StepIndex.METHOD_SETTINGS:
         return <MethodSettings selectedMethod={selectedMethod} setSelectedMethod={setSelectedMethod} setSettings={setSettings} settings={settings} />;
-      case 1:
+      case StepIndex.INPUT_SETTINGS:
         return <InputSettings onSettingsChange={setInputSettings} settings={inputSettings} />;
-      case 2:
+      case StepIndex.OUTPUT_SETTINGS:
         return <OutputSettings onSettingsChange={setOutputSettings} settings={outputSettings} />;
-      case 3:
+      case StepIndex.EVALUATION_SETTINGS:
         return <EvaluationSettings onSettingsChange={setEvaluationSettings} settings={evaluationSettings} />;
-      case 4:
+      case StepIndex.SUMMARY:
         return (
           <Summary
             evaluationSettings={evaluationSettings}
@@ -134,7 +134,7 @@ export default function UDLFConfigStepper() {
             setConfigFileToExecute={setConfigFileToExecute}
           />
         );
-      case 5:
+      case StepIndex.DONE:
         return null;
       default:
         return <Typography>Step content in development</Typography>;
@@ -143,7 +143,7 @@ export default function UDLFConfigStepper() {
 
   const canProceed = useMemo(() => isStepComplete(activeStep), [activeStep, isStepComplete]);
 
-  if (configFileToExecute && configFileName && activeStep === STEPS.length) {
+  if (configFileToExecute && configFileName && activeStep === StepIndex.DONE) {
     void uploadAndRedirect(configFileToExecute, configFileName);
   }
 
@@ -194,8 +194,8 @@ export default function UDLFConfigStepper() {
         </Box>
 
         <Box sx={{ display: "flex", pt: 2, width: "100%", maxWidth: "500px", mt: "auto" }}>
-          {activeStep !== 0 && (
-            <Button color="inherit" disabled={activeStep === 0} onClick={prevStep} sx={{ mr: 1 }}>
+          {activeStep !== StepIndex.METHOD_SETTINGS && (
+            <Button color="inherit" disabled={activeStep === StepIndex.METHOD_SETTINGS} onClick={prevStep} sx={{ mr: 1 }}>
               Back
             </Button>
           )}
@@ -206,7 +206,7 @@ export default function UDLFConfigStepper() {
             </Button>
           )}
           <Button disabled={!canProceed} onClick={nextStep}>
-            {activeStep === STEPS.length - 1 ? "Execute" : "Next"}
+            {activeStep === StepIndex.SUMMARY ? "Execute" : "Next"}
           </Button>
         </Box>
       </Box>
