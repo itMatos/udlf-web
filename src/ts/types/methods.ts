@@ -1,39 +1,39 @@
-import { UDLF_METHODS } from "../constants/common";
-import { BFSTREE_DEFAULT_PARAMS } from "../constants/methods/bfstree";
-import { CONTEXTRR_DEFAULT_PARAMS } from "../constants/methods/contextrr";
-import { CORGRAPH_DEFAULT_PARAMS } from "../constants/methods/corgraph";
-import { CPRR_DEFAULT_PARAMS } from "../constants/methods/cprr";
-import { LHRR_DEFAULT_PARAMS } from "../constants/methods/lhrr";
-import { RDPAC_DEFAULT_PARAMS } from "../constants/methods/rdpac";
-import { RECKNNGRAPH_DEFAULT_PARAMS } from "../constants/methods/recknngraph";
-import { RFE_DEFAULT_PARAMS } from "../constants/methods/rfe";
-import { RKGRAPH_DEFAULT_PARAMS } from "../constants/methods/rkgraph";
-import { RLRECOM_DEFAULT_PARAMS } from "../constants/methods/rkrecom";
-import { RLSIM_DEFAULT_PARAMS } from "../constants/methods/rlsim";
-import { BFSTree } from "../interfaces/methods/bfstree";
-import { ContextRR } from "../interfaces/methods/contextrr";
-import { CorGraph } from "../interfaces/methods/corgraph";
-import { CPRR } from "../interfaces/methods/cprr";
-import { LHRR } from "../interfaces/methods/lhrr";
-import { RDPAC } from "../interfaces/methods/rdpac";
-import { ReckNNGraph } from "../interfaces/methods/recknngraph";
-import { RFE } from "../interfaces/methods/rfe";
-import { RKGraph } from "../interfaces/methods/rkgraph";
-import { RLRecom } from "../interfaces/methods/rlrecom";
-import { RLSim } from "../interfaces/methods/rlsim";
+import { UDLF_METHODS } from '../constants/common';
+import { BFSTREE_DEFAULT_PARAMS } from '../constants/methods/bfstree';
+import { CONTEXTRR_DEFAULT_PARAMS } from '../constants/methods/contextrr';
+import { CORGRAPH_DEFAULT_PARAMS } from '../constants/methods/corgraph';
+import { CPRR_DEFAULT_PARAMS } from '../constants/methods/cprr';
+import { LHRR_DEFAULT_PARAMS } from '../constants/methods/lhrr';
+import { RDPAC_DEFAULT_PARAMS } from '../constants/methods/rdpac';
+import { RECKNNGRAPH_DEFAULT_PARAMS } from '../constants/methods/recknngraph';
+import { RFE_DEFAULT_PARAMS } from '../constants/methods/rfe';
+import { RKGRAPH_DEFAULT_PARAMS } from '../constants/methods/rkgraph';
+import { RLRECOM_DEFAULT_PARAMS } from '../constants/methods/rkrecom';
+import { RLSIM_DEFAULT_PARAMS } from '../constants/methods/rlsim';
+import type { CorGraph } from '../interfaces/methods/corgraph';
+import type { RLSim } from '../interfaces/methods/rlsim';
+import type { BFSTree } from './methods/bfstree';
+import type { ContextRR } from './methods/contextrr';
+import type { CPRR } from './methods/cprr';
+import type { LHRR } from './methods/lhrr';
+import type { RDPAC } from './methods/rdpac';
+import type { ReckNNGraph } from './methods/recknngraph';
+import type { RFE } from './methods/rfe';
+import type { RKGraph } from './methods/rkgraph';
+import type { RLRecom } from './methods/rlrecom';
 
 export type Method =
-  | "ContextRR"
-  | "CPRR"
-  | "LHRR"
-  | "BFSTree"
-  | "CorGraph"
-  | "RDPAC"
-  | "ReckNNGraph"
-  | "RFE"
-  | "RLSim"
-  | "RKGraph"
-  | "RLRecom";
+  | 'ContextRR'
+  | 'CPRR'
+  | 'LHRR'
+  | 'BFSTree'
+  | 'CorGraph'
+  | 'RDPAC'
+  | 'ReckNNGraph'
+  | 'RFE'
+  | 'RLSim'
+  | 'RKGraph'
+  | 'RLRecom';
 
 export type MethodsSettings =
   | ContextRR
@@ -61,3 +61,10 @@ export const METHOD_CONFIGS = {
   [UDLF_METHODS.RKGRAPH]: RKGRAPH_DEFAULT_PARAMS,
   [UDLF_METHODS.RLRECOM]: RLRECOM_DEFAULT_PARAMS,
 } as const;
+
+export interface MethodSettingsProps {
+  selectedMethod: Method;
+  setSelectedMethod: (method: Method) => void;
+  settings: ContextRR | CPRR | LHRR | BFSTree | CorGraph | RDPAC | ReckNNGraph | RFE | RLSim;
+  setSettings: (settings: ContextRR | CPRR | LHRR | BFSTree | CorGraph | RDPAC | ReckNNGraph | RFE | RLSim) => void;
+}

@@ -1,5 +1,5 @@
 import { Box, FormControlLabel, Switch, TextField } from "@mui/material";
-import type { RFE, RFESettingsProps } from "@/ts/interfaces/methods/rfe";
+import type { RFE, RFESettingsProps } from "@/ts/types/methods/rfe";
 
 export default function RFESettings({ settings, setSettings }: RFESettingsProps) {
   const handleSettingChange = (field: keyof RFE) => (event: React.ChangeEvent<HTMLInputElement>) => {

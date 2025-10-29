@@ -1,4 +1,4 @@
-import { RFE } from "@/ts/interfaces/methods/rfe";
+import type { RFE } from '@/ts/types/methods/rfe';
 
 export const RFE_DEFAULT_PARAMS: RFE = {
   L: 1400,
@@ -9,6 +9,6 @@ export const RFE_DEFAULT_PARAMS: RFE = {
   PERFORM_CCS: true,
   RERANK_BY_EMB: false,
   EXPORT_EMBEDDINGS: false,
-  EMBEDDINGS_PATH: "",
-  CCS_PATH: "",
+  EMBEDDINGS_PATH: '',
+  CCS_PATH: '',
 } as const;

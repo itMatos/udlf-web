@@ -1,4 +1,4 @@
-import { ConfigBoolean } from "@/ts/types/common";
+import type { ConfigBoolean } from '../common';
 
 export interface RFE {
   L: number;

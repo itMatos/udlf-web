@@ -1,4 +1,4 @@
-import { RLRecom } from "@/ts/interfaces/methods/rlrecom";
+import type { RLRecom } from '@/ts/types/methods/rlrecom';
 
 export const RLRECOM_DEFAULT_PARAMS: RLRecom = {
   K: 8,

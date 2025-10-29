@@ -1,4 +1,4 @@
-import { RDPAC } from "@/ts/interfaces/methods/rdpac";
+import type { RDPAC } from '@/ts/types/methods/rdpac';
 
 export const RDPAC_DEFAULT_PARAMS: RDPAC = {
   L: 400,

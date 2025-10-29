@@ -1,7 +1,7 @@
-import { EvaluationSettingsData } from "../interfaces";
-import { Method, MethodsSettings } from "../types/methods";
-import { InputSettingsData } from "../types/input";
-import { OutputSettingsData } from "./output";
+import type { EvaluationSettingsData } from '../interfaces';
+import type { InputSettingsData } from './input';
+import type { Method, MethodsSettings } from './methods';
+import type { OutputSettingsData } from './output';
 
 export interface SummaryData {
   method: string;

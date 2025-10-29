@@ -1,5 +1,5 @@
 import { Box, TextField } from "@mui/material";
-import type { RLRecom, RLRecomSettingsProps } from "@/ts/interfaces/methods/rlrecom";
+import type { RLRecom, RLRecomSettingsProps } from "@/ts/types/methods/rlrecom";
 
 export default function RLRecomSettings({ settings, setSettings }: RLRecomSettingsProps) {
   const handleSettingChange = (field: keyof RLRecom) => (event: React.ChangeEvent<HTMLInputElement>) => {

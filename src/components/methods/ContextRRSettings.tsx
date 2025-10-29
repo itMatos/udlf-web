@@ -2,7 +2,7 @@
 
 import { Box, FormControl, FormControlLabel, FormHelperText, Switch, TextField } from "@mui/material";
 import type React from "react";
-import type { ContextRR, ContextRRSettingsProps } from "@/ts/interfaces/methods/contextrr";
+import type { ContextRR, ContextRRSettingsProps } from "@/ts/types/methods/contextrr";
 
 export default function ContextRRSettings({ settings, setSettings }: ContextRRSettingsProps) {
   const handleSettingChange = (field: keyof ContextRR) => (event: React.ChangeEvent<HTMLInputElement>) => {

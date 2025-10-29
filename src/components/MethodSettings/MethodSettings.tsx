@@ -1,19 +1,19 @@
 "use client";
 import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { UDLF_METHODS } from "@/ts/constants/common";
-import type { MethodSettingsProps } from "@/ts/interfaces/methods";
-import type { BFSTree } from "@/ts/interfaces/methods/bfstree";
-import type { ContextRR } from "@/ts/interfaces/methods/contextrr";
-import type { CorGraph } from "@/ts/interfaces/methods/corgraph";
-import type { CPRR } from "@/ts/interfaces/methods/cprr";
-import type { LHRR } from "@/ts/interfaces/methods/lhrr";
-import type { RDPAC } from "@/ts/interfaces/methods/rdpac";
-import type { ReckNNGraph } from "@/ts/interfaces/methods/recknngraph";
-import type { RFE } from "@/ts/interfaces/methods/rfe";
-import type { RKGraph } from "@/ts/interfaces/methods/rkgraph";
-import type { RLRecom } from "@/ts/interfaces/methods/rlrecom";
-import type { RLSim } from "@/ts/interfaces/methods/rlsim";
+import type { MethodSettingsProps } from "@/ts/types/methods";
 import { METHOD_CONFIGS, type Method } from "@/ts/types/methods";
+import type { BFSTree } from "@/ts/types/methods/bfstree";
+import type { ContextRR } from "@/ts/types/methods/contextrr";
+import type { CorGraph } from "@/ts/types/methods/corgraph";
+import type { CPRR } from "@/ts/types/methods/cprr";
+import type { LHRR } from "@/ts/types/methods/lhrr";
+import type { RDPAC } from "@/ts/types/methods/rdpac";
+import type { ReckNNGraph } from "@/ts/types/methods/recknngraph";
+import type { RFE } from "@/ts/types/methods/rfe";
+import type { RKGraph } from "@/ts/types/methods/rkgraph";
+import type { RLRecom } from "@/ts/types/methods/rlrecom";
+import type { RLSim } from "@/ts/types/methods/rlsim";
 import BFSTreeSettings from "../methods/BFSTreeSettings";
 import ContextRRSettings from "../methods/ContextRRSettings";
 import CorGraphSettings from "../methods/CorGraphSettings";
@@ -62,16 +62,16 @@ export default function MethodSettings({ selectedMethod, setSelectedMethod, sett
       {selectedMethod === UDLF_METHODS.CONTEXTRR && <ContextRRSettings setSettings={(s) => setSettings(s as ContextRR)} settings={settings as ContextRR} />}
       {selectedMethod === UDLF_METHODS.CPRR && <CPRRSettings setSettings={(s) => setSettings(s as CPRR)} settings={settings as CPRR} />}
       {selectedMethod === UDLF_METHODS.LHRR && <LHRRSettings setSettings={(s) => setSettings(s as LHRR)} settings={settings as LHRR} />}
-      {selectedMethod === UDLF_METHODS.BFSTREE && <BFSTreeSettings setSettings={(s) => setSettings(s as BFSTree)} settings={settings as BFSTree} />}
-      {selectedMethod === UDLF_METHODS.CORGRAPH && <CorGraphSettings setSettings={(s) => setSettings(s as CorGraph)} settings={settings as CorGraph} />}
-      {selectedMethod === UDLF_METHODS.RDPAC && <RDPACSettings setSettings={(s) => setSettings(s as RDPAC)} settings={settings as RDPAC} />}
+      {selectedMethod === UDLF_METHODS.BFSTREE && <BFSTreeSettings setSettings={(s: BFSTree) => setSettings(s)} settings={settings as BFSTree} />}
+      {selectedMethod === UDLF_METHODS.CORGRAPH && <CorGraphSettings setSettings={(s: CorGraph) => setSettings(s)} settings={settings as CorGraph} />}
+      {selectedMethod === UDLF_METHODS.RDPAC && <RDPACSettings setSettings={(s: RDPAC) => setSettings(s)} settings={settings as RDPAC} />}
       {selectedMethod === UDLF_METHODS.RECKNNGRAPH && (
-        <ReckNNGraphSettings setSettings={(s) => setSettings(s as ReckNNGraph)} settings={settings as ReckNNGraph} />
+        <ReckNNGraphSettings setSettings={(s: ReckNNGraph) => setSettings(s)} settings={settings as ReckNNGraph} />
       )}
-      {selectedMethod === UDLF_METHODS.RFE && <RFESettings setSettings={(s) => setSettings(s as RFE)} settings={settings as RFE} />}
-      {selectedMethod === UDLF_METHODS.RLSIM && <RLSimSettings setSettings={(s) => setSettings(s as RLSim)} settings={settings as RLSim} />}
-      {selectedMethod === UDLF_METHODS.RKGRAPH && <RKGraphSettings setSettings={(s) => setSettings(s as RKGraph)} settings={settings as RKGraph} />}
-      {selectedMethod === UDLF_METHODS.RLRECOM && <RLRecomSettings setSettings={(s) => setSettings(s as RLRecom)} settings={settings as RLRecom} />}
+      {selectedMethod === UDLF_METHODS.RFE && <RFESettings setSettings={(s: RFE) => setSettings(s)} settings={settings as RFE} />}
+      {selectedMethod === UDLF_METHODS.RLSIM && <RLSimSettings setSettings={(s: RLSim) => setSettings(s)} settings={settings as RLSim} />}
+      {selectedMethod === UDLF_METHODS.RKGRAPH && <RKGraphSettings setSettings={(s: RKGraph) => setSettings(s)} settings={settings as RKGraph} />}
+      {selectedMethod === UDLF_METHODS.RLRECOM && <RLRecomSettings setSettings={(s: RLRecom) => setSettings(s)} settings={settings as RLRecom} />}
     </Box>
   );
 }

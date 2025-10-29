@@ -1,7 +1,7 @@
 "use client";
 import { Box, TextField } from "@mui/material";
 import type React from "react";
-import type { CPRR, CPRRSettingsProps } from "@/ts/interfaces/methods/cprr";
+import type { CPRR, CPRRSettingsProps } from "@/ts/types/methods/cprr";
 
 export default function CPRRSettings({ settings, setSettings }: CPRRSettingsProps) {
   const handleSettingChange = (field: keyof CPRR) => (event: React.ChangeEvent<HTMLInputElement>) => {

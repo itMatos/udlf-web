@@ -1,5 +1,5 @@
 import { Box, TextField } from "@mui/material";
-import type { LHRR, LHRRSettingsProps } from "@/ts/interfaces/methods/lhrr";
+import type { LHRR, LHRRSettingsProps } from "@/ts/types/methods/lhrr";
 
 export default function LHRRSettings({ settings, setSettings }: LHRRSettingsProps) {
   const handleSettingChange = (field: keyof LHRR) => (event: React.ChangeEvent<HTMLInputElement>) => {

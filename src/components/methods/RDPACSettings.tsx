@@ -1,5 +1,5 @@
 import { Box, TextField } from "@mui/material";
-import type { RDPAC, RDPACSettingsProps } from "@/ts/interfaces/methods/rdpac";
+import type { RDPAC, RDPACSettingsProps } from "@/ts/types/methods/rdpac";
 
 export default function RDPACSettings({ settings, setSettings }: RDPACSettingsProps) {
   const handleSettingChange = (field: keyof RDPAC) => (event: React.ChangeEvent<HTMLInputElement>) => {

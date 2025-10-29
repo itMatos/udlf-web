@@ -1,5 +1,5 @@
 import { Box, TextField } from "@mui/material";
-import type { RKGraph, RkGraphSettingsProps } from "@/ts/interfaces/methods/rkgraph";
+import type { RKGraph, RkGraphSettingsProps } from "@/ts/types/methods/rkgraph";
 
 export default function RKGraphSettings({ settings, setSettings }: RkGraphSettingsProps) {
   const handleSettingChange = (field: keyof RKGraph) => (event: React.ChangeEvent<HTMLInputElement>) => {

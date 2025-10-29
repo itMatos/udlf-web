@@ -1,4 +1,4 @@
-import { ReckNNGraph } from "@/ts/interfaces/methods/recknngraph";
+import type { ReckNNGraph } from '@/ts/types/methods/recknngraph';
 
 export const RECKNNGRAPH_DEFAULT_PARAMS: ReckNNGraph = {
   L: 200,

@@ -34,8 +34,8 @@ import {
   generateRKGraphSettings,
   generateRLRecomSettings,
   generateRLSimSettings,
-  type MethodSettingsResult,
   type LValidationResult,
+  type MethodSettingsResult,
 } from "@/services/configs-generator/ConfigMethodSettings";
 import { evaluationSettingsConfig } from "@/services/templates/evaluationSettings";
 import { baseConfigTemplate } from "@/services/templates/generalConfig";
@@ -44,20 +44,20 @@ import { outputFilesSettingsConfig } from "@/services/templates/outputFIlesSetti
 import { UDLF_METHODS } from "@/ts/constants/common";
 import { OUTPUT_TYPES } from "@/ts/constants/output";
 import type { BFSTree } from "@/ts/interfaces/methods/bfstree";
-import type { ContextRR } from "@/ts/interfaces/methods/contextrr";
 import type { CorGraph } from "@/ts/interfaces/methods/corgraph";
-import type { CPRR } from "@/ts/interfaces/methods/cprr";
-import type { LHRR } from "@/ts/interfaces/methods/lhrr";
-import type { RDPAC } from "@/ts/interfaces/methods/rdpac";
-import type { ReckNNGraph } from "@/ts/interfaces/methods/recknngraph";
-import type { RFE } from "@/ts/interfaces/methods/rfe";
-import type { RKGraph } from "@/ts/interfaces/methods/rkgraph";
-import type { SummaryProps } from "@/ts/interfaces/summary";
+import type { RLSim } from "@/ts/interfaces/methods/rlsim";
 import type { Method } from "@/ts/types/methods";
+import type { ContextRR } from "@/ts/types/methods/contextrr";
+import type { CPRR } from "@/ts/types/methods/cprr";
+import type { LHRR } from "@/ts/types/methods/lhrr";
+import type { RDPAC } from "@/ts/types/methods/rdpac";
+import type { ReckNNGraph } from "@/ts/types/methods/recknngraph";
+import type { RFE } from "@/ts/types/methods/rfe";
+import type { RKGraph } from "@/ts/types/methods/rkgraph";
+import type { RLRecom } from "@/ts/types/methods/rlrecom";
+import type { SummaryProps } from "@/ts/types/summary";
 import { createBaseConfig, createEvaluationSettings, createInputSettings, createOutputSettings } from "@/utils/config-generator";
 import { generateFileName, generateUniqueId, getFriendlyTitleInput } from "@/utils/helpers";
-import { RLSim } from "@/ts/interfaces/methods/rlsim";
-import { RLRecom } from "@/ts/interfaces/methods/rlrecom";
 
 const Summary: React.FC<SummaryProps> = ({
   selectedMethod,
@@ -84,18 +84,16 @@ const Summary: React.FC<SummaryProps> = ({
     const methodSettingsResult = generateMethodSettings(selectedMethod, datasetSize);
 
     // Check for L parameter adjustments and show snackbar if needed
-    const adjustments = methodSettingsResult.lAdjustments.filter(adj => adj.wasAdjusted);
+    const adjustments = methodSettingsResult.lAdjustments.filter((adj) => adj.wasAdjusted);
     if (adjustments.length > 0) {
-      const adjustmentMessages = adjustments.map(adj => 
-        `Parameter L adjusted from ${adj.originalValue} to ${adj.value} (dataset size: ${adj.datasetSize})`
-      );
-      setLAdjustmentMessage(adjustmentMessages.join('; '));
+      const adjustmentMessages = adjustments.map((adj) => `Parameter L adjusted from ${adj.originalValue} to ${adj.value} (dataset size: ${adj.datasetSize})`);
+      setLAdjustmentMessage(adjustmentMessages.join("; "));
       setShowLAdjustmentSnackbar(true);
 
       // Apply adjustments to method settings for UI display
       const updatedMethodSettings = { ...methodSettings };
-      adjustments.forEach(adj => {
-        if (adj.originalValue !== undefined && 'L' in updatedMethodSettings) {
+      adjustments.forEach((adj) => {
+        if (adj.originalValue !== undefined && "L" in updatedMethodSettings) {
           (updatedMethodSettings as any).L = adj.value;
         }
       });
@@ -122,7 +120,7 @@ const Summary: React.FC<SummaryProps> = ({
     return blob;
   };
 
-  const generateMethodSettings = (method: Method, datasetSize: number = 1400): MethodSettingsResult => {
+  const generateMethodSettings = (method: Method, datasetSize = 1400): MethodSettingsResult => {
     switch (method) {
       case UDLF_METHODS.CONTEXTRR:
         return generateContextRRSettings(methodSettings as ContextRR, datasetSize);
@@ -185,7 +183,7 @@ const Summary: React.FC<SummaryProps> = ({
         console.error("Error generating config file:", error);
       }
     };
-    
+
     generateConfig();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -212,29 +210,30 @@ const Summary: React.FC<SummaryProps> = ({
               </TableHead>
               <TableBody>
                 {Object.entries(adjustedMethodSettings || methodSettings).map(([key, value]) => {
-                  const isAdjusted = adjustedMethodSettings && key === 'L' && 
-                    'L' in adjustedMethodSettings && 'L' in methodSettings &&
+                  const isAdjusted =
+                    adjustedMethodSettings &&
+                    key === "L" &&
+                    "L" in adjustedMethodSettings &&
+                    "L" in methodSettings &&
                     (adjustedMethodSettings as any).L !== (methodSettings as any).L;
                   return (
                     <TableRow key={key}>
                       <TableCell component="th" scope="row">
                         {key}
                         {isAdjusted && (
-                          <Typography 
-                            variant="caption" 
-                            sx={{ 
-                              ml: 1, 
-                              color: 'warning.main',
-                              fontWeight: 'bold'
+                          <Typography
+                            sx={{
+                              ml: 1,
+                              color: "warning.main",
+                              fontWeight: "bold",
                             }}
+                            variant="caption"
                           >
                             (adjusted)
                           </Typography>
                         )}
                       </TableCell>
-                      <TableCell align="right">
-                        {typeof value === "boolean" ? (value ? "Yes" : "No") : String(value)}
-                      </TableCell>
+                      <TableCell align="right">{typeof value === "boolean" ? (value ? "Yes" : "No") : String(value)}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -360,15 +359,10 @@ const Summary: React.FC<SummaryProps> = ({
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
         autoHideDuration={6000}
-        open={showLAdjustmentSnackbar}
         onClose={() => setShowLAdjustmentSnackbar(false)}
+        open={showLAdjustmentSnackbar}
       >
-        <Alert 
-          onClose={() => setShowLAdjustmentSnackbar(false)} 
-          severity="warning" 
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
+        <Alert onClose={() => setShowLAdjustmentSnackbar(false)} severity="warning" sx={{ width: "100%" }} variant="filled">
           {lAdjustmentMessage}
         </Alert>
       </Snackbar>
