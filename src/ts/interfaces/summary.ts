@@ -1,6 +1,6 @@
 import { EvaluationSettingsData } from "../interfaces";
 import { Method, MethodsSettings } from "../types/methods";
-import { InputSettingsData } from "./input";
+import { InputSettingsData } from "../types/input";
 import { OutputSettingsData } from "./output";
 
 export interface SummaryData {

@@ -1,5 +1,4 @@
-import { InputSettingsData } from "./interfaces/input";
-
+import { InputSettingsData } from "./types/input";
 export interface StepProps {
   completed?: boolean;
 }

@@ -1,4 +1,4 @@
-import type { InputSettingsData } from '../interfaces/input';
+import type { InputSettingsData } from "../types/input";
 
 export const INPUT_TYPES = [
   {
