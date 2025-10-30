@@ -117,6 +117,7 @@ export default function UDLFConfigStepper() {
       methodSettings={settings}
       outputSettings={outputSettings}
       selectedMethod={selectedMethod}
+      setActiveStep={setActiveStep}
       setConfigFileName={setConfigFileName}
       setConfigFileToExecute={setConfigFileToExecute}
     />,

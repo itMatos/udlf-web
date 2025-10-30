@@ -12,6 +12,7 @@ export interface SummaryData {
 }
 
 export interface SummaryProps {
+  setActiveStep: (step: number) => void;
   selectedMethod: Method;
   methodSettings: MethodsSettings;
   inputSettings: InputSettingsData | null;
