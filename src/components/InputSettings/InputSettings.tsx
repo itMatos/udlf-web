@@ -6,9 +6,8 @@ import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 import { Box, Button, FormHelperText, IconButton, InputAdornment, MenuItem, TextField, Tooltip } from "@mui/material";
 import { useState } from "react";
 import { DEFAULT_INPUT_SETTINGS, INPUT_TYPES } from "@/ts/constants/input";
-import type { InputFileField, InputSettingsData, InputType } from "@/ts/types/input";
+import type { InputFileField, InputSettingsData, InputSettingsProps, InputType } from "@/ts/types/input";
 import { createNewFileField } from "@/utils/helpers";
-import type { InputSettingsProps } from "../../ts/interfaces";
 import FileExplorer from "../FileExplorer";
 
 export default function InputSettings({ onSettingsChange }: InputSettingsProps) {
