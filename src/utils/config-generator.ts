@@ -1,5 +1,6 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: any is used to avoid type errors */
-import type { BaseConfigType, ConfigSectionType } from '@/ts/types/config-generator';
+
+import type { BaseConfigType, ConfigSectionType } from '@/ts/types/configGenerator';
 import type { EvaluationSettingsData } from '@/ts/types/evaluation';
 import type { InputSettingsData } from '@/ts/types/input';
 import type { OutputSettingsData } from '@/ts/types/output';
