@@ -3,8 +3,8 @@ import AddIcon from "@mui/icons-material/Add";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import { Box, Button, Card, CardActionArea, CardActions, CardContent, Container, Typography } from "@mui/material";
-import Appbar from "@/components/Appbar";
 import { useRouter } from "next/navigation";
+import Appbar from "@/components/Appbar/Appbar";
 
 export default function Homepage() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function Homepage() {
   };
 
   return (
-    <Container maxWidth="xl" disableGutters>
+    <Container disableGutters maxWidth="xl">
       <Appbar />
       <Box
         sx={{

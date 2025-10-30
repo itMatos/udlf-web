@@ -324,7 +324,7 @@ const Summary: React.FC<SummaryProps> = ({
                 primary="Recall Values"
                 secondary={
                   <Stack component={"span"} direction="row" flexWrap="wrap" spacing={1}>
-                    {evaluationSettings.recall.map((value) => (
+                    {(evaluationSettings.recall as number[]).map((value: number) => (
                       <Chip color="primary" component={"span"} key={value} label={value} size="small" variant="outlined" />
                     ))}
                   </Stack>

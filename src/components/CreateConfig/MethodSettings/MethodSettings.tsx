@@ -14,17 +14,17 @@ import type { RFE } from "@/ts/types/methods/rfe";
 import type { RKGraph } from "@/ts/types/methods/rkgraph";
 import type { RLRecom } from "@/ts/types/methods/rlrecom";
 import type { RLSim } from "@/ts/types/methods/rlsim";
-import BFSTreeSettings from "../UDLFMethods/BFSTreeSettings";
-import ContextRRSettings from "../UDLFMethods/ContextRRSettings";
-import CorGraphSettings from "../UDLFMethods/CorGraphSettings";
-import CPRRSettings from "../UDLFMethods/CPRRSettings";
-import LHRRSettings from "../UDLFMethods/LHRRSettings";
-import RDPACSettings from "../UDLFMethods/RDPACSettings";
-import ReckNNGraphSettings from "../UDLFMethods/ReckNNGraph";
-import RFESettings from "../UDLFMethods/RFESettings";
-import RKGraphSettings from "../UDLFMethods/RKGraphSettings";
-import RLRecomSettings from "../UDLFMethods/RLRecom";
-import RLSimSettings from "../UDLFMethods/RLSimSettings";
+import BFSTreeSettings from "../../UDLFMethods/BFSTreeSettings";
+import ContextRRSettings from "../../UDLFMethods/ContextRRSettings";
+import CorGraphSettings from "../../UDLFMethods/CorGraphSettings";
+import CPRRSettings from "../../UDLFMethods/CPRRSettings";
+import LHRRSettings from "../../UDLFMethods/LHRRSettings";
+import RDPACSettings from "../../UDLFMethods/RDPACSettings";
+import ReckNNGraphSettings from "../../UDLFMethods/ReckNNGraph";
+import RFESettings from "../../UDLFMethods/RFESettings";
+import RKGraphSettings from "../../UDLFMethods/RKGraphSettings";
+import RLRecomSettings from "../../UDLFMethods/RLRecom";
+import RLSimSettings from "../../UDLFMethods/RLSimSettings";
 
 export default function MethodSettings({ selectedMethod, setSelectedMethod, settings, setSettings }: MethodSettingsProps) {
   const handleMethodChange = (method: Method) => {

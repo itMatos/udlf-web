@@ -5,7 +5,7 @@ import TerminalIcon from "@mui/icons-material/Terminal";
 import { Alert, Box, Button, CircularProgress, Fade, Snackbar, Typography } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import Appbar from "@/components/Appbar";
+import Appbar from "@/components/Appbar/Appbar";
 import type { ResponseApi } from "@/services/api/types";
 import { downloadLogFile, downloadOutputFile, executeUDLF } from "@/services/api/UDLF-api";
 
@@ -39,7 +39,7 @@ export default function ExecuteConfig() {
     setIsNavigating(true);
     try {
       // Add a small delay to show the loading state
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
       router.replace(`/result/${resultFileName}`);
     } catch (error) {
       console.error("Error navigating to result page:", error);
@@ -126,95 +126,95 @@ export default function ExecuteConfig() {
                   transition: "opacity 0.3s ease-in-out",
                 }}
               >
-              <Button onClick={onClickDownloadOutputFile} startIcon={<FileDownloadIcon />} variant="outlined">
-                Output file
-              </Button>
+                <Button onClick={onClickDownloadOutputFile} startIcon={<FileDownloadIcon />} variant="outlined">
+                  Output file
+                </Button>
 
-              <Button onClick={onClickDownloadLogFile} startIcon={<FileDownloadIcon />} variant="outlined">
-                Log File
-              </Button>
-              <Button
-                disabled={isNavigating}
-                endIcon={isNavigating ? <CircularProgress size={20} color="inherit" /> : <ArrowForwardIosIcon />}
-                onClick={handleNavigateToResult}
-                sx={{ 
-                  width: "auto", 
-                  my: 2,
-                  minWidth: 200,
-                  transition: "all 0.3s ease-in-out",
-                  "&:hover": {
-                    transform: "translateY(-2px)",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.15)"
-                  }
-                }}
-                variant="contained"
-              >
-                {isNavigating ? "Loading Results..." : "View Execution Result"}
-              </Button>
-            </Box>
-            <Typography variant="h5">Log: {configFileName}</Typography>
-            
-            {/* Global loading overlay when navigating */}
-            {isNavigating && (
-              <Box
-                sx={{
-                  position: "fixed",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  backgroundColor: "rgba(0, 0, 0, 0.5)",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  zIndex: 9999,
-                }}
-              >
+                <Button onClick={onClickDownloadLogFile} startIcon={<FileDownloadIcon />} variant="outlined">
+                  Log File
+                </Button>
+                <Button
+                  disabled={isNavigating}
+                  endIcon={isNavigating ? <CircularProgress color="inherit" size={20} /> : <ArrowForwardIosIcon />}
+                  onClick={handleNavigateToResult}
+                  sx={{
+                    width: "auto",
+                    my: 2,
+                    minWidth: 200,
+                    transition: "all 0.3s ease-in-out",
+                    "&:hover": {
+                      transform: "translateY(-2px)",
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                    },
+                  }}
+                  variant="contained"
+                >
+                  {isNavigating ? "Loading Results..." : "View Execution Result"}
+                </Button>
+              </Box>
+              <Typography variant="h5">Log: {configFileName}</Typography>
+
+              {/* Global loading overlay when navigating */}
+              {isNavigating && (
                 <Box
                   sx={{
-                    backgroundColor: "white",
-                    padding: 4,
-                    borderRadius: 2,
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
-                    gap: 2,
+                    justifyContent: "center",
+                    zIndex: 9999,
                   }}
                 >
-                  <CircularProgress size={40} />
-                  <Typography variant="h6" color="primary">
-                    Loading Results...
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Please wait while we prepare your results
-                  </Typography>
+                  <Box
+                    sx={{
+                      backgroundColor: "white",
+                      padding: 4,
+                      borderRadius: 2,
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: 2,
+                    }}
+                  >
+                    <CircularProgress size={40} />
+                    <Typography color="primary" variant="h6">
+                      Loading Results...
+                    </Typography>
+                    <Typography color="text.secondary" variant="body2">
+                      Please wait while we prepare your results
+                    </Typography>
+                  </Box>
                 </Box>
-              </Box>
-            )}
+              )}
 
-            <Snackbar
-              anchorOrigin={{ vertical: "top", horizontal: "right" }}
-              autoHideDuration={3000}
-              message={resultUdlf.message || "Execution completed successfully!"}
-              open={showSuccessMessage}
-            >
-              <Alert severity="success" sx={{ width: "100%" }} variant="filled">
-                {resultUdlf.message || "Execution completed successfully!"}
-              </Alert>
-            </Snackbar>
+              <Snackbar
+                anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                autoHideDuration={3000}
+                message={resultUdlf.message || "Execution completed successfully!"}
+                open={showSuccessMessage}
+              >
+                <Alert severity="success" sx={{ width: "100%" }} variant="filled">
+                  {resultUdlf.message || "Execution completed successfully!"}
+                </Alert>
+              </Snackbar>
 
-            <Snackbar
-              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-              message={resultUdlf.error || "Execution completed with warnings!"}
-              open={showWarningMessage}
-            >
-              <Alert severity="warning" sx={{ width: "100%" }}>
-                <pre>{resultUdlf.error || "Execution completed successfully!"}</pre>
-              </Alert>
-            </Snackbar>
+              <Snackbar
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                message={resultUdlf.error || "Execution completed with warnings!"}
+                open={showWarningMessage}
+              >
+                <Alert severity="warning" sx={{ width: "100%" }}>
+                  <pre>{resultUdlf.error || "Execution completed successfully!"}</pre>
+                </Alert>
+              </Snackbar>
 
-            <pre>{resultUdlf.output}</pre>
+              <pre>{resultUdlf.output}</pre>
             </Box>
           </Fade>
         ) : (

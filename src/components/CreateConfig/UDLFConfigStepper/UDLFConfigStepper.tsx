@@ -20,7 +20,7 @@ import type { ReckNNGraph } from "@/ts/types/methods/recknngraph";
 import type { RFE } from "@/ts/types/methods/rfe";
 import type { RLSim } from "@/ts/types/methods/rlsim";
 import type { OutputSettingsData } from "@/ts/types/output";
-import type { LabelProps, StepProps } from "../../ts/interfaces";
+import type { LabelProps, StepProps } from "../../../ts/interfaces";
 import EvaluationSettings from "../EvaluationSettings/EvaluationSettings";
 import InputSettings from "../InputSettings/InputSettings";
 import MethodSettings from "../MethodSettings/MethodSettings";

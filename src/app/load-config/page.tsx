@@ -3,7 +3,7 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import { Box, Button, Paper, Typography } from "@mui/material";
 import { type ChangeEvent, useRef, useState } from "react";
-import Appbar from "@/components/Appbar";
+import Appbar from "@/components/Appbar/Appbar";
 
 export default function UploadPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);

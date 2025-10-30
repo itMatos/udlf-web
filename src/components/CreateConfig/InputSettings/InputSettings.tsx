@@ -8,7 +8,7 @@ import { useState } from "react";
 import { DEFAULT_INPUT_SETTINGS, INPUT_TYPES } from "@/ts/constants/input";
 import type { InputFileField, InputSettingsData, InputSettingsProps, InputType } from "@/ts/types/input";
 import { createNewFileField } from "@/utils/helpers";
-import FileExplorer from "../FileExplorer";
+import FileExplorer from "../../FileExplorer";
 
 export default function InputSettings({ onSettingsChange }: InputSettingsProps) {
   const [inputSettings, setInputSettings] = useState<InputSettingsData>(DEFAULT_INPUT_SETTINGS);

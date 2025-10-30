@@ -1,4 +1,4 @@
-import type { EvaluationSettingsData } from '../interfaces';
+import type { EvaluationSettingsData } from './evaluation';
 import type { InputSettingsData } from './input';
 import type { Method, MethodsSettings } from './methods';
 import type { OutputSettingsData } from './output';
