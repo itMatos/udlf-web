@@ -159,7 +159,10 @@ export default function UDLFConfigStepper() {
           return (
             <Step key={label} {...stepProps} disabled={!enabled}>
               <StepButton onClick={() => enabled && setActiveStep(index)} value={index}>
-                {label}
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  {index === activeStep && <Box sx={{ width: 6, height: 6, borderRadius: "50%", bgcolor: "primary.main" }} />}
+                  {label}
+                </Box>
               </StepButton>
             </Step>
           );
