@@ -1,4 +1,4 @@
-import { EvaluationSettingsData } from "../interfaces";
+import type { EvaluationSettingsData } from '../types/evaluation';
 
 export const DEFAULT_EVALUATION_SETTINGS: EvaluationSettingsData = {
   useMap: false,

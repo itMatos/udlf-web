@@ -1,5 +1,6 @@
-import type { EvaluationSettingsData } from '@/ts/interfaces';
+/** biome-ignore-all lint/suspicious/noExplicitAny: any is used to avoid type errors */
 import type { BaseConfigType, ConfigSectionType } from '@/ts/types/config-generator';
+import type { EvaluationSettingsData } from '@/ts/types/evaluation';
 import type { InputSettingsData } from '@/ts/types/input';
 import type { OutputSettingsData } from '@/ts/types/output';
 import { calculateDatasetSize } from './datasetSizeCalculator';
@@ -146,6 +147,8 @@ export const createEvaluationSettings = (
 /**
  * Cria a configuração específica do método.
  */
+
+// biome-ignore lint/correctness/noUnusedVariables: unused function
 const createMethodSettings = (selectedMethod: string, settingsTemplate: Record<string, any> | null) => {
   return {
     section: `${selectedMethod.toUpperCase()} SETTINGS`,
