@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: we need to use any to allow for dynamic typing */
 import DownloadIcon from "@mui/icons-material/Download";
 import {
   Alert,
@@ -91,11 +92,12 @@ const Summary: React.FC<SummaryProps> = ({
 
       // Apply adjustments to method settings for UI display
       const updatedMethodSettings = { ...methodSettings };
-      adjustments.forEach((adj) => {
+      for (const adj of adjustments) {
         if (adj.originalValue !== undefined && "L" in updatedMethodSettings) {
-          (updatedMethodSettings as any).L = adj.value;
+          // Specify the type instead of using 'any'
+          (updatedMethodSettings as { [key: string]: typeof adj.value }).L = adj.value;
         }
-      });
+      }
       setAdjustedMethodSettings(updatedMethodSettings);
     } else {
       // Reset adjusted settings if no adjustments were made
@@ -148,6 +150,7 @@ const Summary: React.FC<SummaryProps> = ({
     }
   };
 
+  // biome-ignore lint/correctness/noUnusedVariables: we need to set the generated config file
   const [generatedConfigFile, setGeneratedConfigFile] = useState<Blob | null>(null);
   const [showLAdjustmentSnackbar, setShowLAdjustmentSnackbar] = useState<boolean>(false);
   const [lAdjustmentMessage, setLAdjustmentMessage] = useState<string>("");
@@ -333,7 +336,7 @@ const Summary: React.FC<SummaryProps> = ({
                 primary="Precision Values"
                 secondary={
                   <Stack component={"span"} direction="row" flexWrap="wrap" spacing={1}>
-                    {evaluationSettings.precision.map((value) => (
+                    {(evaluationSettings.precision as unknown as number[]).map((value: number) => (
                       <Chip color="primary" component={"span"} key={value} label={value} size="small" variant="outlined" />
                     ))}
                   </Stack>

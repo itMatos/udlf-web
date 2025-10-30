@@ -7,6 +7,7 @@ import { STEPS, StepIndex, UDLF_METHODS } from "@/ts/constants/common";
 import { DEFAULT_INPUT_SETTINGS } from "@/ts/constants/input";
 import { CONTEXTRR_DEFAULT_PARAMS } from "@/ts/constants/methods-default-params/contextrr";
 import { DEFAULT_OUTPUT_SETTINGS } from "@/ts/constants/output";
+import type { EvaluationSettingsData } from "@/ts/types/evaluation";
 import type { InputSettingsData } from "@/ts/types/input";
 import type { Method } from "@/ts/types/methods";
 import type { BFSTree } from "@/ts/types/methods/bfstree";
@@ -19,12 +20,12 @@ import type { ReckNNGraph } from "@/ts/types/methods/recknngraph";
 import type { RFE } from "@/ts/types/methods/rfe";
 import type { RLSim } from "@/ts/types/methods/rlsim";
 import type { OutputSettingsData } from "@/ts/types/output";
-import type { EvaluationSettingsData, LabelProps, StepProps } from "../../ts/interfaces";
-import EvaluationSettings from "../EvaluationSettings";
+import type { LabelProps, StepProps } from "../../ts/interfaces";
+import EvaluationSettings from "../EvaluationSettings/EvaluationSettings";
 import InputSettings from "../InputSettings/InputSettings";
 import MethodSettings from "../MethodSettings/MethodSettings";
 import OutputSettings from "../OutputSettings/OutputSettings";
-import Summary from "../Summary";
+import Summary from "../Summary/Summary";
 
 export default function UDLFConfigStepper() {
   const router = useRouter();

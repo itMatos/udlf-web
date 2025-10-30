@@ -1,48 +1,28 @@
-import { useState } from "react";
-import {
-  Box,
-  Checkbox,
-  Divider,
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  FormLabel,
-  TextField,
-  Chip,
-  Stack,
-  Button,
-  Tooltip,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { Add } from "@mui/icons-material";
-import { EvaluationSettingsData } from "@/ts/interfaces";
+import DeleteIcon from "@mui/icons-material/Delete";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-
-interface EvaluationSettingsProps {
-  onSettingsChange: (settings: EvaluationSettingsData | null) => void;
-  settings: EvaluationSettingsData | null;
-}
+import { Box, Button, Checkbox, Chip, Divider, FormControl, FormControlLabel, FormGroup, FormLabel, Stack, TextField, Tooltip } from "@mui/material";
+import { useState } from "react";
+import type { EvaluationSettingsProps } from "@/ts/types/evaluation";
 
 export default function EvaluationSettings({ onSettingsChange, settings }: EvaluationSettingsProps) {
-  const [useMap, setUseMap] = useState(settings?.useMap || false);
-  const [useEfficiency, setUseEfficiency] = useState(settings?.useEfficiency || false);
-  // const [useEfficiency, setUseEfficiency] = useState(settings?.useEfficiency || false);
+  const [useMap, setUseMap] = useState<boolean>(settings?.useMap ?? false);
+  const [useEfficiency, setUseEfficiency] = useState<boolean>(settings?.useEfficiency ?? false);
   const [recallValues, setRecallValues] = useState<number[]>(settings?.recall || []);
   const [inputRecallValue, setInputRecallValue] = useState<string>("");
   const [precisionValues, setPrecisionValues] = useState<number[]>(settings?.precision || []);
   const [inputPrecisionValue, setInputPrecisionValue] = useState<string>("");
 
-  // Função para adicionar um valor de recall
   const handleAddRecall = () => {
-    const value = parseInt(inputRecallValue, 10);
-    if (!isNaN(value) && !recallValues.includes(value)) {
+    const value = Number.parseInt(inputRecallValue, 10);
+    if (!(Number.isNaN(value) || recallValues.includes(value))) {
       const newValues = [...recallValues, value].sort((a, b) => a - b);
       setRecallValues(newValues);
       onSettingsChange({
-        useMap,
+        useMap: useMap ?? false,
         recall: newValues,
         precision: precisionValues,
-        useEfficiency,
+        useEfficiency: useEfficiency ?? false,
       });
     }
     setInputRecallValue("");
@@ -56,7 +36,7 @@ export default function EvaluationSettings({ onSettingsChange, settings }: Evalu
       useMap: checked,
       recall: recallValues,
       precision: precisionValues,
-      useEfficiency: useEfficiency,
+      useEfficiency: useEfficiency ?? false,
     });
   };
 
@@ -64,7 +44,7 @@ export default function EvaluationSettings({ onSettingsChange, settings }: Evalu
     setUseEfficiency(checked);
     console.log("Efficiency:", checked);
     onSettingsChange({
-      useMap: checked,
+      useMap: useMap ?? false,
       recall: recallValues,
       precision: precisionValues,
       useEfficiency: checked,
@@ -76,23 +56,23 @@ export default function EvaluationSettings({ onSettingsChange, settings }: Evalu
     const newValues = recallValues.filter((recall) => recall !== value);
     setRecallValues(newValues);
     onSettingsChange({
-      useMap,
+      useMap: useMap ?? false,
       recall: newValues,
       precision: precisionValues,
-      useEfficiency,
+      useEfficiency: useEfficiency ?? false,
     });
   };
 
   const handleAddPrecision = () => {
-    const value = parseInt(inputPrecisionValue, 10);
-    if (!isNaN(value) && !precisionValues.includes(value)) {
+    const value = Number.parseInt(inputPrecisionValue, 10);
+    if (!(Number.isNaN(value) || precisionValues.includes(value))) {
       const newValues = [...precisionValues, value].sort((a, b) => a - b);
       setPrecisionValues(newValues);
       onSettingsChange({
-        useMap,
+        useMap: useMap ?? false,
         recall: recallValues,
         precision: newValues,
-        useEfficiency,
+        useEfficiency: useEfficiency ?? false,
       });
     }
     setInputPrecisionValue("");
@@ -102,10 +82,10 @@ export default function EvaluationSettings({ onSettingsChange, settings }: Evalu
     const newValues = precisionValues.filter((precision) => precision !== value);
     setPrecisionValues(newValues);
     onSettingsChange({
-      useMap,
+      useMap: useMap ?? false,
       recall: recallValues,
       precision: newValues,
-      useEfficiency,
+      useEfficiency: useEfficiency ?? false,
     });
   };
 
@@ -123,15 +103,15 @@ export default function EvaluationSettings({ onSettingsChange, settings }: Evalu
         flexDirection: "column",
       }}
     >
-      <Box component="form" noValidate autoComplete="off" sx={{ gap: 2, display: "flex", flexDirection: "column" }}>
+      <Box autoComplete="off" component="form" noValidate sx={{ gap: 2, display: "flex", flexDirection: "column" }}>
         <FormControl component="fieldset" variant="standard">
           <FormGroup>
             <FormControlLabel
-              control={<Checkbox checked={useMap} onChange={() => handleMapChange(!useMap)} name="map" />}
+              control={<Checkbox checked={!!useMap} name="map" onChange={() => handleMapChange(!useMap)} />}
               label={
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   MAP
-                  <Tooltip title="Compute and show MAP results" placement="right">
+                  <Tooltip placement="right" title="Compute and show MAP results">
                     <HelpOutlineIcon fontSize="small" sx={{ ml: 1, fontSize: "16px", opacity: 0.7 }} />
                   </Tooltip>
                 </Box>
@@ -143,13 +123,11 @@ export default function EvaluationSettings({ onSettingsChange, settings }: Evalu
         <FormControl component="fieldset" variant="standard">
           <FormGroup>
             <FormControlLabel
-              control={
-                <Checkbox checked={useEfficiency} onChange={() => handleEfficiencyChange(!useEfficiency)} name="map" />
-              }
+              control={<Checkbox checked={!!useEfficiency} name="efficiency" onChange={() => handleEfficiencyChange(!useEfficiency)} />}
               label={
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   Efficiency
-                  <Tooltip title="Enable efficiency evaluation" placement="right">
+                  <Tooltip placement="right" title="Enable efficiency evaluation">
                     <HelpOutlineIcon fontSize="small" sx={{ ml: 1, fontSize: "16px", opacity: 0.7 }} />
                   </Tooltip>
                 </Box>
@@ -164,11 +142,8 @@ export default function EvaluationSettings({ onSettingsChange, settings }: Evalu
         <FormLabel component="legend">Recall</FormLabel>
         <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
           <TextField
+            color={inputRecallValue.trim() !== "" && Number.isNaN(Number.parseInt(inputRecallValue, 10)) ? "error" : "primary"}
             label="Add Recall"
-            variant="outlined"
-            size="small"
-            color={inputRecallValue.trim() !== "" && isNaN(parseInt(inputRecallValue, 10)) ? "error" : "primary"}
-            value={inputRecallValue}
             onChange={(e) => setInputRecallValue(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -176,25 +151,22 @@ export default function EvaluationSettings({ onSettingsChange, settings }: Evalu
                 handleAddRecall();
               }
             }}
+            size="small"
+            value={inputRecallValue}
+            variant="outlined"
           />
           <Button
             color="primary"
-            startIcon={<Add />}
+            disabled={!inputRecallValue || Number.isNaN(Number.parseInt(inputRecallValue, 10))}
             onClick={handleAddRecall}
-            disabled={!inputRecallValue || isNaN(parseInt(inputRecallValue, 10))}
+            startIcon={<Add />}
           >
             Add
           </Button>
         </Stack>
         <Stack direction="row" spacing={1} sx={{ mt: 2, flexWrap: "wrap" }}>
           {recallValues.map((value) => (
-            <Chip
-              key={value}
-              label={value}
-              onDelete={() => handleDeleteRecall(value)}
-              deleteIcon={<DeleteIcon />}
-              color="primary"
-            />
+            <Chip color="primary" deleteIcon={<DeleteIcon />} key={value} label={value} onDelete={() => handleDeleteRecall(value)} />
           ))}
         </Stack>
       </Box>
@@ -203,11 +175,8 @@ export default function EvaluationSettings({ onSettingsChange, settings }: Evalu
         <FormLabel component="legend">Precision</FormLabel>
         <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
           <TextField
+            color={inputPrecisionValue.trim() !== "" && Number.isNaN(Number.parseInt(inputPrecisionValue, 10)) ? "error" : "primary"}
             label="Add Precision"
-            variant="outlined"
-            size="small"
-            color={inputPrecisionValue.trim() !== "" && isNaN(parseInt(inputPrecisionValue, 10)) ? "error" : "primary"}
-            value={inputPrecisionValue}
             onChange={(e) => setInputPrecisionValue(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -215,25 +184,22 @@ export default function EvaluationSettings({ onSettingsChange, settings }: Evalu
                 handleAddPrecision();
               }
             }}
+            size="small"
+            value={inputPrecisionValue}
+            variant="outlined"
           />
           <Button
             color="primary"
-            startIcon={<Add />}
+            disabled={!inputPrecisionValue || Number.isNaN(Number.parseInt(inputPrecisionValue, 10))}
             onClick={handleAddPrecision}
-            disabled={!inputPrecisionValue || isNaN(parseInt(inputPrecisionValue, 10))}
+            startIcon={<Add />}
           >
             Add
           </Button>
         </Stack>
         <Stack direction="row" spacing={1} sx={{ mt: 2, flexWrap: "wrap" }}>
           {precisionValues.map((value) => (
-            <Chip
-              key={value}
-              label={value}
-              onDelete={() => handleDeletePrecision(value)}
-              deleteIcon={<DeleteIcon />}
-              color="primary"
-            />
+            <Chip color="primary" deleteIcon={<DeleteIcon />} key={value} label={value} onDelete={() => handleDeletePrecision(value)} />
           ))}
         </Stack>
       </Box>
