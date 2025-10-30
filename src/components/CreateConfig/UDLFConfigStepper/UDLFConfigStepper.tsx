@@ -1,5 +1,5 @@
 "use client";
-import { Box, Button, Step, StepLabel, Stepper, Typography } from "@mui/material";
+import { Box, Button, Step, StepButton, Stepper, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { uploadUDLFConfig } from "@/services/api/UDLF-api";
@@ -40,7 +40,7 @@ export default function UDLFConfigStepper() {
   const [configFileToExecute, setConfigFileToExecute] = useState<Blob | null>(null);
   const [configFileName, setConfigFileName] = useState<string>("");
 
-  const isStepOptional = useCallback((step: number) => step === -1, []);
+  const isStepOptional = useCallback((step: number) => step === 2, []);
   const isStepSkipped = useCallback((step: number) => skipped.has(step), [skipped]);
 
   const isInputSettingsComplete = useCallback((s?: InputSettingsData | null): boolean => {
@@ -108,46 +108,22 @@ export default function UDLFConfigStepper() {
 
   const prevStep = useCallback(() => setActiveStep((prev) => Math.max(0, prev - 1)), []);
 
-  const skipStep = useCallback(() => {
-    if (!isStepOptional(activeStep)) {
-      throw new Error("You can't skip a step that isn't optional.");
-    }
-    setSkipped((prev) => {
-      const ns = new Set(prev.values());
-      ns.add(activeStep);
-      return ns;
-    });
-    setActiveStep((prev) => prev + 1);
-  }, [activeStep, isStepOptional]);
-
-  const renderStepContent = useCallback(() => {
-    switch (activeStep) {
-      case StepIndex.METHOD_SETTINGS:
-        return <MethodSettings selectedMethod={selectedMethod} setSelectedMethod={setSelectedMethod} setSettings={setSettings} settings={settings} />;
-      case StepIndex.INPUT_SETTINGS:
-        return <InputSettings onSettingsChange={setInputSettings} settings={inputSettings} />;
-      case StepIndex.OUTPUT_SETTINGS:
-        return <OutputSettings onSettingsChange={setOutputSettings} settings={outputSettings} />;
-      case StepIndex.EVALUATION_SETTINGS:
-        return <EvaluationSettings onSettingsChange={setEvaluationSettings} settings={evaluationSettings} />;
-      case StepIndex.SUMMARY:
-        return (
-          <Summary
-            evaluationSettings={evaluationSettings}
-            inputSettings={inputSettings}
-            methodSettings={settings}
-            outputSettings={outputSettings}
-            selectedMethod={selectedMethod}
-            setConfigFileName={setConfigFileName}
-            setConfigFileToExecute={setConfigFileToExecute}
-          />
-        );
-      case StepIndex.DONE:
-        return null;
-      default:
-        return <Typography>Step content in development</Typography>;
-    }
-  }, [activeStep, selectedMethod, settings, inputSettings, outputSettings, evaluationSettings]);
+  const stepsContent = [
+    <MethodSettings key="method" selectedMethod={selectedMethod} setSelectedMethod={setSelectedMethod} setSettings={setSettings} settings={settings} />,
+    <InputSettings key="input" onSettingsChange={setInputSettings} settings={inputSettings} />,
+    <OutputSettings key="output" onSettingsChange={setOutputSettings} settings={outputSettings} />,
+    <EvaluationSettings key="evaluation" onSettingsChange={setEvaluationSettings} settings={evaluationSettings} />,
+    <Summary
+      evaluationSettings={evaluationSettings}
+      inputSettings={inputSettings}
+      key="summary"
+      methodSettings={settings}
+      outputSettings={outputSettings}
+      selectedMethod={selectedMethod}
+      setConfigFileName={setConfigFileName}
+      setConfigFileToExecute={setConfigFileToExecute}
+    />,
+  ];
 
   const canProceed = useMemo(() => isStepComplete(activeStep), [activeStep, isStepComplete]);
 
@@ -180,7 +156,9 @@ export default function UDLFConfigStepper() {
 
           return (
             <Step key={label} {...stepProps}>
-              <StepLabel {...labelProps}>{label}</StepLabel>
+              <StepButton onClick={() => setActiveStep(index)} value={index}>
+                {label}
+              </StepButton>
             </Step>
           );
         })}
@@ -195,10 +173,27 @@ export default function UDLFConfigStepper() {
             justifyContent: "center",
             minHeight: "500px",
             alignItems: "flex-start",
-            pt: 2,
+            pt: 1,
           }}
         >
-          {renderStepContent() || null}
+          {(() => {
+            const stepKeys = ["method", "input", "output", "evaluation", "summary"] as const;
+            return stepsContent.map((node, idx) => (
+              <Box
+                aria-hidden={activeStep !== idx}
+                key={stepKeys[idx]}
+                role="tabpanel"
+                sx={{
+                  display: activeStep === idx ? "flex" : "none",
+                  width: "100%",
+                  alignItems: "flex-start",
+                  justifyContent: "center",
+                }}
+              >
+                {node}
+              </Box>
+            ));
+          })()}
         </Box>
 
         <Box sx={{ display: "flex", pt: 2, width: "100%", maxWidth: "500px", mt: "auto" }}>
@@ -208,11 +203,6 @@ export default function UDLFConfigStepper() {
             </Button>
           )}
           <Box sx={{ flex: "1 1 auto" }} />
-          {isStepOptional(activeStep) && (
-            <Button color="inherit" onClick={skipStep} sx={{ mr: 1 }}>
-              Skip
-            </Button>
-          )}
           <Button disabled={!canProceed} onClick={nextStep}>
             {activeStep === StepIndex.SUMMARY ? "Execute" : "Next"}
           </Button>
