@@ -55,9 +55,10 @@ export default function FileExplorer({
   const updateBreadcrumbs = useCallback((path: string) => {
     const pathParts = path.split("/").filter((part) => part !== "");
     // Always show breadcrumbs relative to Datasets, not app
-    const breadcrumbParts = pathParts.length > 2 && pathParts[0] === "app" && pathParts[1] === "Datasets" 
-      ? pathParts.slice(2) 
-      : pathParts.length > 1 && pathParts[0] === "Datasets" 
+    const breadcrumbParts =
+      pathParts.length > 2 && pathParts[0] === "app" && pathParts[1] === "Datasets"
+        ? pathParts.slice(2)
+        : pathParts.length > 1 && pathParts[0] === "Datasets"
         ? pathParts.slice(1)
         : [];
     console.log("breadcrumbParts", breadcrumbParts);
@@ -198,7 +199,7 @@ export default function FileExplorer({
     if (open) {
       // Testar a conexão primeiro para debug
       FileExplorerService.testConnection().catch(console.error);
-      
+
       loadDirectory("/app/Datasets");
       setSelectedDirectory(null); // Clear selection when opening
     }
