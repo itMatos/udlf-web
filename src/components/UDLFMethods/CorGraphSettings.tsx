@@ -1,8 +1,7 @@
 "use client";
 import { Box, MenuItem, TextField } from "@mui/material";
 import type React from "react";
-import type { CorGraph, CorGraphSettingsProps } from "@/ts/interfaces/methods/corgraph";
-import type { CorGraphCorrelation } from "@/ts/types/methods/corgraph";
+import type { CorGraph, CorGraphCorrelation, CorGraphSettingsProps } from "@/ts/types/methods/corgraph";
 
 export default function CorGraphSettings({ settings, setSettings }: CorGraphSettingsProps) {
   const handleSettingChange = (field: keyof CorGraph) => (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,10 +1,13 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: we need to use any to allow for dynamic typing */
 import DownloadIcon from "@mui/icons-material/Download";
+import EditIcon from "@mui/icons-material/Edit";
 import {
   Alert,
   Box,
   Button,
   Chip,
   Divider,
+  IconButton,
   List,
   ListItem,
   ListItemText,
@@ -34,20 +37,18 @@ import {
   generateRKGraphSettings,
   generateRLRecomSettings,
   generateRLSimSettings,
-  type LValidationResult,
   type MethodSettingsResult,
 } from "@/services/configs-generator/ConfigMethodSettings";
 import { evaluationSettingsConfig } from "@/services/templates/evaluationSettings";
 import { baseConfigTemplate } from "@/services/templates/generalConfig";
 import { inputDatasetFilesConfig } from "@/services/templates/inputDataSetFilesConfig";
 import { outputFilesSettingsConfig } from "@/services/templates/outputFIlesSettingsConfig";
-import { UDLF_METHODS } from "@/ts/constants/common";
+import { StepIndex, UDLF_METHODS } from "@/ts/constants/common";
 import { OUTPUT_TYPES } from "@/ts/constants/output";
-import type { BFSTree } from "@/ts/interfaces/methods/bfstree";
-import type { CorGraph } from "@/ts/interfaces/methods/corgraph";
-import type { RLSim } from "@/ts/interfaces/methods/rlsim";
 import type { Method } from "@/ts/types/methods";
+import type { BFSTree } from "@/ts/types/methods/bfstree";
 import type { ContextRR } from "@/ts/types/methods/contextrr";
+import type { CorGraph } from "@/ts/types/methods/corgraph";
 import type { CPRR } from "@/ts/types/methods/cprr";
 import type { LHRR } from "@/ts/types/methods/lhrr";
 import type { RDPAC } from "@/ts/types/methods/rdpac";
@@ -55,6 +56,7 @@ import type { ReckNNGraph } from "@/ts/types/methods/recknngraph";
 import type { RFE } from "@/ts/types/methods/rfe";
 import type { RKGraph } from "@/ts/types/methods/rkgraph";
 import type { RLRecom } from "@/ts/types/methods/rlrecom";
+import type { RLSim } from "@/ts/types/methods/rlsim";
 import type { SummaryProps } from "@/ts/types/summary";
 import { createBaseConfig, createEvaluationSettings, createInputSettings, createOutputSettings } from "@/utils/config-generator";
 import { generateFileName, generateUniqueId, getFriendlyTitleInput } from "@/utils/helpers";
@@ -65,6 +67,7 @@ const Summary: React.FC<SummaryProps> = ({
   inputSettings,
   outputSettings,
   evaluationSettings,
+  setActiveStep,
   setConfigFileToExecute,
   setConfigFileName,
 }) => {
@@ -92,11 +95,12 @@ const Summary: React.FC<SummaryProps> = ({
 
       // Apply adjustments to method settings for UI display
       const updatedMethodSettings = { ...methodSettings };
-      adjustments.forEach((adj) => {
+      for (const adj of adjustments) {
         if (adj.originalValue !== undefined && "L" in updatedMethodSettings) {
-          (updatedMethodSettings as any).L = adj.value;
+          // Specify the type instead of using 'any'
+          (updatedMethodSettings as { [key: string]: typeof adj.value }).L = adj.value;
         }
-      });
+      }
       setAdjustedMethodSettings(updatedMethodSettings);
     } else {
       // Reset adjusted settings if no adjustments were made
@@ -149,6 +153,7 @@ const Summary: React.FC<SummaryProps> = ({
     }
   };
 
+  // biome-ignore lint/correctness/noUnusedVariables: we need to set the generated config file
   const [generatedConfigFile, setGeneratedConfigFile] = useState<Blob | null>(null);
   const [showLAdjustmentSnackbar, setShowLAdjustmentSnackbar] = useState<boolean>(false);
   const [lAdjustmentMessage, setLAdjustmentMessage] = useState<string>("");
@@ -196,9 +201,14 @@ const Summary: React.FC<SummaryProps> = ({
       </Typography>
 
       <Box sx={{ mb: 3 }}>
-        <Typography color="primary" gutterBottom variant="h6">
-          Selected Method: {selectedMethod}
-        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <Typography color="primary" gutterBottom variant="h6">
+            Selected Method: {selectedMethod}
+          </Typography>
+          <IconButton onClick={() => setActiveStep(StepIndex.METHOD_SETTINGS)} size="small">
+            <EditIcon color="primary" />
+          </IconButton>
+        </Box>
         {(adjustedMethodSettings || methodSettings) && (
           <TableContainer component={Paper} sx={{ mt: 2 }}>
             <Table aria-label="simple table" sx={{ minWidth: 300 }}>
@@ -246,15 +256,20 @@ const Summary: React.FC<SummaryProps> = ({
       <Divider sx={{ my: 2 }} />
 
       <Box sx={{ mb: 3 }}>
-        <Typography color="primary" gutterBottom variant="h6">
-          Input
-        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <Typography color="primary" gutterBottom variant="h6">
+            Input
+          </Typography>
+          <IconButton onClick={() => setActiveStep(StepIndex.INPUT_SETTINGS)} size="small">
+            <EditIcon color="primary" />
+          </IconButton>
+        </Box>
         {inputSettings && (
           <List dense>
             {Object.entries(inputSettings).map(([key, value]) => {
               if (key === "inputFiles" && Array.isArray(value)) {
                 return (
-                  <ListItem key={key}>
+                  <ListItem disableGutters key={key} sx={{ m: 0 }}>
                     <ListItemText
                       primary={getFriendlyTitleInput(key)}
                       secondary={
@@ -275,7 +290,7 @@ const Summary: React.FC<SummaryProps> = ({
               }
 
               return (
-                <ListItem key={key}>
+                <ListItem disableGutters key={key} sx={{ m: 0 }}>
                   <ListItemText primary={getFriendlyTitleInput(key)} secondary={value} />
                 </ListItem>
               );
@@ -287,9 +302,14 @@ const Summary: React.FC<SummaryProps> = ({
       <Divider sx={{ my: 2 }} />
 
       <Box sx={{ mb: 3 }}>
-        <Typography color="primary" gutterBottom variant="h6">
-          Output
-        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <Typography color="primary" gutterBottom variant="h6">
+            Output
+          </Typography>
+          <IconButton onClick={() => setActiveStep(StepIndex.OUTPUT_SETTINGS)} size="small">
+            <EditIcon color="primary" />
+          </IconButton>
+        </Box>
 
         {outputSettings.enabledOutput ? (
           <Box sx={{ mb: 2 }}>
@@ -306,35 +326,40 @@ const Summary: React.FC<SummaryProps> = ({
       <Divider sx={{ my: 2 }} />
 
       <Box>
-        <Typography color="primary" gutterBottom variant="h6">
-          Evaluation Configuration
-        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <Typography color="primary" gutterBottom variant="h6">
+            Evaluation Configuration
+          </Typography>
+          <IconButton onClick={() => setActiveStep(StepIndex.EVALUATION_SETTINGS)} size="small">
+            <EditIcon color="primary" />
+          </IconButton>
+        </Box>
         {evaluationSettings && (
           <List dense>
-            <ListItem>
+            <ListItem disableGutters sx={{ m: 0 }}>
               <ListItemText primary="MAP" secondary={evaluationSettings.useMap ? "Yes" : "No"} />
             </ListItem>
-            <ListItem>
+            <ListItem disableGutters sx={{ m: 0 }}>
               <ListItemText primary="Efficiency" secondary={evaluationSettings.useEfficiency ? "Yes" : "No"} />
             </ListItem>
-            <ListItem>
+            <ListItem disableGutters sx={{ m: 0 }}>
               <ListItemText
                 primary="Recall Values"
                 secondary={
                   <Stack component={"span"} direction="row" flexWrap="wrap" spacing={1}>
-                    {evaluationSettings.recall.map((value) => (
+                    {(evaluationSettings.recall as number[]).map((value: number) => (
                       <Chip color="primary" component={"span"} key={value} label={value} size="small" variant="outlined" />
                     ))}
                   </Stack>
                 }
               />
             </ListItem>
-            <ListItem>
+            <ListItem disableGutters sx={{ m: 0 }}>
               <ListItemText
                 primary="Precision Values"
                 secondary={
                   <Stack component={"span"} direction="row" flexWrap="wrap" spacing={1}>
-                    {evaluationSettings.precision.map((value) => (
+                    {(evaluationSettings.precision as unknown as number[]).map((value: number) => (
                       <Chip color="primary" component={"span"} key={value} label={value} size="small" variant="outlined" />
                     ))}
                   </Stack>

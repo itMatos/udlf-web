@@ -1,4 +1,7 @@
 "use client";
+import AssessmentIcon from "@mui/icons-material/Assessment";
+import CloseIcon from "@mui/icons-material/Close";
+import TerminalIcon from "@mui/icons-material/Terminal";
 import {
   Autocomplete,
   Box,
@@ -18,24 +21,21 @@ import {
   MenuItem,
   Pagination,
   Select,
-  SelectChangeEvent,
+  type SelectChangeEvent,
   Tab,
   Tabs,
   TextField,
   Typography,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import TerminalIcon from "@mui/icons-material/Terminal";
-import AssessmentIcon from "@mui/icons-material/Assessment";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { useParams, useRouter } from "next/navigation";
-import React from "react";
+import type React from "react";
 import { useEffect, useState } from "react";
-import Appbar from "@/components/Appbar";
-import type { lineContent } from "@/services/api/models";
-import { getAllClasses, getAllFilenames, getPaginatedListFilenames, getPaginatedListFilenamesByConfig, getLogFileContent } from "@/services/api/UDLF-api";
-import { IMAGES_PER_PAGE_DEFAULT } from "@/ts/constants/common";
+import Appbar from "@/components/Appbar/Appbar";
 import config from "@/services/api/config";
+import type { lineContent } from "@/services/api/models";
+import { getAllClasses, getAllFilenames, getLogFileContent, getPaginatedListFilenames, getPaginatedListFilenamesByConfig } from "@/services/api/UDLF-api";
+import { IMAGES_PER_PAGE_DEFAULT } from "@/ts/constants/common";
 
 export default function Result() {
   const params = useParams();
@@ -192,12 +192,14 @@ export default function Result() {
           afterSection = false;
           relativeGainsSection = false;
           continue;
-        } else if (trimmedLine === "After:") {
+        }
+        if (trimmedLine === "After:") {
           beforeSection = false;
           afterSection = true;
           relativeGainsSection = false;
           continue;
-        } else if (trimmedLine === "Relative Gains:") {
+        }
+        if (trimmedLine === "Relative Gains:") {
           beforeSection = false;
           afterSection = false;
           relativeGainsSection = true;
@@ -208,7 +210,7 @@ export default function Result() {
         const match = trimmedLine.match(/^(P@\d+|Recall@\d+|MAP)\s+(-?\d+\.\d+)(%?)$/);
         if (match) {
           const [, metric, value, isPercent] = match;
-          const numValue = parseFloat(value);
+          const numValue = Number.parseFloat(value);
 
           if (beforeSection) {
             before[metric] = numValue;
@@ -229,7 +231,7 @@ export default function Result() {
   };
 
   const renderEffectivenessChart = () => {
-    if (!evaluationData || (!Object.keys(evaluationData.before).length && !Object.keys(evaluationData.after).length)) {
+    if (!evaluationData || !(Object.keys(evaluationData.before).length || Object.keys(evaluationData.after).length)) {
       return (
         <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: 300 }}>
           <Typography variant="body1">No effectiveness data available for visualization</Typography>
@@ -244,7 +246,7 @@ export default function Result() {
     const recallMetrics = allMetrics.filter((metric) => metric.startsWith("Recall@"));
     const mapMetrics = allMetrics.filter((metric) => metric === "MAP");
 
-    const renderChart = (metrics: string[], title: string, containerHeight: number = 400) => {
+    const renderChart = (metrics: string[], title: string, containerHeight = 400) => {
       if (metrics.length === 0) return null;
 
       const beforeData = metrics.map((metric) => evaluationData.before[metric] || 0);
@@ -252,18 +254,18 @@ export default function Result() {
 
       return (
         <Box sx={{ height: containerHeight, p: 2, mb: 3 }}>
-          <Typography variant="h6" sx={{ mb: 2, textAlign: "center" }}>
+          <Typography sx={{ mb: 2, textAlign: "center" }} variant="h6">
             {title}
           </Typography>
           <BarChart
-            width={800}
             height={containerHeight - 80}
+            margin={{ top: 20, bottom: 80, left: 60, right: 20 }}
             series={[
               { data: beforeData, label: "Before", id: `before-${title}`, color: "#1976d2" },
               { data: afterData, label: "After", id: `after-${title}`, color: "#42a5f5" },
             ]}
+            width={800}
             xAxis={[{ data: metrics, scaleType: "band" }]}
-            margin={{ top: 20, bottom: 80, left: 60, right: 20 }}
           />
         </Box>
       );
@@ -271,7 +273,7 @@ export default function Result() {
 
     return (
       <Box sx={{ p: 2, overflow: "auto" }}>
-        <Typography variant="h5" sx={{ mb: 3, textAlign: "center", fontWeight: "bold" }}>
+        <Typography sx={{ mb: 3, textAlign: "center", fontWeight: "bold" }} variant="h5">
           Effectiveness: Before vs After
         </Typography>
 
@@ -288,7 +290,7 @@ export default function Result() {
   };
 
   const renderRelativeGainsChart = () => {
-    if (!evaluationData || !Object.keys(evaluationData.relativeGains).length) {
+    if (!(evaluationData && Object.keys(evaluationData.relativeGains).length)) {
       return (
         <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: 300 }}>
           <Typography variant="body1">No relative gains data available for visualization</Typography>
@@ -301,12 +303,12 @@ export default function Result() {
 
     return (
       <Box sx={{ height: 400, p: 2 }}>
-        <Typography variant="h6" sx={{ mb: 2, textAlign: "center" }}>
+        <Typography sx={{ mb: 2, textAlign: "center" }} variant="h6">
           Relative Gains (%)
         </Typography>
         <BarChart
-          width={800}
           height={350}
+          margin={{ top: 20, bottom: 100, left: 60, right: 20 }}
           series={[
             {
               data: gainsData,
@@ -315,8 +317,8 @@ export default function Result() {
               color: "#4caf50",
             },
           ]}
+          width={800}
           xAxis={[{ data: metrics, scaleType: "band" }]}
-          margin={{ top: 20, bottom: 100, left: 60, right: 20 }}
         />
       </Box>
     );
@@ -337,7 +339,7 @@ export default function Result() {
             </Typography>
           </Typography>
 
-          <Button startIcon={<TerminalIcon />} variant="outlined" onClick={handleOpenLogDialog} sx={{ minWidth: "auto", flexShrink: 0 }}>
+          <Button onClick={handleOpenLogDialog} startIcon={<TerminalIcon />} sx={{ minWidth: "auto", flexShrink: 0 }} variant="outlined">
             View Log
           </Button>
         </Box>
@@ -345,29 +347,29 @@ export default function Result() {
         <Box sx={{ my: 2, mx: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Box sx={{ my: 2, display: "flex", alignItems: "center" }}>
             <Autocomplete
-              options={inputImageNames}
-              renderInput={(params) => <TextField {...params} label="Search input file..." />}
               onChange={(_event, value) => {
                 if (value) {
                   router.push(`/result/${outputname}/${value}`);
                 }
               }}
+              options={inputImageNames}
+              renderInput={(params) => <TextField {...params} label="Search input file..." />}
               sx={{ width: 300, mr: 2 }}
             />
           </Box>
 
           <Box sx={{ my: 2, mx: 2, display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
-            <Typography variant="body1" sx={{ mr: 2 }}>
+            <Typography sx={{ mr: 2 }} variant="body1">
               Aspect Ratio:
             </Typography>
             <Select
-              value={aspectRatio}
-              onChange={handleAspectRatioChange}
               displayEmpty
               inputProps={{ "aria-label": "Without label" }}
+              onChange={handleAspectRatioChange}
               sx={{
                 width: 150,
               }}
+              value={aspectRatio}
             >
               <MenuItem value="original">Original</MenuItem>
               <MenuItem value="square">1:1</MenuItem>
@@ -388,10 +390,10 @@ export default function Result() {
             }}
           >
             <CircularProgress size={40} />
-            <Typography variant="h6" color="primary">
+            <Typography color="primary" variant="h6">
               Loading Results...
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography color="text.secondary" variant="body2">
               Please wait while we fetch your results
             </Typography>
             <LinearProgress sx={{ width: "100%", mt: 2 }} />
@@ -412,19 +414,19 @@ export default function Result() {
               mx: 2,
             }}
           >
-            <Typography variant="h6" color="error">
+            <Typography color="error" variant="h6">
               Error Loading Results
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography color="text.secondary" variant="body2">
               {errorMessage}
             </Typography>
-            <Button variant="contained" color="primary" onClick={() => window.location.reload()}>
+            <Button color="primary" onClick={() => window.location.reload()} variant="contained">
               Try Again
             </Button>
           </Box>
         )}
 
-        {!isLoading && !isError && (
+        {!(isLoading || isError) && (
           <Box
             sx={{
               display: "flex",
@@ -438,8 +440,8 @@ export default function Result() {
               return (
                 <Card
                   key={image.fileInputNameLine}
-                  sx={{ p: 1, m: 2, width: 150, cursor: "pointer" }}
                   onClick={() => router.push(`/result/${outputname}/${imageName}`)}
+                  sx={{ p: 1, m: 2, width: 150, cursor: "pointer" }}
                 >
                   <CardHeader subheader={`${imageName}`} />
                   <CardMedia
@@ -461,7 +463,7 @@ export default function Result() {
         )}
 
         {/* Pagination and Page Size Selector */}
-        {!isLoading && !isError && (
+        {!(isLoading || isError) && (
           <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", mt: 4, mb: 2, gap: 2 }}>
             <Pagination color="primary" count={totalPages} onChange={handlePageChange} page={page} />
             <FormControl size="small" sx={{ m: 1, minWidth: 120 }}>
@@ -484,10 +486,10 @@ export default function Result() {
 
       {/* Log Dialog */}
       <Dialog
-        open={logDialogOpen}
-        onClose={handleCloseLogDialog}
-        maxWidth="xl"
         fullWidth
+        maxWidth="xl"
+        onClose={handleCloseLogDialog}
+        open={logDialogOpen}
         PaperProps={{
           sx: {
             height: "90vh",
@@ -496,7 +498,7 @@ export default function Result() {
         }}
       >
         <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <Typography variant="h6" component="div">
+          <Typography component="div" variant="h6">
             Execution Log - {configFileName}
           </Typography>
           <IconButton aria-label="close" onClick={handleCloseLogDialog} sx={{ color: (theme) => theme.palette.grey[500] }}>
@@ -511,27 +513,27 @@ export default function Result() {
             </Box>
           ) : (
             <Box sx={{ height: "100%" }}>
-              <Tabs value={tabValue} onChange={handleTabChange} sx={{ borderBottom: 1, borderColor: "divider" }}>
+              <Tabs onChange={handleTabChange} sx={{ borderBottom: 1, borderColor: "divider" }} value={tabValue}>
                 {[
-                  <Tab key="raw-log" icon={<TerminalIcon />} iconPosition="start" label="Raw Log" id="tab-0" aria-controls="tabpanel-0" />,
+                  <Tab aria-controls="tabpanel-0" icon={<TerminalIcon />} iconPosition="start" id="tab-0" key="raw-log" label="Raw Log" />,
                   ...(evaluationData
                     ? [
                         <Tab
-                          key="effectiveness"
+                          aria-controls="tabpanel-1"
                           icon={<AssessmentIcon />}
                           iconPosition="start"
-                          label="Effectiveness Chart"
                           id="tab-1"
-                          aria-controls="tabpanel-1"
+                          key="effectiveness"
+                          label="Effectiveness Chart"
                         />,
-                        <Tab key="gains" icon={<AssessmentIcon />} iconPosition="start" label="Relative Gains Chart" id="tab-2" aria-controls="tabpanel-2" />,
+                        <Tab aria-controls="tabpanel-2" icon={<AssessmentIcon />} iconPosition="start" id="tab-2" key="gains" label="Relative Gains Chart" />,
                       ]
                     : []),
                 ]}
               </Tabs>
 
               {/* Raw Log Tab */}
-              <Box role="tabpanel" hidden={tabValue !== 0} id="tabpanel-0" aria-labelledby="tab-0" sx={{ height: "calc(100% - 48px)" }}>
+              <Box aria-labelledby="tab-0" hidden={tabValue !== 0} id="tabpanel-0" role="tabpanel" sx={{ height: "calc(100% - 48px)" }}>
                 {tabValue === 0 && (
                   <Box
                     component="pre"
@@ -554,14 +556,14 @@ export default function Result() {
 
               {/* Effectiveness Chart Tab */}
               {evaluationData && (
-                <Box role="tabpanel" hidden={tabValue !== 1} id="tabpanel-1" aria-labelledby="tab-1" sx={{ height: "calc(100% - 48px)", overflow: "auto" }}>
+                <Box aria-labelledby="tab-1" hidden={tabValue !== 1} id="tabpanel-1" role="tabpanel" sx={{ height: "calc(100% - 48px)", overflow: "auto" }}>
                   {tabValue === 1 && renderEffectivenessChart()}
                 </Box>
               )}
 
               {/* Relative Gains Chart Tab */}
               {evaluationData && (
-                <Box role="tabpanel" hidden={tabValue !== 2} id="tabpanel-2" aria-labelledby="tab-2" sx={{ height: "calc(100% - 48px)", overflow: "auto" }}>
+                <Box aria-labelledby="tab-2" hidden={tabValue !== 2} id="tabpanel-2" role="tabpanel" sx={{ height: "calc(100% - 48px)", overflow: "auto" }}>
                   {tabValue === 2 && renderRelativeGainsChart()}
                 </Box>
               )}

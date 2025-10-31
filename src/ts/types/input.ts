@@ -1,4 +1,4 @@
-export type InputType = "AUTO" | "MATRIX" | "RANKEDLISTS";
+export type InputType = 'AUTO' | 'MATRIX' | 'RANKEDLISTS';
 export type InputFileField = { id: number; value: string };
 
 export interface InputSettingsData {
@@ -12,4 +12,9 @@ export interface InputSettingsData {
 export interface FileObject {
   id: number;
   value: string;
+}
+
+export interface InputSettingsProps {
+  onSettingsChange: (settings: InputSettingsData | null) => void;
+  settings: InputSettingsData | null;
 }

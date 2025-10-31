@@ -1,4 +1,4 @@
-import type { ConfigTemplate } from '@/ts/generatorTypes';
+import type { ConfigTemplate } from '@/ts/types/generatorTypes';
 
 export const baseConfigTemplate: ConfigTemplate = {
   section: 'GENERAL CONFIGURATION',

@@ -1,4 +1,4 @@
-import type { ConfigParameter, ConfigTemplate } from '@/ts/generatorTypes';
+import type { ConfigParameter, ConfigTemplate } from '@/ts/types/generatorTypes';
 import { formatValue } from './formatters';
 
 export class ConfigGenerator {

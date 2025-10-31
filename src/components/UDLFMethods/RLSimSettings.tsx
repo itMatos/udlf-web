@@ -1,6 +1,6 @@
 import { Box, MenuItem, TextField } from "@mui/material";
-import { RLSIM_METRICS } from "@/ts/constants/methods/rlsim";
-import type { RLSim, RLSimSettingsProps } from "@/ts/interfaces/methods/rlsim";
+import { RLSIM_METRICS } from "@/ts/constants/methods-default-params/rlsim";
+import type { RLSim, RLSimSettingsProps } from "@/ts/types/methods/rlsim";
 
 export default function RLSimSettings({ settings, setSettings }: RLSimSettingsProps) {
   const handleSettingChange = (field: keyof RLSim) => (event: React.ChangeEvent<HTMLInputElement>) => {
