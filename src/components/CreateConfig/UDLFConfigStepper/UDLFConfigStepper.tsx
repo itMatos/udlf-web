@@ -1,5 +1,5 @@
 "use client";
-import { Box, Button, Step, StepButton, Stepper, Typography } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Step, StepButton, Stepper, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { uploadUDLFConfig } from "@/services/api/UDLF-api";
@@ -39,6 +39,8 @@ export default function UDLFConfigStepper() {
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
   const [configFileToExecute, setConfigFileToExecute] = useState<Blob | null>(null);
   const [configFileName, setConfigFileName] = useState<string>("");
+  const [showEvaluationWarning, setShowEvaluationWarning] = useState<boolean>(false);
+  const [pendingStep, setPendingStep] = useState<number | null>(null);
 
   const isStepOptional = useCallback((step: number) => step === StepIndex.OUTPUT_SETTINGS, []);
 
@@ -73,14 +75,14 @@ export default function UDLFConfigStepper() {
         case StepIndex.OUTPUT_SETTINGS:
           return true;
         case StepIndex.EVALUATION_SETTINGS:
-          return !!evaluationSettings;
+          return true;
         case StepIndex.SUMMARY:
           return true;
         default:
           return false;
       }
     },
-    [inputSettings, evaluationSettings, isInputSettingsComplete]
+    [inputSettings, isInputSettingsComplete]
   );
 
   const uploadAndRedirect = useCallback(
@@ -104,6 +106,58 @@ export default function UDLFConfigStepper() {
   }, [activeStep]);
 
   const prevStep = useCallback(() => setActiveStep((prev) => Math.max(0, prev - 1)), []);
+
+  const isEvaluationMetricsMissing = useCallback(() => {
+    const recallCount = evaluationSettings?.recall?.length ?? 0;
+    const precisionCount = evaluationSettings?.precision?.length ?? 0;
+    return recallCount === 0 || precisionCount === 0;
+  }, [evaluationSettings]);
+
+  const handleNextClick = useCallback(() => {
+    if (activeStep === StepIndex.EVALUATION_SETTINGS && isEvaluationMetricsMissing()) {
+      setPendingStep(activeStep + 1);
+      setShowEvaluationWarning(true);
+      return;
+    }
+    nextStep();
+  }, [activeStep, isEvaluationMetricsMissing, nextStep]);
+
+  const handleStepSelection = useCallback(
+    (index: number, enabled: boolean) => {
+      if (!enabled) {
+        return;
+      }
+
+      if (activeStep === StepIndex.EVALUATION_SETTINGS && index > activeStep && isEvaluationMetricsMissing()) {
+        setPendingStep(index);
+        setShowEvaluationWarning(true);
+        return;
+      }
+
+      setActiveStep(index);
+    },
+    [activeStep, isEvaluationMetricsMissing]
+  );
+
+  const handleCloseEvaluationWarning = useCallback(() => {
+    setShowEvaluationWarning(false);
+    setPendingStep(null);
+  }, []);
+
+  const handleConfirmEvaluationWarning = useCallback(() => {
+    setShowEvaluationWarning(false);
+    if (pendingStep === null) {
+      return;
+    }
+
+    if (pendingStep === activeStep + 1) {
+      nextStep();
+    } else {
+      setActiveStep(pendingStep);
+    }
+
+    setPendingStep(null);
+  }, [activeStep, nextStep, pendingStep]);
 
   const stepsContent = [
     <MethodSettings key="method" selectedMethod={selectedMethod} setSelectedMethod={setSelectedMethod} setSettings={setSettings} settings={settings} />,
@@ -141,26 +195,27 @@ export default function UDLFConfigStepper() {
     >
       <Stepper activeStep={activeStep} nonLinear>
         {STEPS.map((label, index) => {
+          const stepIndex = index as StepIndex;
           const stepProps: StepProps = {};
           const labelProps: LabelProps = {};
 
-          if (isStepOptional(index)) {
+          if (isStepOptional(stepIndex)) {
             labelProps.optional = <Typography variant="caption">Optional</Typography>;
           }
 
-          const stepIsComplete = isStepComplete(index);
+          const stepIsComplete = isStepComplete(stepIndex);
           stepProps.completed = stepIsComplete;
           const canGoToNext = canProceedByValidation(activeStep);
-          const isImmediateNext = index === activeStep + 1 && canGoToNext;
-          const outputGate = index === StepIndex.OUTPUT_SETTINGS ? isStepComplete(StepIndex.INPUT_SETTINGS) : true;
+          const isImmediateNext = stepIndex === activeStep + 1 && canGoToNext;
+          const outputGate = stepIndex === StepIndex.OUTPUT_SETTINGS ? isStepComplete(StepIndex.INPUT_SETTINGS) : true;
           const allowNonLinear = activeStep === StepIndex.SUMMARY || isStepComplete(StepIndex.SUMMARY);
-          const enabled = outputGate && (allowNonLinear ? index === activeStep || stepIsComplete : index === activeStep || isImmediateNext);
+          const enabled = outputGate && (allowNonLinear ? stepIndex === activeStep || stepIsComplete : stepIndex === activeStep || isImmediateNext);
 
           return (
             <Step key={label} {...stepProps} disabled={!enabled}>
-              <StepButton onClick={() => enabled && setActiveStep(index)} value={index}>
+              <StepButton onClick={() => handleStepSelection(stepIndex, enabled)} value={stepIndex}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  {index === activeStep && <Box sx={{ width: 6, height: 6, borderRadius: "50%", bgcolor: "primary.main" }} />}
+                  {stepIndex === activeStep && <Box sx={{ width: 6, height: 6, borderRadius: "50%", bgcolor: "primary.main" }} />}
                   {label}
                 </Box>
               </StepButton>
@@ -208,11 +263,25 @@ export default function UDLFConfigStepper() {
             </Button>
           )}
           <Box sx={{ flex: "1 1 auto" }} />
-          <Button disabled={!canProceed} onClick={nextStep}>
+          <Button disabled={!canProceed} onClick={handleNextClick}>
             {activeStep === StepIndex.SUMMARY ? "Execute" : "Next"}
           </Button>
         </Box>
       </Box>
+      <Dialog onClose={handleCloseEvaluationWarning} open={showEvaluationWarning}>
+        <DialogTitle>Missing evaluation metrics</DialogTitle>
+        <DialogContent>
+          <DialogContentText>You have not inserted values for precision and/or recall. Do you want to continue anyway?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button color="inherit" onClick={handleCloseEvaluationWarning}>
+            Cancel
+          </Button>
+          <Button color="primary" onClick={handleConfirmEvaluationWarning} variant="contained">
+            Continue
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
