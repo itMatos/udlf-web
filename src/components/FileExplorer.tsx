@@ -55,13 +55,12 @@ export default function FileExplorer({
   const updateBreadcrumbs = useCallback((path: string) => {
     const pathParts = path.split("/").filter((part) => part !== "");
     // Always show breadcrumbs relative to Datasets, not app
-    const breadcrumbParts =
-      pathParts.length > 2 && pathParts[0] === "app" && pathParts[1] === "Datasets"
-        ? pathParts.slice(2)
-        : pathParts.length > 1 && pathParts[0] === "Datasets"
-        ? pathParts.slice(1)
-        : [];
-    console.log("breadcrumbParts", breadcrumbParts);
+    let breadcrumbParts: string[] = [];
+    if (pathParts.length > 2 && pathParts[0] === "app" && pathParts[1] === "Datasets") {
+      breadcrumbParts = pathParts.slice(2);
+    } else if (pathParts.length > 1 && pathParts[0] === "Datasets") {
+      breadcrumbParts = pathParts.slice(1);
+    }
     setBreadcrumbs(breadcrumbParts);
   }, []);
 
@@ -119,18 +118,17 @@ export default function FileExplorer({
     }
   };
 
-  const handleDirectoryDoubleClick = (item: FileItem) => {
-    if (item.type === "directory" && allowDirectorySelection) {
-      // Double-click to navigate into directory in selection mode
-      loadDirectory(item.path);
-      setSelectedDirectory(null); // Clear selection when navigating
-    }
-  };
-
   const handleSelectDirectory = () => {
     if (selectedDirectory) {
       onFileSelect(selectedDirectory);
       setOpen(false);
+    }
+  };
+
+  const handleOpenDirectory = () => {
+    if (selectedDirectory) {
+      loadDirectory(selectedDirectory);
+      setSelectedDirectory(null); // Clear selection when navigating
     }
   };
 
@@ -197,9 +195,6 @@ export default function FileExplorer({
 
   useEffect(() => {
     if (open) {
-      // Testar a conexão primeiro para debug
-      FileExplorerService.testConnection().catch(console.error);
-
       loadDirectory("/app/Datasets");
       setSelectedDirectory(null); // Clear selection when opening
     }
@@ -233,7 +228,7 @@ export default function FileExplorer({
           </Box>
           {allowDirectorySelection && (
             <Typography color="text.secondary" sx={{ mt: 1 }} variant="body2">
-              Click to select a directory, double-click to navigate into it
+              Click to select a directory
             </Typography>
           )}
         </DialogTitle>
@@ -328,11 +323,6 @@ export default function FileExplorer({
                         handleFileClick(item);
                       }
                     }}
-                    onDoubleClick={() => {
-                      if (item.type === "directory") {
-                        handleDirectoryDoubleClick(item);
-                      }
-                    }}
                     sx={{
                       opacity: (() => {
                         if (item.type === "file" && !isFileAllowed(item.name)) {
@@ -415,9 +405,14 @@ export default function FileExplorer({
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>
           {allowDirectorySelection && selectedDirectory && (
-            <Button onClick={handleSelectDirectory} variant="contained">
-              Select Directory
-            </Button>
+            <>
+              <Button onClick={handleOpenDirectory} variant="outlined">
+                Abrir Diretório
+              </Button>
+              <Button onClick={handleSelectDirectory} variant="contained">
+                Select Directory
+              </Button>
+            </>
           )}
           {multiple && !allowDirectorySelection && (
             <Button disabled={selectedFiles.length === 0} onClick={() => setOpen(false)} variant="contained">
