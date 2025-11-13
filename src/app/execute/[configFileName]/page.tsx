@@ -9,6 +9,7 @@ import Appbar from "@/components/Appbar/Appbar";
 import type { ResponseApi } from "@/services/api/types";
 import { downloadLogFile, downloadOutputFile, executeUDLF } from "@/services/api/UDLF-api";
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: we need to use the params to get the config file name
 export default function ExecuteConfig() {
   const params = useParams();
   const router = useRouter();

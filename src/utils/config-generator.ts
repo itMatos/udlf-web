@@ -47,8 +47,11 @@ export const createInputSettings = async (
   inputSettings: InputSettingsData | null,
   inputDatasetFilesConfig: ConfigSectionType
 ) => {
-  const inputFilesLength = inputSettings?.inputFiles.length || 0;
-  const inputFiles = inputSettings?.inputFiles.reduce(
+  // Filter out empty strings from inputFiles
+  const validInputFiles = inputSettings?.inputFiles?.filter((file) => file && file.trim() !== '') || [];
+  const inputFilesLength = validInputFiles.length;
+
+  const inputFiles = validInputFiles.reduce(
     (acc, file, index) => {
       if (inputFilesLength > 1) {
         acc[`INPUT_FILES_FUSION_${index + 1}`] = file;
@@ -62,11 +65,11 @@ export const createInputSettings = async (
 
   const dynamicParameters =
     inputFilesLength > 1
-      ? inputSettings?.inputFiles?.map((file, index) => ({
+      ? validInputFiles.map((file, index) => ({
           key: `INPUT_FILES_FUSION_${index + 1}`,
           value: file,
           description: `#Path of input file ${index + 1} for FUSION tasks`,
-        })) || []
+        }))
       : [];
 
   const enhancedConfigTemplate = {
@@ -79,7 +82,7 @@ export const createInputSettings = async (
 
   // Calculate dataset size dynamically based on INPUT_FILE_LIST
   let datasetSize = 1400; // Default fallback
-  if (inputSettings?.inputFileList) {
+  if (inputSettings?.inputFileList && inputSettings.inputFileList.trim() !== '') {
     try {
       const sizeResult = await calculateDatasetSize(inputSettings.inputFileList);
       if (sizeResult.success) {
@@ -93,15 +96,34 @@ export const createInputSettings = async (
     }
   }
 
-  const valueUpdates = {
-    ...inputFiles,
-    INPUT_FILE_FORMAT: inputSettings?.inputType,
-    INPUT_FILE_LIST: inputSettings?.inputFileList,
-    INPUT_FILE_CLASSES: inputSettings?.inputFileClasses,
-    INPUT_IMAGES_PATH: inputSettings?.datasetImagesPath,
-    NUM_INPUT_FUSION_FILES: inputFilesLength,
-    SIZE_DATASET: datasetSize,
-  };
+  // Only include values that are not empty/undefined in valueUpdates
+  const valueUpdates: Record<string, any> = {};
+
+  // Add input files only if they exist
+  Object.entries(inputFiles).forEach(([key, value]) => {
+    if (value && value.trim() !== '') {
+      valueUpdates[key] = value;
+    }
+  });
+
+  // Add other fields only if they have valid values
+  if (inputSettings?.inputType) {
+    valueUpdates.INPUT_FILE_FORMAT = inputSettings.inputType;
+  }
+  if (inputSettings?.inputFileList && inputSettings.inputFileList.trim() !== '') {
+    valueUpdates.INPUT_FILE_LIST = inputSettings.inputFileList;
+  }
+  if (inputSettings?.inputFileClasses && inputSettings.inputFileClasses.trim() !== '') {
+    valueUpdates.INPUT_FILE_CLASSES = inputSettings.inputFileClasses;
+  }
+  if (inputSettings?.datasetImagesPath && inputSettings.datasetImagesPath.trim() !== '') {
+    valueUpdates.INPUT_IMAGES_PATH = inputSettings.datasetImagesPath;
+  }
+
+  // Always include these numeric values
+  valueUpdates.NUM_INPUT_FUSION_FILES = inputFilesLength;
+  valueUpdates.SIZE_DATASET = datasetSize;
+
   const createdConfigSection = createConfigSection(enhancedConfigTemplate, valueUpdates);
   return { createdConfigSection, datasetSize };
 };

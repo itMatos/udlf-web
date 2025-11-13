@@ -1,4 +1,4 @@
-import { FileService } from '@/services/api/fileService';
+import { countFileLines as countFileLinesFromApi } from '@/services/api/fileService';
 import { countFileLines, countFileLinesFromUrl } from './helpers';
 
 export interface DatasetSizeCalculationResult {
@@ -15,7 +15,7 @@ export interface DatasetSizeCalculationResult {
  */
 export const calculateDatasetSize = async (
   inputFileList: string | File,
-  isLocalFile: boolean = false
+  isLocalFile = false
 ): Promise<DatasetSizeCalculationResult> => {
   try {
     let lineCount: number;
@@ -29,13 +29,13 @@ export const calculateDatasetSize = async (
         // It's a URL, fetch and count lines
         lineCount = await countFileLinesFromUrl(inputFileList);
       } else {
-        // It's a local file path, use the API to count lines
-        const result = await FileService.countFileLines(inputFileList);
+        // It's a local file path, use the API to count lines from the file explorer
+        const result = await countFileLinesFromApi(inputFileList);
         if (!result.success) {
           return {
-            success: false,
+            success: false, // fallback to default
             size: 1400, // fallback to default
-            error: result.error || 'Failed to count file lines'
+            error: result.error || 'Failed to count file lines',
           };
         }
         lineCount = result.lineCount;
@@ -46,14 +46,14 @@ export const calculateDatasetSize = async (
 
     return {
       success: true,
-      size: lineCount
+      size: lineCount,
     };
   } catch (error) {
     console.error('Error calculating dataset size:', error);
     return {
       success: false,
       size: 1400, // fallback to default
-      error: error instanceof Error ? error.message : 'Unknown error occurred'
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
     };
   }
 };
@@ -67,10 +67,8 @@ export const calculateDatasetSize = async (
 export const updateDatasetSizeInConfig = (configTemplate: any, newSize: number) => {
   return {
     ...configTemplate,
-    parameters: configTemplate.parameters.map((param: any) => 
-      param.key === 'SIZE_DATASET' 
-        ? { ...param, value: newSize }
-        : param
-    )
+    parameters: configTemplate.parameters.map((param: any) =>
+      param.key === 'SIZE_DATASET' ? { ...param, value: newSize } : param
+    ),
   };
 };

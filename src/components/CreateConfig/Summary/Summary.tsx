@@ -176,7 +176,7 @@ const Summary: React.FC<SummaryProps> = ({
     }
   };
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: we need to set the config file to execute and the config file name
+  // Regenerate config file whenever settings change
   useEffect(() => {
     const generateConfig = async () => {
       try {
@@ -189,10 +189,11 @@ const Summary: React.FC<SummaryProps> = ({
       }
     };
 
-    generateConfig();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // Only generate if we have a config file name
+    if (configFileName) {
+      generateConfig();
+    }
+  }, [inputSettings, outputSettings, evaluationSettings, methodSettings, selectedMethod]);
 
   return (
     <Paper elevation={3} sx={{ p: 3 }}>

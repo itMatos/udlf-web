@@ -1,12 +1,12 @@
-import axios from "axios";
-import config from "./config";
-import type { lineContent, PaginatedResponse } from "./models";
-import type { ImageNameLineMatch, InputFileDetail, LineContentResponse } from "./types";
+import axios from 'axios';
+import config from './config';
+import type { lineContent, PaginatedResponse } from './models';
+import type { ImageNameLineMatch, InputFileDetail, LineContentResponse } from './types';
 
 const udlfApi = axios.create({
   baseURL: config.udlfApi,
   headers: {
-    "ngrok-skip-browser-warning": "true",
+    'ngrok-skip-browser-warning': 'true',
   },
 });
 
@@ -20,16 +20,16 @@ const performDownload = async (fileName: string, endpoint: string) => {
 
   try {
     const response = await udlfApi.get<Blob>(fullEndpoint, {
-      responseType: "blob", // Importante para receber dados binários
+      responseType: 'blob', // Importante para receber dados binários
     });
 
     // Cria uma URL temporária para o Blob recebido
     const url = window.URL.createObjectURL(response.data);
 
     // Cria um link oculto e simula um clique para iniciar o download
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = url;
-    link.setAttribute("download", fileName); // Define o nome do arquivo para download
+    link.setAttribute('download', fileName); // Define o nome do arquivo para download
     document.body.appendChild(link);
     link.click();
 
@@ -51,7 +51,7 @@ const performDownload = async (fileName: string, endpoint: string) => {
  */
 export const downloadOutputFile = async (outputFileName: string) => {
   const fileName = `output_${outputFileName}.txt`;
-  await performDownload(fileName, "/download-output/");
+  await performDownload(fileName, '/download-output/');
 };
 
 /**
@@ -60,7 +60,7 @@ export const downloadOutputFile = async (outputFileName: string) => {
  */
 export const downloadLogFile = async (configFileName: string) => {
   const fileName = `log_${configFileName}`;
-  await performDownload(fileName, "/download-output/");
+  await performDownload(fileName, '/download-output/');
 };
 
 /**
@@ -73,33 +73,33 @@ export const getLogFileContent = async (configFileName: string): Promise<string>
     const response = await udlfApi.get(`/get-log-content/${fileName}`);
     return response.data as string;
   } catch (error) {
-    console.error("Error fetching log file content:", error);
+    console.error('Error fetching log file content:', error);
     throw error;
   }
 };
 
 export const uploadUDLFConfig = async (configFile: Blob, fileName: string) => {
   const formData = new FormData();
-  formData.append("config_file", configFile, fileName);
+  formData.append('config_file', configFile, fileName);
   try {
-    const endpointToUpload = "/upload-file";
+    const endpointToUpload = '/upload-file';
     const response = await udlfApi.post(endpointToUpload, formData);
     return response.data;
   } catch (error) {
-    console.error("Error uploading UDLF config:", error);
+    console.error('Error uploading UDLF config:', error);
     throw error;
   }
 };
 
 export const executeUDLF = async (fileName: string) => {
   const formData = new FormData();
-  formData.append("config_file", fileName);
+  formData.append('config_file', fileName);
   try {
     const endpointToExecute = `/execute/${fileName}`;
     const response = await udlfApi.get(endpointToExecute);
     return response.data;
   } catch (error) {
-    console.error("Error executing UDLF:", error);
+    console.error('Error executing UDLF:', error);
     throw error;
   }
 };
@@ -110,7 +110,7 @@ export const getUDLFOutputs = async (outputFileName: string) => {
     const response = await udlfApi.get(endpointToGetOutputs);
     return response.data;
   } catch (error) {
-    console.error("Error fetching UDLF outputs:", error);
+    console.error('Error fetching UDLF outputs:', error);
     throw error;
   }
 };
@@ -121,32 +121,35 @@ export const getUDLFOutputFileByLine = async (outputFileName: string, lineNumber
     const response = await udlfApi.get(endpointToGetOutputFileByLine);
     return response.data as LineContentResponse;
   } catch (error) {
-    console.error("Error fetching UDLF output file by line:", error);
+    console.error('Error fetching UDLF output file by line:', error);
     throw error;
   }
 };
 
 export const getImageNamesByIndexesList = async (lineNumbers: number[], configFileName?: string) => {
-  const indexesAsString = lineNumbers.join(",");
+  const indexesAsString = lineNumbers.join(',');
   let endpointToGetImageName = `/file-input-name-by-index?indexList=${indexesAsString}`;
 
   if (configFileName) {
     endpointToGetImageName += `&configFile=${configFileName}`;
   }
 
-  console.log("Fetching image names from:", endpointToGetImageName);
+  console.log('Fetching image names from:', endpointToGetImageName);
 
   try {
     const response = await udlfApi.get(endpointToGetImageName);
     return response.data as lineContent[];
   } catch (error) {
-    console.error("Error fetching image name by line number:", error);
+    console.error('Error fetching image name by line number:', error);
     throw error;
   }
 };
 
-export const getImageDetailsByLineNumbers = async (lineNumbers: number[], configFileName?: string): Promise<InputFileDetail> => {
-  const indexesAsString = lineNumbers.join(",");
+export const getImageDetailsByLineNumbers = async (
+  lineNumbers: number[],
+  configFileName?: string
+): Promise<InputFileDetail> => {
+  const indexesAsString = lineNumbers.join(',');
   let endpointToGetImageDetails = `/file-input-details-by-line-numbers?lineNumbers=${indexesAsString}`;
 
   if (configFileName) {
@@ -157,18 +160,21 @@ export const getImageDetailsByLineNumbers = async (lineNumbers: number[], config
     const response = await udlfApi.get(endpointToGetImageDetails);
     return response.data as InputFileDetail;
   } catch (error) {
-    console.error("Error fetching image details by line numbers:", error);
+    console.error('Error fetching image details by line numbers:', error);
     throw error;
   }
 };
 
-export const getLineNumberByImageName = async (imageName: string, configFileName: string): Promise<ImageNameLineMatch> => {
-  let endpointToGetLineNumber = `/teste/get-line-by-image-name/${imageName}?configFile=${configFileName}`;
+export const getLineNumberByImageName = async (
+  imageName: string,
+  configFileName: string
+): Promise<ImageNameLineMatch> => {
+  const endpointToGetLineNumber = `/teste/get-line-by-image-name/${imageName}?configFile=${configFileName}`;
   try {
     const response = await udlfApi.get(endpointToGetLineNumber);
     return response.data as ImageNameLineMatch;
   } catch (error) {
-    console.error("Error fetching line number by image name:", error);
+    console.error('Error fetching line number by image name:', error);
     throw error;
   }
 };
@@ -182,17 +188,22 @@ export const getImageFileByName = async (imageFileName: string, configFileName?:
 
   try {
     const response = await udlfApi.get(endpointToGetImageFile, {
-      responseType: "blob",
+      responseType: 'blob',
     });
     return response.data;
   } catch (error) {
-    console.error("Error fetching image file by name:", error);
+    console.error('Error fetching image file by name:', error);
   }
 };
 
-export const getPaginatedListFilenames = async (filename: string, page: number, pageSize: number, configFileName?: string): Promise<PaginatedResponse> => {
+export const getPaginatedListFilenames = async (
+  filename: string,
+  page: number,
+  pageSize: number,
+  configFileName?: string
+): Promise<PaginatedResponse> => {
   const endpointToGetPaginatedList = `/paginated-file-list/${filename}/page/${page}`;
-  const params: any = {
+  const params: Record<string, unknown> = {
     filename,
     page,
     pageSize,
@@ -207,7 +218,7 @@ export const getPaginatedListFilenames = async (filename: string, page: number, 
 };
 
 export const getAllFilenames = async (filename: string, configFileName?: string): Promise<string[]> => {
-  let endpointToGetAllFilenames = `/get-all-input-file-names`;
+  let endpointToGetAllFilenames = '/get-all-input-file-names';
 
   if (configFileName) {
     endpointToGetAllFilenames += `?configFile=${configFileName}`;
@@ -218,7 +229,7 @@ export const getAllFilenames = async (filename: string, configFileName?: string)
 };
 
 export const getAllClasses = async (filename: string, configFileName?: string): Promise<string[]> => {
-  let endpointToGetAllClasses = `/grouped-input-class-names`;
+  let endpointToGetAllClasses = '/grouped-input-class-names';
 
   if (configFileName) {
     endpointToGetAllClasses += `?configFile=${configFileName}`;
@@ -229,7 +240,7 @@ export const getAllClasses = async (filename: string, configFileName?: string): 
 };
 
 export const getInputFileDetailsByName = async (filename: string, configFileName?: string): Promise<any> => {
-  let endpointToGetInputFileDetails = `/input-file-details-by-name`;
+  let endpointToGetInputFileDetails = '/input-file-details-by-name';
 
   if (configFileName) {
     endpointToGetInputFileDetails += `?configFile=${configFileName}`;
@@ -240,7 +251,7 @@ export const getInputFileDetailsByName = async (filename: string, configFileName
 };
 
 export const getInputFileDetailsByIndexesList = async (configFileName?: string): Promise<InputFileDetail> => {
-  let endpointToGetInputFilenamesDetails = `/file-input-details-by-line-numbers`;
+  let endpointToGetInputFilenamesDetails = '/file-input-details-by-line-numbers';
 
   if (configFileName) {
     endpointToGetInputFilenamesDetails += `?configFile=${configFileName}`;
@@ -251,7 +262,11 @@ export const getInputFileDetailsByIndexesList = async (configFileName?: string):
 };
 
 // New function that uses the config-specific route (recommended)
-export const getPaginatedListFilenamesByConfig = async (configFileName: string, page: number, pageSize: number): Promise<PaginatedResponse> => {
+export const getPaginatedListFilenamesByConfig = async (
+  configFileName: string,
+  page: number,
+  pageSize: number
+): Promise<PaginatedResponse> => {
   const endpointToGetPaginatedList = `/paginated-file-list-by-config/${configFileName}/page/${page}`;
   const params = {
     pageSize,
