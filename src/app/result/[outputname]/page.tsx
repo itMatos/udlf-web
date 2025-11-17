@@ -22,6 +22,7 @@ import {
   Pagination,
   Select,
   type SelectChangeEvent,
+  Skeleton,
   Tab,
   Tabs,
   TextField,
@@ -34,9 +35,13 @@ import { useEffect, useState } from "react";
 import Appbar from "@/components/Appbar/Appbar";
 import config from "@/services/api/config";
 import type { lineContent } from "@/services/api/models";
-import { getAllClasses, getAllFilenames, getLogFileContent, getPaginatedListFilenames, getPaginatedListFilenamesByConfig } from "@/services/api/UDLF-api";
+import { getAllClasses, getAllFilenames, getLogFileContent, getPaginatedListFilenamesByConfig } from "@/services/api/UDLF-api";
 import { IMAGES_PER_PAGE_DEFAULT } from "@/ts/constants/common";
 
+// Regex patterns defined at top-level scope for performance
+const EVALUATION_METRIC_REGEX = /^(P@\d+|Recall@\d+|MAP)\s+(-?\d+\.\d+)(%?)$/;
+
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: we need to use the params to get the output name
 export default function Result() {
   const params = useParams();
   const router = useRouter();
@@ -47,10 +52,13 @@ export default function Result() {
 
   // Extract config file name from output name
   // e.g., "output_ContextRR_3m172i0.ini.txt" -> "ContextRR_3m172i0.ini"
+  // Define regexes once outside the function for performance
+  const OUTPUT_PREFIX_REGEX = /^output_/g;
+  const TXT_SUFFIX_REGEX = /\.txt$/g;
   const getConfigFileName = (outputName: string): string => {
     // Remove "output_" prefix and ".txt" suffix
-    const withoutPrefix = outputName.replace(/^output_/, "");
-    const withoutSuffix = withoutPrefix.replace(/\.txt$/, "");
+    const withoutPrefix = outputName.replace(OUTPUT_PREFIX_REGEX, "");
+    const withoutSuffix = withoutPrefix.replace(TXT_SUFFIX_REGEX, "");
     return withoutSuffix;
   };
 
@@ -64,6 +72,9 @@ export default function Result() {
   const [imagesCurrentPage, setImagesCurrentPage] = useState<lineContent[]>([]);
   const [aspectRatio, setAspectRatio] = useState<"original" | "square">("square");
   const [inputImageNames, setInputImageNames] = useState<string[]>([]);
+  const [loadingImages, setLoadingImages] = useState<Set<string>>(new Set());
+  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
+  const [errorImages, setErrorImages] = useState<Set<string>>(new Set());
 
   // Log dialog states
   const [logDialogOpen, setLogDialogOpen] = useState<boolean>(false);
@@ -93,6 +104,12 @@ export default function Result() {
         setTotalPages(imageName.totalPages);
         setImagesCurrentPage(imageName.items);
         console.log("Fetched image names:", imageName.items);
+        // Reset loading states when page changes and start loading for new images
+        setLoadedImages(new Set());
+        setErrorImages(new Set());
+        // Start loading state for all images immediately
+        const newImageNames = imageName.items.map((img) => img.fileInputNameLine);
+        setLoadingImages(new Set(newImageNames));
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error(`Error fetching image names for output ${outputname}:`, error);
@@ -172,9 +189,10 @@ export default function Result() {
     setTabValue(newValue);
   };
 
-  const parseEvaluationData = (logContent: string) => {
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: we need to parse the log content to get the evaluation data
+  const parseEvaluationData = (logContentParsed: string) => {
     try {
-      const lines = logContent.split("\n");
+      const lines = logContentParsed.split("\n");
       let beforeSection = false;
       let afterSection = false;
       let relativeGainsSection = false;
@@ -205,11 +223,9 @@ export default function Result() {
           relativeGainsSection = true;
           continue;
         }
-
-        // Parse data lines
-        const match = trimmedLine.match(/^(P@\d+|Recall@\d+|MAP)\s+(-?\d+\.\d+)(%?)$/);
+        const match = trimmedLine.match(EVALUATION_METRIC_REGEX);
         if (match) {
-          const [, metric, value, isPercent] = match;
+          const [, metric, value] = match;
           const numValue = Number.parseFloat(value);
 
           if (beforeSection) {
@@ -231,7 +247,7 @@ export default function Result() {
   };
 
   const renderEffectivenessChart = () => {
-    if (!evaluationData || !(Object.keys(evaluationData.before).length || Object.keys(evaluationData.after).length)) {
+    if (!(evaluationData && (Object.keys(evaluationData.before).length || Object.keys(evaluationData.after).length))) {
       return (
         <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: 300 }}>
           <Typography variant="body1">No effectiveness data available for visualization</Typography>
@@ -247,7 +263,9 @@ export default function Result() {
     const mapMetrics = allMetrics.filter((metric) => metric === "MAP");
 
     const renderChart = (metrics: string[], title: string, containerHeight = 400) => {
-      if (metrics.length === 0) return null;
+      if (metrics.length === 0) {
+        return null;
+      }
 
       const beforeData = metrics.map((metric) => evaluationData.before[metric] || 0);
       const afterData = metrics.map((metric) => evaluationData.after[metric] || 0);
@@ -353,7 +371,7 @@ export default function Result() {
                 }
               }}
               options={inputImageNames}
-              renderInput={(params) => <TextField {...params} label="Search input file..." />}
+              renderInput={(autocompleteParams) => <TextField {...autocompleteParams} label="Search input file..." />}
               sx={{ width: 300, mr: 2 }}
             />
           </Box>
@@ -435,8 +453,13 @@ export default function Result() {
               justifyContent: "center",
             }}
           >
+            {/** biome-ignore lint/complexity/noExcessiveCognitiveComplexity: we need to map the images current page */}
             {imagesCurrentPage.map((image) => {
               const imageName = image.fileInputNameLine;
+              const imageUrl = `${config.udlfApi}/image-file/${imageName}?configFile=${configFileName}`;
+              const imageIsLoading = loadingImages.has(imageName);
+              const hasError = errorImages.has(imageName);
+
               return (
                 <Card
                   key={image.fileInputNameLine}
@@ -444,18 +467,86 @@ export default function Result() {
                   sx={{ p: 1, m: 2, width: 150, cursor: "pointer" }}
                 >
                   <CardHeader subheader={`${imageName}`} />
-                  <CardMedia
-                    alt={`${imageName}`}
-                    component="img"
-                    image={`${config.udlfApi}/image-file/${imageName}?configFile=${configFileName}`}
+                  <Box
                     sx={{
+                      position: "relative",
+                      width: "100%",
                       ...(aspectRatio === "square" && {
                         aspectRatio: "1 / 1",
-                        objectFit: "cover",
                         height: 150,
                       }),
                     }}
-                  />
+                  >
+                    {imageIsLoading && (
+                      <Skeleton
+                        height={aspectRatio === "square" ? 150 : "100%"}
+                        sx={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          borderRadius: 1,
+                        }}
+                        variant="rectangular"
+                        width="100%"
+                      />
+                    )}
+                    {hasError ? (
+                      <Box
+                        sx={{
+                          width: "100%",
+                          height: aspectRatio === "square" ? 150 : "auto",
+                          aspectRatio: aspectRatio === "square" ? "1 / 1" : undefined,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          bgcolor: "action.hover",
+                          color: "text.secondary",
+                          fontSize: "0.75rem",
+                        }}
+                      >
+                        Erro ao carregar
+                      </Box>
+                    ) : (
+                      <CardMedia
+                        alt={`${imageName}`}
+                        component="img"
+                        image={imageUrl}
+                        onError={() => {
+                          setLoadingImages((prev) => {
+                            const newSet = new Set(prev);
+                            newSet.delete(imageName);
+                            return newSet;
+                          });
+                          setErrorImages((prev) => new Set(prev).add(imageName));
+                        }}
+                        onLoad={() => {
+                          setLoadingImages((prev) => {
+                            const newSet = new Set(prev);
+                            newSet.delete(imageName);
+                            return newSet;
+                          });
+                          setLoadedImages((prev) => new Set(prev).add(imageName));
+                        }}
+                        onLoadStart={() => {
+                          const isNotLoaded = !loadedImages.has(imageName);
+                          const hasNoError = !errorImages.has(imageName);
+                          if (isNotLoaded && hasNoError) {
+                            setLoadingImages((prev) => new Set(prev).add(imageName));
+                          }
+                        }}
+                        sx={{
+                          position: "relative",
+                          opacity: imageIsLoading ? 0 : 1,
+                          transition: "opacity 0.3s ease-in-out",
+                          ...(aspectRatio === "square" && {
+                            aspectRatio: "1 / 1",
+                            objectFit: "cover",
+                            height: 150,
+                          }),
+                        }}
+                      />
+                    )}
+                  </Box>
                 </Card>
               );
             })}

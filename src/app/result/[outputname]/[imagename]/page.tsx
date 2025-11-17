@@ -1,20 +1,100 @@
 "use client";
-import { lineContent } from "@/services/api/models";
-import { InputFileDetail } from "@/services/api/types";
-import {
-  getAllClasses,
-  getImageDetailsByLineNumbers,
-  getImageNamesByIndexesList,
-  getInputFileDetailsByName,
-  getLineNumberByImageName,
-  getUDLFOutputFileByLine,
-} from "@/services/api/UDLF-api";
-import config from "@/services/api/config";
-import { Box, Card, CardHeader, CardMedia, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
+import { Box, Card, CardHeader, CardMedia, MenuItem, Select, type SelectChangeEvent, Skeleton, Typography } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import config from "@/services/api/config";
+import type { InputFileDetail } from "@/services/api/types";
+import { getImageDetailsByLineNumbers, getLineNumberByImageName, getUDLFOutputFileByLine } from "@/services/api/UDLF-api";
 
 const MAX_RESULT_IMAGES = 20;
+const OUTPUT_PREFIX_REGEX = /^output_/;
+const TXT_SUFFIX_REGEX = /\.txt$/;
+
+interface ImageCardProps {
+  imageKey: string;
+  imageUrl: string;
+  isLoading: boolean;
+  hasError: boolean;
+  aspectRatio: "original" | "square";
+  onLoad: () => void;
+  onError: () => void;
+  onLoadStart: () => void;
+  onClick: () => void;
+}
+
+const ImageCard = ({ imageKey, imageUrl, isLoading, hasError, aspectRatio, onLoad, onError, onLoadStart, onClick }: ImageCardProps) => (
+  <Card
+    onClick={onClick}
+    sx={{
+      p: 1,
+      m: 1,
+      width: 150,
+      cursor: "pointer",
+    }}
+  >
+    <CardHeader subheader={imageKey} />
+    <Box
+      sx={{
+        position: "relative",
+        width: "100%",
+        ...(aspectRatio === "square" && {
+          aspectRatio: "1 / 1",
+          height: 150,
+        }),
+      }}
+    >
+      {isLoading && (
+        <Skeleton
+          height={aspectRatio === "square" ? 150 : "100%"}
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            borderRadius: 1,
+          }}
+          variant="rectangular"
+          width="100%"
+        />
+      )}
+      {hasError ? (
+        <Box
+          sx={{
+            width: "100%",
+            height: aspectRatio === "square" ? 150 : "auto",
+            aspectRatio: aspectRatio === "square" ? "1 / 1" : undefined,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            bgcolor: "action.hover",
+            color: "text.secondary",
+            fontSize: "0.75rem",
+          }}
+        >
+          Erro ao carregar
+        </Box>
+      ) : (
+        <CardMedia
+          alt={imageKey}
+          component="img"
+          image={imageUrl}
+          onError={onError}
+          onLoad={onLoad}
+          onLoadStart={onLoadStart}
+          sx={{
+            position: "relative",
+            opacity: isLoading ? 0 : 1,
+            transition: "opacity 0.3s ease-in-out",
+            ...(aspectRatio === "square" && {
+              aspectRatio: "1 / 1",
+              objectFit: "cover",
+              height: 150,
+            }),
+          }}
+        />
+      )}
+    </Box>
+  </Card>
+);
 
 export default function ImagePage() {
   const params = useParams();
@@ -23,18 +103,37 @@ export default function ImagePage() {
 
   // Extract config file name from output name
   // e.g., "output_ContextRR_3m172i0.ini.txt" -> "ContextRR_3m172i0.ini"
-  const getConfigFileName = (outputName: string): string => {
+  const getConfigFileName = useCallback((outputName: string): string => {
     // Remove "output_" prefix and ".txt" suffix
-    const withoutPrefix = outputName.replace(/^output_/, "");
-    const withoutSuffix = withoutPrefix.replace(/\.txt$/, "");
+    const withoutPrefix = outputName.replace(OUTPUT_PREFIX_REGEX, "");
+    const withoutSuffix = withoutPrefix.replace(TXT_SUFFIX_REGEX, "");
     return withoutSuffix;
-  };
+  }, []);
 
   const configFileName = getConfigFileName(outputname);
   const [indexesResultByCurrentInput, setIndexesResultByCurrentInput] = useState<string | null>(null);
   const [similarImages, setSimilarImages] = useState<InputFileDetail | null>(null);
   const [aspectRatio, setAspectRatio] = useState<"original" | "square">("square");
   const [currentImageClass, setCurrentImageClass] = useState<string | null>(null);
+  const [loadingImages, setLoadingImages] = useState<Set<string>>(new Set());
+  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
+  const [errorImages, setErrorImages] = useState<Set<string>>(new Set());
+
+  const getListIndexesResultByLine = useCallback(
+    async (lineNumber: number) => {
+      console.log("outputname:", outputname);
+      if (lineNumber !== null) {
+        try {
+          const result = await getUDLFOutputFileByLine(outputname, lineNumber);
+          console.log("Fetched result by line:", result);
+          setIndexesResultByCurrentInput(result.lineContent);
+        } catch (error) {
+          console.error(`Error fetching result for line ${lineNumber}:`, error);
+        }
+      }
+    },
+    [outputname]
+  );
 
   useEffect(() => {
     const fetchLineNumber = async () => {
@@ -48,26 +147,13 @@ export default function ImagePage() {
       }
     };
     fetchLineNumber();
-  }, [imagename]);
-
-  const getListIndexesResultByLine = async (lineNumber: number) => {
-    console.log("outputname:", outputname);
-    if (lineNumber !== null) {
-      try {
-        const result = await getUDLFOutputFileByLine(outputname, lineNumber);
-        console.log("Fetched result by line:", result);
-        setIndexesResultByCurrentInput(result.lineContent);
-      } catch (error) {
-        console.error(`Error fetching result for line ${lineNumber}:`, error);
-      }
-    }
-  };
+  }, [imagename, configFileName, getListIndexesResultByLine]);
 
   useEffect(() => {
     if (indexesResultByCurrentInput !== null) {
       const lineIndexes = indexesResultByCurrentInput
         .split(" ")
-        .map((num) => parseInt(num.trim(), 10))
+        .map((num) => Number.parseInt(num.trim(), 10))
         .filter((num) => !Number.isNaN(num));
       if (lineIndexes.length > MAX_RESULT_IMAGES) {
         lineIndexes.splice(MAX_RESULT_IMAGES);
@@ -82,33 +168,73 @@ export default function ImagePage() {
           console.log("Similar images set to:", imagesDetails);
           setCurrentImageClass(imagesDetails[imagename].class);
           console.log(`Image ${imagename} is of class ${imagesDetails[imagename].class} and index ${imagesDetails[imagename].lineIndexInInputFile}`);
+          // Reset loading states when images change
+          setLoadingImages(new Set());
+          setLoadedImages(new Set());
+          setErrorImages(new Set());
         } catch (error) {
           console.error(`Error fetching image names for line numbers ${lineIndexes}:`, error);
         }
       };
       fetchImageNames();
     }
-  }, [indexesResultByCurrentInput]);
+  }, [indexesResultByCurrentInput, imagename, configFileName]);
 
   const handleAspectRatioChange = (event: SelectChangeEvent) => {
     setAspectRatio(event.target.value as "original" | "square");
+  };
+
+  const handleImageLoad = (imageKey: string) => {
+    setLoadingImages((prev) => {
+      const newSet = new Set(prev);
+      newSet.delete(imageKey);
+      return newSet;
+    });
+    setLoadedImages((prev) => new Set(prev).add(imageKey));
+  };
+
+  const handleImageError = (imageKey: string) => {
+    setLoadingImages((prev) => {
+      const newSet = new Set(prev);
+      newSet.delete(imageKey);
+      return newSet;
+    });
+    setErrorImages((prev) => new Set(prev).add(imageKey));
+  };
+
+  const handleImageStartLoad = (imageKey: string) => {
+    const isNotLoaded = !loadedImages.has(imageKey);
+    const hasNoError = !errorImages.has(imageKey);
+    if (isNotLoaded && hasNoError) {
+      setLoadingImages((prev) => new Set(prev).add(imageKey));
+    }
+  };
+
+  const getCardBorder = (imageKey: string) => {
+    if (imageKey === imagename) {
+      return (theme: { palette: { success: { main: string } } }) => `2px solid ${theme.palette.success.main}`;
+    }
+    if (similarImages && similarImages[imageKey]?.class !== currentImageClass) {
+      return (theme: { palette: { error: { main: string } } }) => `2px solid ${theme.palette.error.main}`;
+    }
+    return "none";
   };
 
   return (
     <div>
       <h1>Ranked list for image: {imagename} </h1>
       <Box sx={{ my: 2, mx: 2, display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
-        <Typography variant="body1" sx={{ mr: 2 }}>
+        <Typography sx={{ mr: 2 }} variant="body1">
           Aspect Ratio:
         </Typography>
         <Select
-          value={aspectRatio}
-          onChange={handleAspectRatioChange}
           displayEmpty
           inputProps={{ "aria-label": "Without label" }}
+          onChange={handleAspectRatioChange}
           sx={{
             width: 150,
           }}
+          value={aspectRatio}
         >
           <MenuItem value="original">Original</MenuItem>
           <MenuItem value="square">1:1</MenuItem>
@@ -125,37 +251,31 @@ export default function ImagePage() {
         {similarImages &&
           currentImageClass &&
           Object.keys(similarImages).map((imageKey) => {
+            const isLoading = loadingImages.has(imageKey);
+            const hasError = errorImages.has(imageKey);
+            const imageUrl = `${config.udlfApi}/image-file/${imageKey}?configFile=${configFileName}`;
+            const cardBorder = getCardBorder(imageKey);
+
             return (
-              <Card
+              <Box
                 key={imageKey}
                 sx={{
-                  p: 1,
-                  m: 1,
-                  width: 150,
-                  cursor: "pointer",
-                  border:
-                    imageKey === imagename
-                      ? (theme) => `2px solid ${theme.palette.success.main}`
-                      : similarImages[imageKey].class !== currentImageClass
-                      ? (theme) => `2px solid ${theme.palette.error.main}`
-                      : "none",
+                  border: cardBorder,
+                  borderRadius: 1,
                 }}
-                onClick={() => router.replace(`/result/${outputname}/${imageKey}`)}
               >
-                <CardHeader subheader={`${imageKey}`} />
-                <CardMedia
-                  alt={`${imageKey}`}
-                  component="img"
-                  image={`${config.udlfApi}/image-file/${imageKey}?configFile=${configFileName}`}
-                  sx={{
-                    ...(aspectRatio === "square" && {
-                      aspectRatio: "1 / 1",
-                      objectFit: "cover",
-                      height: 150,
-                    }),
-                  }}
+                <ImageCard
+                  aspectRatio={aspectRatio}
+                  hasError={hasError}
+                  imageKey={imageKey}
+                  imageUrl={imageUrl}
+                  isLoading={isLoading}
+                  onClick={() => router.replace(`/result/${outputname}/${imageKey}`)}
+                  onError={() => handleImageError(imageKey)}
+                  onLoad={() => handleImageLoad(imageKey)}
+                  onLoadStart={() => handleImageStartLoad(imageKey)}
                 />
-              </Card>
+              </Box>
             );
           })}
       </Box>
