@@ -90,8 +90,37 @@ export default function Result() {
   } | null>(null);
 
   useEffect(() => {
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: cache logic adds complexity but improves performance
     const fetchImageNames = async () => {
       try {
+        // Check cache first
+        const cacheKey = `result_${configFileName}_${page}_${pageSize}`;
+        const cachedData = sessionStorage.getItem(cacheKey);
+
+        if (cachedData) {
+          try {
+            const parsedData = JSON.parse(cachedData);
+            const cacheTimestamp = parsedData.timestamp;
+            const cacheAge = Date.now() - cacheTimestamp;
+            // Use cache if less than 5 minutes old
+            if (cacheAge < 5 * 60 * 1000) {
+              console.log("Using cached data for:", outputname);
+              setTotalPages(parsedData.totalPages);
+              setImagesCurrentPage(parsedData.items);
+              setLoadedImages(new Set());
+              setErrorImages(new Set());
+              const newImageNames = parsedData.items.map((img: { fileInputNameLine: string }) => img.fileInputNameLine);
+              setLoadingImages(new Set(newImageNames));
+              setIsLoading(false);
+              setIsError(false);
+              return;
+            }
+          } catch {
+            // If cache is invalid, continue to fetch
+            console.warn("Invalid cache data, fetching fresh data");
+          }
+        }
+
         setIsLoading(true);
         setIsError(false);
         setErrorMessage("");
@@ -104,6 +133,21 @@ export default function Result() {
         setTotalPages(imageName.totalPages);
         setImagesCurrentPage(imageName.items);
         console.log("Fetched image names:", imageName.items);
+
+        // Cache the data
+        try {
+          sessionStorage.setItem(
+            cacheKey,
+            JSON.stringify({
+              totalPages: imageName.totalPages,
+              items: imageName.items,
+              timestamp: Date.now(),
+            })
+          );
+        } catch (e) {
+          console.warn("Failed to cache data:", e);
+        }
+
         // Reset loading states when page changes and start loading for new images
         setLoadedImages(new Set());
         setErrorImages(new Set());
@@ -123,11 +167,45 @@ export default function Result() {
   }, [outputname, page, pageSize, configFileName]);
 
   useEffect(() => {
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: cache logic adds complexity but improves performance
     const fetchInputImageNames = async () => {
       try {
+        // Check cache for input image names
+        const cacheKey = `inputNames_${configFileName}`;
+        const cachedData = sessionStorage.getItem(cacheKey);
+
+        if (cachedData) {
+          try {
+            const parsedData = JSON.parse(cachedData);
+            const cacheTimestamp = parsedData.timestamp;
+            const cacheAge = Date.now() - cacheTimestamp;
+            // Use cache if less than 5 minutes old
+            if (cacheAge < 5 * 60 * 1000) {
+              console.log("Using cached input image names");
+              setInputImageNames(parsedData.names);
+              return;
+            }
+          } catch {
+            console.warn("Invalid cache data, fetching fresh data");
+          }
+        }
+
         const inputNames = await getAllFilenames(outputname, configFileName);
         setInputImageNames(inputNames);
         console.log("Fetched input image names:", inputNames);
+
+        // Cache the input names
+        try {
+          sessionStorage.setItem(
+            cacheKey,
+            JSON.stringify({
+              names: inputNames,
+              timestamp: Date.now(),
+            })
+          );
+        } catch {
+          console.warn("Failed to cache input names");
+        }
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error(`Error fetching input image names for output ${outputname}:`, error);

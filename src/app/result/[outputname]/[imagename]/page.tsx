@@ -1,7 +1,9 @@
 "use client";
-import { Box, MenuItem, Select, type SelectChangeEvent, Typography } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { Box, Button, MenuItem, Select, type SelectChangeEvent, Typography } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import Appbar from "@/components/Appbar/Appbar";
 import { ImageCard } from "@/components/Results/ImageCard";
 import config from "@/services/api/config";
 import type { InputFileDetail } from "@/services/api/types";
@@ -136,64 +138,80 @@ export default function ImagePage() {
   };
 
   return (
-    <div>
-      <h1>Ranked list for image: {imagename} </h1>
-      <Box sx={{ my: 2, mx: 2, display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
-        <Typography sx={{ mr: 2 }} variant="body1">
-          Aspect Ratio:
-        </Typography>
-        <Select
-          displayEmpty
-          inputProps={{ "aria-label": "Without label" }}
-          onChange={handleAspectRatioChange}
+    <Box>
+      <Appbar />
+      <Box sx={{ mb: 4, mx: 1 }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 2 }}>
+          <Box>
+            <Button onClick={() => router.push(`/result/${outputname}`)} startIcon={<ArrowBackIcon />} sx={{ mb: 2, mt: 1 }} variant="outlined">
+              Back to Results
+            </Button>
+            <Typography variant="h6">
+              Ranked list for image:
+              <Typography component="span" style={{ fontWeight: "bold" }} variant="h6">
+                {` ${imagename}`}
+              </Typography>
+            </Typography>
+          </Box>
+        </Box>
+        <Box sx={{ my: 2, mx: 2, display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+          <Typography sx={{ mr: 2 }} variant="body1">
+            Aspect Ratio:
+          </Typography>
+          <Select
+            displayEmpty
+            inputProps={{ "aria-label": "Without label" }}
+            onChange={handleAspectRatioChange}
+            sx={{
+              width: 150,
+            }}
+            value={aspectRatio}
+          >
+            <MenuItem value="original">Original</MenuItem>
+            <MenuItem value="square">1:1</MenuItem>
+          </Select>
+        </Box>
+        <Box
           sx={{
-            width: 150,
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            justifyContent: "flex-start",
           }}
-          value={aspectRatio}
         >
-          <MenuItem value="original">Original</MenuItem>
-          <MenuItem value="square">1:1</MenuItem>
-        </Select>
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          flexWrap: "wrap",
-          justifyContent: "flex-start",
-        }}
-      >
-        {similarImages &&
-          currentImageClass &&
-          Object.keys(similarImages).map((imageKey) => {
-            const isLoading = loadingImages.has(imageKey);
-            const hasError = errorImages.has(imageKey);
-            const imageUrl = `${config.udlfApi}/image-file/${imageKey}?configFile=${configFileName}`;
-            const cardBorder = getCardBorder(imageKey);
+          {similarImages &&
+            currentImageClass &&
+            Object.keys(similarImages).map((imageKey) => {
+              const isLoading = loadingImages.has(imageKey);
+              const hasError = errorImages.has(imageKey);
+              const imageUrl = `${config.udlfApi}/image-file/${imageKey}?configFile=${configFileName}`;
+              const cardBorder = getCardBorder(imageKey);
 
-            return (
-              <Box
-                key={imageKey}
-                sx={{
-                  border: cardBorder,
-                  borderRadius: 1,
-                }}
-              >
-                <ImageCard
-                  aspectRatio={aspectRatio}
-                  hasError={hasError}
-                  imageKey={imageKey}
-                  imageUrl={imageUrl}
-                  isLoading={isLoading}
-                  onClick={() => router.replace(`/result/${outputname}/${imageKey}`)}
-                  onError={() => handleImageError(imageKey)}
-                  onLoad={() => handleImageLoad(imageKey)}
-                  onLoadStart={() => handleImageStartLoad(imageKey)}
-                />
-              </Box>
-            );
-          })}
+              return (
+                <Box
+                  key={imageKey}
+                  sx={{
+                    border: cardBorder,
+                    borderRadius: 1,
+                    margin: 1,
+                  }}
+                >
+                  <ImageCard
+                    aspectRatio={aspectRatio}
+                    hasError={hasError}
+                    imageKey={imageKey}
+                    imageUrl={imageUrl}
+                    isLoading={isLoading}
+                    onClick={() => router.replace(`/result/${outputname}/${imageKey}`)}
+                    onError={() => handleImageError(imageKey)}
+                    onLoad={() => handleImageLoad(imageKey)}
+                    onLoadStart={() => handleImageStartLoad(imageKey)}
+                  />
+                </Box>
+              );
+            })}
+        </Box>
       </Box>
-    </div>
+    </Box>
   );
 }

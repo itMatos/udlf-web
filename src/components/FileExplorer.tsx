@@ -407,7 +407,7 @@ export default function FileExplorer({
           {allowDirectorySelection && selectedDirectory && (
             <>
               <Button onClick={handleOpenDirectory} variant="outlined">
-                Abrir Diretório
+                Open Directory
               </Button>
               <Button onClick={handleSelectDirectory} variant="contained">
                 Select Directory
