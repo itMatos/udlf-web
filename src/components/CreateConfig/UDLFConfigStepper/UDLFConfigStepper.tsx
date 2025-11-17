@@ -26,6 +26,17 @@ import InputSettings from "../InputSettings/InputSettings";
 import MethodSettings from "../MethodSettings/MethodSettings";
 import OutputSettings from "../OutputSettings/OutputSettings";
 import Summary from "../Summary/Summary";
+import {
+  activeStepIndicatorStyles,
+  backButtonStyles,
+  containerStyles,
+  contentContainerStyles,
+  contentWrapperStyles,
+  getTabPanelStyles,
+  navigationButtonsContainerStyles,
+  spacerStyles,
+  stepButtonLabelStyles,
+} from "./UDLFConfigStepper.styles";
 
 export default function UDLFConfigStepper() {
   const router = useRouter();
@@ -184,15 +195,7 @@ export default function UDLFConfigStepper() {
   }
 
   return (
-    <Box
-      component={"div"}
-      sx={{
-        width: "100%",
-        margin: "auto",
-        py: 4,
-        justifyItems: "center",
-      }}
-    >
+    <Box component="div" sx={containerStyles}>
       <Stepper activeStep={activeStep} nonLinear>
         {STEPS.map((label, index) => {
           const stepIndex = index as StepIndex;
@@ -214,8 +217,8 @@ export default function UDLFConfigStepper() {
           return (
             <Step key={label} {...stepProps} disabled={!enabled}>
               <StepButton onClick={() => handleStepSelection(stepIndex, enabled)} value={stepIndex}>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  {stepIndex === activeStep && <Box sx={{ width: 6, height: 6, borderRadius: "50%", bgcolor: "primary.main" }} />}
+                <Box sx={stepButtonLabelStyles}>
+                  {stepIndex === activeStep && <Box sx={activeStepIndicatorStyles} />}
                   {label}
                 </Box>
               </StepButton>
@@ -224,45 +227,25 @@ export default function UDLFConfigStepper() {
         })}
       </Stepper>
 
-      <Box sx={{ mt: 4, mb: 2, width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <Box
-          sx={{
-            width: "100%",
-            maxWidth: "500px",
-            display: "flex",
-            justifyContent: "center",
-            minHeight: "500px",
-            alignItems: "flex-start",
-            pt: 1,
-          }}
-        >
+      <Box sx={contentWrapperStyles}>
+        <Box sx={contentContainerStyles}>
           {(() => {
             const stepKeys = ["method", "input", "output", "evaluation", "summary"] as const;
             return stepsContent.map((node, idx) => (
-              <Box
-                aria-hidden={activeStep !== idx}
-                key={stepKeys[idx]}
-                role="tabpanel"
-                sx={{
-                  display: activeStep === idx ? "flex" : "none",
-                  width: "100%",
-                  alignItems: "flex-start",
-                  justifyContent: "center",
-                }}
-              >
+              <Box aria-hidden={activeStep !== idx} key={stepKeys[idx]} role="tabpanel" sx={getTabPanelStyles(activeStep === idx)}>
                 {node}
               </Box>
             ));
           })()}
         </Box>
 
-        <Box sx={{ display: "flex", pt: 2, width: "100%", maxWidth: "500px", mt: "auto" }}>
+        <Box sx={navigationButtonsContainerStyles}>
           {activeStep !== StepIndex.METHOD_SETTINGS && (
-            <Button color="inherit" disabled={activeStep === StepIndex.METHOD_SETTINGS} onClick={prevStep} sx={{ mr: 1 }}>
+            <Button color="inherit" disabled={activeStep === StepIndex.METHOD_SETTINGS} onClick={prevStep} sx={backButtonStyles}>
               Back
             </Button>
           )}
-          <Box sx={{ flex: "1 1 auto" }} />
+          <Box sx={spacerStyles} />
           <Button disabled={!canProceed} onClick={handleNextClick}>
             {activeStep === StepIndex.SUMMARY ? "Execute" : "Next"}
           </Button>
