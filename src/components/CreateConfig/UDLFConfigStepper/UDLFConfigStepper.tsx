@@ -7,6 +7,7 @@ import { STEPS, StepIndex, UDLF_METHODS } from "@/ts/constants/common";
 import { DEFAULT_INPUT_SETTINGS } from "@/ts/constants/input";
 import { CONTEXTRR_DEFAULT_PARAMS } from "@/ts/constants/methods-default-params/contextrr";
 import { DEFAULT_OUTPUT_SETTINGS } from "@/ts/constants/output";
+import { STEP_KEYS } from "@/ts/types/common";
 import type { LabelProps, StepProps } from "@/ts/types/createConfig";
 import type { EvaluationSettingsData } from "@/ts/types/evaluation";
 import type { InputSettingsData } from "@/ts/types/input";
@@ -198,7 +199,7 @@ export default function UDLFConfigStepper() {
     <Box component="div" sx={containerStyles}>
       <Stepper activeStep={activeStep} nonLinear>
         {STEPS.map((label, index) => {
-          const stepIndex = index as StepIndex;
+          const stepIndex = index as number;
           const stepProps: StepProps = {};
           const labelProps: LabelProps = {};
 
@@ -230,9 +231,8 @@ export default function UDLFConfigStepper() {
       <Box sx={contentWrapperStyles}>
         <Box sx={contentContainerStyles}>
           {(() => {
-            const stepKeys = ["method", "input", "output", "evaluation", "summary"] as const;
             return stepsContent.map((node, idx) => (
-              <Box aria-hidden={activeStep !== idx} key={stepKeys[idx]} role="tabpanel" sx={getTabPanelStyles(activeStep === idx)}>
+              <Box aria-hidden={activeStep !== idx} key={STEP_KEYS[idx]} role="tabpanel" sx={getTabPanelStyles(activeStep === idx)}>
                 {node}
               </Box>
             ));
