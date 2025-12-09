@@ -100,8 +100,9 @@ export default function ContextRRSettings({ settings, setSettings }: ContextRRSe
       />
       <FormControl>
         <FormControlLabel
+          sx={{ display: "flex", flexDirection: "row-reverse", justifyContent: "flex-end", alignItems: "center" }}
           control={
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, width: "100%" }}>
+            <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", gap: 1, width: "100%" }}>
               <Switch
                 checked={"OPTIMIZATIONS" in settings ? settings.OPTIMIZATIONS : false}
                 id="OPTIMIZATIONS"
@@ -112,7 +113,7 @@ export default function ContextRRSettings({ settings, setSettings }: ContextRRSe
           label="OPTIMIZATIONS"
           labelPlacement="start"
         />
-        <FormHelperText sx={{ display: "flex", justifyContent: "flex-end" }}>{settings.OPTIMIZATIONS ? "Enabled" : "Disabled"}</FormHelperText>
+        <FormHelperText sx={{ display: "flex", justifyContent: "end", alignItems: "center" }}>{settings.OPTIMIZATIONS ? "Enabled" : "Disabled"}</FormHelperText>
       </FormControl>
     </Box>
   );
