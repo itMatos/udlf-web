@@ -6,22 +6,22 @@ export const ContextRRSettingsConfig: ConfigTemplate = {
     {
       key: 'PARAM_NONE_L',
       value: '1400',
-      description: '#(TUint): Size of ranked lists (must be lesser than SIZE_DATASET)',
+      description: 'Size of ranked lists (must be lesser than size of dataset)',
     },
     {
       key: 'PARAM_CONTEXTRR_L',
       value: '25',
-      description: '#(TUint): Size of context images',
+      description: 'Size of context images',
     },
     {
       key: 'PARAM_CONTEXTRR_K',
       value: '7',
-      description: '#(TUint): Number of nearest neighbors',
+      description: 'Number of nearest neighbors',
     },
     {
       key: 'PARAM_CONTEXTRR_T',
       value: '5',
-      description: '#(TUint): Number of iterations',
+      description: 'Number of iterations',
     },
     {
       key: 'PARAM_CONTEXTRR_NBYK',
@@ -31,7 +31,7 @@ export const ContextRRSettingsConfig: ConfigTemplate = {
     {
       key: 'PARAM_CONTEXTRR_OPTIMIZATIONS',
       value: 'TRUE',
-      description: '#(TBool): Performance optimization',
+      description: 'Performance optimization',
     },
   ],
 };
