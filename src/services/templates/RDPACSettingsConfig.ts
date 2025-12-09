@@ -1,12 +1,3 @@
-// # RDPAC #
-// PARAM_RDPAC_K_END = 15    #(TUint): Final neighborhood size 
-// PARAM_RDPAC_K_INC = 1     #(TUint): Value to increment neighborhood size in each iteration
-// PARAM_RDPAC_K_START = 1   #(TUint): Initial neighborhood size value
-// PARAM_RDPAC_L = 400       #(TUint): Ranked Lists Size
-// PARAM_RDPAC_L_MULT = 2    #(TUint): Ranked Lists Size Multiplier (L*L_MULT must be smaller than dataset size)
-// PARAM_RDPAC_P = 0.60      #(TFloat): Geometric decay factor in the rank-based similarity, giving higher weight to top positions
-// PARAM_RDPAC_PL = 0.99     #(TFloat): Decay factor used in the L-length normalization step before diffusion
-
 import { ConfigTemplate } from "@/ts/types/generatorTypes";
 
 export const RDPACSettingsConfig: ConfigTemplate = {

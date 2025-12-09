@@ -1,8 +1,3 @@
-// # LHRR #
-// PARAM_LHRR_K = 18         #(TUint): Neighborhood size
-// PARAM_LHRR_L = 1000       #(TUint): Ranked Lists Size
-// PARAM_LHRR_T = 2          #(TUint): Number of iterations
-
 import { ConfigTemplate } from "@/ts/types/generatorTypes";
 
 export const LHRRSettingsConfig: ConfigTemplate = {
