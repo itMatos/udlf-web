@@ -26,7 +26,7 @@ export default function Homepage() {
             <CardContent sx={cardContentStyles}>
               <AddIcon sx={addIconStyles} />
               <Typography component="h2" gutterBottom variant="h5">
-                Create New Config
+                Create new config
               </Typography>
               <Typography color="text.secondary" variant="body2">
                 Start from scratch and create a new configuration file for your UDLF config
@@ -45,7 +45,7 @@ export default function Homepage() {
             <CardContent sx={cardContentStyles}>
               <PlayArrowIcon sx={playIconStyles} />
               <Typography component="h2" gutterBottom variant="h5">
-                Run Existing Config
+                Run existing config
               </Typography>
               <Typography color="text.secondary" variant="body2">
                 Load and execute a previously saved config file
